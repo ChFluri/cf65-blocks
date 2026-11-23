@@ -3,7 +3,6 @@ import {
 	RichText,
 	useBlockProps,
 } from '@wordpress/block-editor';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 import InspectorTabs from '../../components/inspector-tabs';
@@ -12,7 +11,7 @@ import {
 	TypographyColorPanels,
 } from '../../components/text-style-panels';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
-import { generateCss } from '../../styles/generator';
+import useBlockCss from '../../styles/use-block-css';
 import metadata from './block.json';
 
 const STYLE_MAP = metadata.supports.cf65.styles;
@@ -28,10 +27,7 @@ export default function Edit( {
 
 	useUniqueId( clientId, uniqueId, setAttributes );
 
-	const css = useMemo(
-		() => generateCss( uniqueId, STYLE_MAP, attributes ),
-		[ uniqueId, attributes ]
-	);
+	const css = useBlockCss( uniqueId, STYLE_MAP, attributes );
 
 	const blockProps = useBlockProps( {
 		className: blockClassName( 'text', uniqueId ),

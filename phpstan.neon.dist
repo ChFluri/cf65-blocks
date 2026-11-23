@@ -5,6 +5,8 @@ parameters:
 		- cf65-blocks.php
 		- uninstall.php
 		- includes
+	scanFiles:
+		- tests/php/stubs/wp-cli.php
 	bootstrapFiles:
 		- tests/php/phpstan-bootstrap.php
 	treatPhpDocTypesAsCertain: false

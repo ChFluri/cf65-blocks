@@ -45,6 +45,20 @@ npm run dist           # Build + Plugin-ZIP mit SHA-256 nach dist/
 
 Für ein Release-ZIP mit Laufzeit-Abhängigkeiten vorher `composer install --no-dev` ausführen (so baut es auch der Release-Workflow).
 
+### Debug-Modus
+
+In `wp-config.php` `define( 'CF65_BLOCKS_DEBUG', true );` setzen (in wp-env bereits aktiv) oder die Option `cf65_blocks_debug` einschalten. Messwerte sehen nur Benutzer mit `manage_options`:
+
+- Admin-Bar-Menü **cf65 Performance** (Blöcke, CSS, DB-Queries, Speicher, langsamste Blöcke)
+- `Server-Timing`-Header (`cf65-render`, `cf65-css`, `cf65-queries`) in den Browser-DevTools
+- im Editor `performance.measure( 'cf65-css' )` pro CSS-Neuberechnung
+
+Benchmark eines Beitrags:
+
+```sh
+npx wp-env run cli wp cf65 bench <post-id> --runs=20 [--format=json]
+```
+
 Beiträge: siehe [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Lizenz

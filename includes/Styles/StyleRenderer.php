@@ -13,6 +13,7 @@ declare( strict_types = 1 );
 namespace Cf65\Blocks\Styles;
 
 use Cf65\Blocks\Blocks\Registry;
+use Cf65\Blocks\Debug\Profiling;
 use const Cf65\Blocks\VERSION;
 
 /**
@@ -66,8 +67,14 @@ final class StyleRenderer {
 			return $content;
 		}
 
+		$profiler   = Profiling::get();
+		$start      = $profiler->enabled() ? \hrtime( true ) : 0;
 		$attributes = \is_array( $block['attrs'] ?? null ) ? $block['attrs'] : array();
 		$css        = $this->generator->generate( $attributes['uniqueId'] ?? null, $map, $attributes );
+
+		if ( $profiler->enabled() ) {
+			$profiler->record( 'css', ( \hrtime( true ) - $start ) / 1e6, \strlen( $css ) );
+		}
 
 		if ( '' !== $css ) {
 			$this->add( $css );

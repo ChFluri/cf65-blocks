@@ -14,6 +14,8 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 - Block **Button (cf65)** (`cf65/button`): Link mit Ziel-URL (nur http(s), mailto, tel, relativ), „In neuem Tab öffnen“, Text-/Hintergrundfarbe inkl. Hover, responsive Schriftgrösse und Innenabstände, Eckenradius.
 - Block **Bild (cf65)** (`cf65/image`): Mediathek/Upload/URL, Alternativtext, Bildunterschrift, responsive Breite, Ausrichtung, Eckenradius; `wp-image-<id>` für automatisches srcset.
 - Blöcke **Spalten (cf65)** / **Spalte (cf65)** (`cf65/columns`, `cf65/column`): 1–6 Spalten, responsiver Abstand und vertikale Ausrichtung, Spaltenbreite pro Gerät; stapelt mobil automatisch.
+- Debug-Modus (`CF65_BLOCKS_DEBUG` oder Option `cf65_blocks_debug`, nur für Admins): Messung pro cf65-Block (Zeit, Queries), CSS-Generierung (Zeit, Bytes), Speicher; Ausgabe im Admin-Bar-Menü „cf65 Performance“ und als `Server-Timing`-Header; Hinweis auf Produktivumgebungen; im Editor `performance.measure`. Ohne Debug-Modus No-Op-Profiler ohne zusätzliche Hooks.
+- WP-CLI `wp cf65 bench <post-id> [--runs] [--format]`: Mittelwert/p95 pro Blocktyp, Queries, Speicher.
 - CSS-Generator: `hoverScope: "selector"` (Hover am Unterelement) und `deviceVar` (CSS-Variable pro Gerät).
 - CSS-Generator in PHP und JS mit gemeinsamen Testfällen (identische Ausgabe in Editor und Frontend), typisierter Sanitizer für Farben, Längen und Auswahlwerte.
 - Stabile `uniqueId` pro Block; Duplikate erhalten automatisch eine neue ID.

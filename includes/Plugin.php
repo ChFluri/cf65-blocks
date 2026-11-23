@@ -10,6 +10,8 @@ declare( strict_types = 1 );
 namespace Cf65\Blocks;
 
 use Cf65\Blocks\Blocks\Registry;
+use Cf65\Blocks\Cli\BenchCommand;
+use Cf65\Blocks\Debug\DebugMode;
 use Cf65\Blocks\Styles\CssGenerator;
 use Cf65\Blocks\Styles\StyleRenderer;
 
@@ -34,8 +36,13 @@ final class Plugin {
 		}
 		self::$booted = true;
 
+		( new DebugMode() )->register_hooks();
 		( new Registry( PLUGIN_DIR ) )->register_hooks();
 		( new StyleRenderer( new CssGenerator() ) )->register_hooks();
+
+		if ( \defined( 'WP_CLI' ) && \WP_CLI ) {
+			\WP_CLI::add_command( 'cf65', BenchCommand::class );
+		}
 
 		/**
 		 * Wird ausgelöst, nachdem cf65 Blocks gebootet hat.

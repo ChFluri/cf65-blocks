@@ -9,7 +9,6 @@ import {
 	SelectControl,
 	ToolbarDropdownMenu,
 } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 import InspectorTabs from '../../components/inspector-tabs';
@@ -18,7 +17,7 @@ import {
 	TypographyColorPanels,
 } from '../../components/text-style-panels';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
-import { generateCss } from '../../styles/generator';
+import useBlockCss from '../../styles/use-block-css';
 import metadata from './block.json';
 import { safeLevel } from './save';
 
@@ -30,10 +29,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
 	useUniqueId( clientId, uniqueId, setAttributes );
 
-	const css = useMemo(
-		() => generateCss( uniqueId, STYLE_MAP, attributes ),
-		[ uniqueId, attributes ]
-	);
+	const css = useBlockCss( uniqueId, STYLE_MAP, attributes );
 
 	const blockProps = useBlockProps( {
 		className: blockClassName( 'heading', uniqueId ),

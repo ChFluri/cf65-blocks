@@ -7,14 +7,13 @@ import {
 import { createBlock } from '@wordpress/blocks';
 import { PanelBody, RangeControl, SelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 import InspectorTabs from '../../components/inspector-tabs';
 import ResponsiveControl from '../../components/responsive-control';
 import ResponsiveLength from '../../components/responsive-length';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
-import { generateCss } from '../../styles/generator';
+import useBlockCss from '../../styles/use-block-css';
 import metadata from './block.json';
 
 const STYLE_MAP = metadata.supports.cf65.styles;
@@ -35,10 +34,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
 	useUniqueId( clientId, uniqueId, setAttributes );
 
-	const css = useMemo(
-		() => generateCss( uniqueId, STYLE_MAP, attributes ),
-		[ uniqueId, attributes ]
-	);
+	const css = useBlockCss( uniqueId, STYLE_MAP, attributes );
 
 	const innerBlocks = useSelect(
 		( select ) => select( blockEditorStore ).getBlocks( clientId ),

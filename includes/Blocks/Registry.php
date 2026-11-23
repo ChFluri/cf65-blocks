@@ -9,6 +9,8 @@ declare( strict_types = 1 );
 
 namespace Cf65\Blocks\Blocks;
 
+use Cf65\Blocks\Debug\DebugMode;
+
 /**
  * Registriert alle Blöcke aus `build/` über das Block-Manifest.
  */
@@ -107,7 +109,7 @@ final class Registry {
 	/**
 	 * Konfiguration für das Editor-Skript.
 	 *
-	 * @return array{autoRecovery: bool}
+	 * @return array{autoRecovery: bool, debug: bool}
 	 */
 	public function editor_config(): array {
 		/**
@@ -119,6 +121,7 @@ final class Registry {
 
 		return array(
 			'autoRecovery' => (bool) $auto_recovery,
+			'debug'        => DebugMode::is_active_for_current_user(),
 		);
 	}
 }
