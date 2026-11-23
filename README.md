@@ -8,7 +8,7 @@ Erweiterte Gutenberg-Blöcke für WordPress mit
 - **Update-Sicherheit** ohne Blockfehler nach Plugin-Updates
 - **Debug-Modus** mit Performance-Messung
 
-> Status: in Entwicklung (Phase 0). Noch nicht für produktive Sites geeignet.
+> Status: in Entwicklung (Phase 1). Noch nicht für produktive Sites geeignet.
 > Umsetzungsplan: [docs/UMSETZPLAN.md](docs/UMSETZPLAN.md)
 
 ## Voraussetzungen
@@ -39,7 +39,11 @@ composer test          # PHPUnit
 npm run lint           # ESLint, Stylelint, package.json
 npm run test:unit      # Vitest
 npm run test:e2e       # Playwright gegen wp-env (Port 8889)
+
+npm run dist           # Build + Plugin-ZIP mit SHA-256 nach dist/
 ```
+
+Für ein Release-ZIP mit Laufzeit-Abhängigkeiten vorher `composer install --no-dev` ausführen (so baut es auch der Release-Workflow).
 
 Beiträge: siehe [CONTRIBUTING.md](CONTRIBUTING.md).
 

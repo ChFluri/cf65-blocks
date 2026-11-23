@@ -5,6 +5,7 @@
 # Build
 /build/
 /*.zip
+/dist/
 
 # Tests / Caches
 /.phpunit.cache/

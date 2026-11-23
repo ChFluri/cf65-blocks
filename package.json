@@ -66,7 +66,8 @@
 		"env:start": "wp-env start",
 		"env:stop": "wp-env stop",
 		"env:clean": "wp-env clean all",
-		"plugin-zip": "wp-scripts plugin-zip"
+		"plugin-zip": "wp-scripts plugin-zip",
+		"dist": "npm run build && wp-scripts plugin-zip && node bin/dist.mjs"
 	},
 	"overrides": {
 		"@types/node": "^24.0.0"
