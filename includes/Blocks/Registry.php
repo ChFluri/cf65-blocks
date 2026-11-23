@@ -84,7 +84,7 @@ final class Registry {
 			return;
 		}
 
-		/** @var array{dependencies: list<string>, version: string} $asset */
+		/** @var array{dependencies: list<non-empty-string>, version: string} $asset */
 		$asset = require $asset_file;
 
 		\wp_enqueue_script(
