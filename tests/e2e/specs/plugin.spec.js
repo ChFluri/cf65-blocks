@@ -4,6 +4,12 @@
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
+/**
+ * Bekannte Konsolenmeldungen von Browser/WP-Core, die nicht vom Plugin stammen.
+ * Chromium blockiert `unload`-Listener, die der WP-Core noch registriert.
+ */
+const IGNORED_ERRORS = [ /Permissions policy violation: unload/ ];
+
 test.describe( 'cf65 Blocks – Smoke', () => {
 	test( 'Plugin ist aktiv', async ( { requestUtils } ) => {
 		const plugin = await requestUtils.rest( {
@@ -18,7 +24,10 @@ test.describe( 'cf65 Blocks – Smoke', () => {
 	} ) => {
 		const errors = [];
 		page.on( 'console', ( msg ) => {
-			if ( msg.type() === 'error' ) {
+			if (
+				msg.type() === 'error' &&
+				! IGNORED_ERRORS.some( ( re ) => re.test( msg.text() ) )
+			) {
 				errors.push( msg.text() );
 			}
 		} );
