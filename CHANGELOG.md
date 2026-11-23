@@ -17,5 +17,6 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 - CSS-Generator: `hoverScope: "selector"` (Hover am Unterelement) und `deviceVar` (CSS-Variable pro Gerät).
 - CSS-Generator in PHP und JS mit gemeinsamen Testfällen (identische Ausgabe in Editor und Frontend), typisierter Sanitizer für Farben, Längen und Auswahlwerte.
 - Stabile `uniqueId` pro Block; Duplikate erhalten automatisch eine neue ID.
-- Update-Sicherheit: Fixture-Test für gespeichertes Markup (`tests/fixtures/blocks/`).
+- Update-Sicherheit: Fixture-Test für gespeichertes Markup (`tests/fixtures/blocks/`), inkl. Prüfung auf Fixture der aktuellen `markupVersion`; `deprecated.js` pro Block.
+- Auto-Recovery im Editor: ungültige cf65-Blöcke werden beim Laden verlustfrei aus ihren Attributen neu erzeugt (mit Hinweis, rückgängig machbar); fremde Blöcke bleiben unangetastet. Abschaltbar über den Filter `cf65_blocks/auto_recovery`.
 - GitHub: CI, CodeQL, Dependency Review, Dependabot, Release-Workflow mit SHA-256-Prüfsumme, Issue-/PR-Vorlagen, Sicherheitsrichtlinie.

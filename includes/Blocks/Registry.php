@@ -97,5 +97,28 @@ final class Registry {
 			array( 'in_footer' => true )
 		);
 		\wp_set_script_translations( 'cf65-blocks-editor', 'cf65-blocks', $this->plugin_dir . '/languages' );
+		\wp_add_inline_script(
+			'cf65-blocks-editor',
+			'window.cf65BlocksConfig = ' . \wp_json_encode( $this->editor_config(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES ) . ';',
+			'before'
+		);
+	}
+
+	/**
+	 * Konfiguration für das Editor-Skript.
+	 *
+	 * @return array{autoRecovery: bool}
+	 */
+	public function editor_config(): array {
+		/**
+		 * Automatische Reparatur ungültiger cf65-Blöcke im Editor (Kap. 2.2, Schicht 4).
+		 *
+		 * @param bool $enabled Standard: true.
+		 */
+		$auto_recovery = \apply_filters( 'cf65_blocks/auto_recovery', true );
+
+		return array(
+			'autoRecovery' => (bool) $auto_recovery,
+		);
 	}
 }

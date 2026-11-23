@@ -9,6 +9,7 @@ declare( strict_types = 1 );
 
 namespace Cf65\Blocks\Tests\Unit\Blocks;
 
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use Cf65\Blocks\Blocks\Registry;
 use Cf65\Blocks\Tests\Unit\TestCase;
@@ -24,6 +25,16 @@ final class RegistryTest extends TestCase {
 
 		self::assertSame( Registry::CATEGORY, $categories[0]['slug'] );
 		self::assertSame( 'text', $categories[1]['slug'] );
+	}
+
+	public function test_auto_recovery_is_enabled_by_default(): void {
+		self::assertSame( array( 'autoRecovery' => true ), ( new Registry( __DIR__ ) )->editor_config() );
+	}
+
+	public function test_auto_recovery_can_be_disabled_by_filter(): void {
+		Filters\expectApplied( 'cf65_blocks/auto_recovery' )->once()->with( true )->andReturn( 0 );
+
+		self::assertSame( array( 'autoRecovery' => false ), ( new Registry( __DIR__ ) )->editor_config() );
 	}
 
 	public function test_register_blocks_without_manifest_does_nothing(): void {

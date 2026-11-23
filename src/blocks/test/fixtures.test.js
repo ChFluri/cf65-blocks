@@ -10,45 +10,15 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { getBlockTypes, parse, registerBlockType } from '@wordpress/blocks';
+import * as blocksApi from '@wordpress/blocks';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import buttonMetadata from '../button/block.json';
-import buttonSave from '../button/save';
-import columnMetadata from '../column/block.json';
-import columnSave from '../column/save';
-import columnsMetadata from '../columns/block.json';
-import columnsSave from '../columns/save';
-import headingMetadata from '../heading/block.json';
-import headingSave from '../heading/save';
-import imageMetadata from '../image/block.json';
-import imageSave from '../image/save';
-import textMetadata from '../text/block.json';
-import textSave from '../text/save';
+import { BLOCK_DEFINITIONS, registerDefinitions } from '../definitions';
 
+const { parse } = blocksApi;
 const FIXTURES = join( __dirname, '../../../tests/fixtures/blocks' );
 
-/** Blöcke mit save (und später deprecated) – ohne Editor-UI. */
-const BLOCKS = [
-	{ metadata: headingMetadata, save: headingSave },
-	{ metadata: textMetadata, save: textSave },
-	{ metadata: buttonMetadata, save: buttonSave },
-	{ metadata: imageMetadata, save: imageSave },
-	{ metadata: columnsMetadata, save: columnsSave },
-	{ metadata: columnMetadata, save: columnSave },
-];
-
-beforeAll( () => {
-	for ( const { metadata, save, deprecated } of BLOCKS ) {
-		if ( ! getBlockTypes().some( ( b ) => b.name === metadata.name ) ) {
-			registerBlockType( metadata, {
-				edit: () => null,
-				save,
-				deprecated,
-			} );
-		}
-	}
-} );
+beforeAll( () => registerDefinitions( blocksApi ) );
 
 const cases = readdirSync( FIXTURES ).flatMap( ( block ) =>
 	readdirSync( join( FIXTURES, block ) )
@@ -59,16 +29,40 @@ const cases = readdirSync( FIXTURES ).flatMap( ( block ) =>
 		] )
 );
 
+/** @type {Array<{ file: string, content: string }>} */
+const fixtureFiles = cases.map( ( [ name, path ] ) => ( {
+	file: name.split( '/' )[ 1 ],
+	content: readFileSync( path, 'utf8' ),
+} ) );
+
+const flatten = ( list ) =>
+	list.flatMap( ( block ) => [
+		block,
+		...flatten( block.innerBlocks ?? [] ),
+	] );
+
 describe( 'Block-Fixtures bleiben gültig', () => {
-	it( 'es gibt Fixtures für jeden Block', () => {
-		const covered = ( name ) =>
-			cases.some( ( [ , path ] ) =>
-				readFileSync( path, 'utf8' ).includes( `<!-- wp:${ name } ` )
-			);
-		const missing = BLOCKS.map( ( { metadata } ) => metadata.name ).filter(
-			( name ) => ! covered( name )
+	it( 'jeder Block hat eine Fixture seiner aktuellen markupVersion', () => {
+		const missing = BLOCK_DEFINITIONS.map( ( { metadata } ) => {
+			const version = metadata.attributes.markupVersion?.default;
+			return { name: metadata.name, version };
+		} ).filter(
+			( { name, version } ) =>
+				! Number.isInteger( version ) ||
+				! fixtureFiles.some(
+					( { file, content } ) =>
+						file === `v${ version }.html` &&
+						content.includes( `<!-- wp:${ name } ` )
+				)
 		);
 		expect( missing ).toEqual( [] );
+	} );
+
+	it( 'jeder Block hat ein deprecated-Array', () => {
+		const invalid = BLOCK_DEFINITIONS.filter(
+			( { deprecated } ) => ! Array.isArray( deprecated )
+		).map( ( { metadata } ) => metadata.name );
+		expect( invalid ).toEqual( [] );
 	} );
 
 	it.each( cases )( '%s', ( _name, path ) => {
@@ -77,11 +71,6 @@ describe( 'Block-Fixtures bleiben gültig', () => {
 		);
 
 		expect( blocks.length ).toBeGreaterThan( 0 );
-		const flatten = ( list ) =>
-			list.flatMap( ( block ) => [
-				block,
-				...flatten( block.innerBlocks ?? [] ),
-			] );
 		for ( const block of flatten( blocks ) ) {
 			expect( block.name.startsWith( 'cf65/' ) ).toBe( true );
 			// Zuerst die Issues vergleichen: zeigt bei Fehlern den Grund an.
