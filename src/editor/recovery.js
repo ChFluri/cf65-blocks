@@ -83,16 +83,28 @@ export function findBrokenBlocks( blocks ) {
 	} );
 }
 
+/** Maximale Reparaturversuche pro Block (Schutz vor Endlosschleifen). */
+const MAX_ATTEMPTS = 3;
+
 /**
  * Ersetzt alle ungültigen cf65-Blöcke im Editor.
  *
+ * @param {Map<string, number>} [attempts] Versuche pro Block (wird fortgeschrieben).
  * @return {number} Anzahl reparierter Blöcke.
  */
-export function recoverAll() {
+export function recoverAll( attempts = new Map() ) {
 	const broken = findBrokenBlocks( select( blockEditorStore ).getBlocks() );
 	const { replaceBlock } = dispatch( blockEditorStore );
 	let total = 0;
 	for ( const block of broken ) {
+		const key = `${ block.name }:${
+			block.attributes?.uniqueId ?? block.clientId
+		}`;
+		const tries = attempts.get( key ) ?? 0;
+		if ( tries >= MAX_ATTEMPTS ) {
+			continue;
+		}
+		attempts.set( key, tries + 1 );
 		const { block: next, count } = rebuildBlock( block );
 		replaceBlock( block.clientId, next );
 		total += count;
@@ -109,21 +121,23 @@ export function recoverAll() {
  * Startet die Überwachung. Geprüft wird nur, wenn sich die Block-Liste
  * ändert (Laden, Einfügen, Code-Editor), nicht bei jeder Texteingabe.
  *
+ * Die Reparatur läuft verzögert (nach dem aktuellen Dispatch), damit die
+ * Synchronisation zwischen Editor und Block-Store abgeschlossen ist und
+ * die Ersetzung nicht wieder überschrieben wird. Jede weitere Änderung der
+ * Block-Liste (auch durch die Reparatur selbst) löst eine erneute Prüfung
+ * aus; MAX_ATTEMPTS verhindert Endlosschleifen.
+ *
  * @return {() => void} Funktion zum Beenden.
  */
 export function startAutoRecovery() {
+	const attempts = new Map();
 	let lastIds = null;
-	let running = false;
+	let timer = null;
 
-	return subscribe( () => {
-		const ids = select( blockEditorStore ).getClientIdsWithDescendants();
-		if ( running || ids === lastIds ) {
-			return;
-		}
-		lastIds = ids;
-		running = true;
+	const run = () => {
+		timer = null;
 		try {
-			const total = recoverAll();
+			const total = recoverAll( attempts );
 			if ( total > 0 ) {
 				dispatch( noticesStore ).createInfoNotice(
 					sprintf(
@@ -145,9 +159,24 @@ export function startAutoRecovery() {
 				`[${ NAMESPACE }] Automatische Reparatur fehlgeschlagen`,
 				error
 			);
-		} finally {
-			lastIds = select( blockEditorStore ).getClientIdsWithDescendants();
-			running = false;
+		}
+	};
+
+	const unsubscribe = subscribe( () => {
+		const ids = select( blockEditorStore ).getClientIdsWithDescendants();
+		if ( ids === lastIds ) {
+			return;
+		}
+		lastIds = ids;
+		if ( timer === null ) {
+			timer = setTimeout( run, 0 );
 		}
 	}, blockEditorStore );
+
+	return () => {
+		unsubscribe();
+		if ( timer !== null ) {
+			clearTimeout( timer );
+		}
+	};
 }

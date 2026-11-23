@@ -30,6 +30,14 @@ test.describe( 'Auto-Recovery', () => {
 			status: 'draft',
 		} );
 
+		// Protokoll der Recovery im Testlog (hilft bei Fehlern in der CI).
+		page.on( 'console', ( message ) => {
+			if ( message.text().includes( '[cf65-blocks]' ) ) {
+				// eslint-disable-next-line no-console
+				console.log( 'browser:', message.text() );
+			}
+		} );
+
 		await admin.editPost( post.id );
 
 		await expect(
@@ -38,24 +46,30 @@ test.describe( 'Auto-Recovery', () => {
 			} )
 		).toBeVisible();
 
-		const blocks = await page.evaluate( () => {
-			const flat = ( list ) =>
-				list.flatMap( ( b ) => [
-					{
-						name: b.name,
-						isValid: b.isValid,
-						content: String( b.attributes.content ?? '' ),
-						uniqueId: b.attributes.uniqueId,
-						markupVersion: b.attributes.markupVersion,
-					},
-					...flat( b.innerBlocks ),
-				] );
-			return flat(
-				window.wp.data.select( 'core/block-editor' ).getBlocks()
-			);
-		} );
+		const readBlocks = () =>
+			page.evaluate( () => {
+				const flat = ( list ) =>
+					list.flatMap( ( b ) => [
+						{
+							name: b.name,
+							isValid: b.isValid,
+							content: String( b.attributes.content ?? '' ),
+							uniqueId: b.attributes.uniqueId,
+							markupVersion: b.attributes.markupVersion,
+						},
+						...flat( b.innerBlocks ),
+					] );
+				return flat(
+					window.wp.data.select( 'core/block-editor' ).getBlocks()
+				);
+			} );
 
-		expect( blocks.filter( ( b ) => ! b.isValid ) ).toEqual( [] );
+		await expect
+			.poll( async () =>
+				( await readBlocks() ).filter( ( b ) => ! b.isValid )
+			)
+			.toEqual( [] );
+		const blocks = await readBlocks();
 		expect( blocks ).toEqual(
 			expect.arrayContaining( [
 				expect.objectContaining( {
