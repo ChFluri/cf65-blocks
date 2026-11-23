@@ -28,6 +28,7 @@
 		"anchor": true,
 		"className": true,
 		"cf65": {
+			"urls": { "url": "image" },
 			"styles": [
 				{
 					"attr": "textAlign",

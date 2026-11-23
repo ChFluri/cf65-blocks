@@ -1,0 +1,33 @@
+{
+	"$comment": "Gemeinsame Fälle für die URL-Prüfung. PHP (Sanitizer::url) und JS (sanitizeUrl) müssen identisch entscheiden. Schemata: link = http, https, mailto, tel; image = http, https.",
+	"cases": [
+		{ "url": "https://example.org/pfad?x=1#a", "link": true, "image": true },
+		{ "url": "http://example.org", "link": true, "image": true },
+		{ "url": "HTTPS://EXAMPLE.ORG", "link": true, "image": true },
+		{ "url": "mailto:info@example.org", "link": true, "image": false },
+		{ "url": "tel:+41441234567", "link": true, "image": false },
+		{ "url": "/kontakt/", "link": true, "image": true },
+		{ "url": "#anker", "link": true, "image": true },
+		{ "url": "?seite=2", "link": true, "image": true },
+		{ "url": "seite.html", "link": true, "image": true },
+		{ "url": "../bild.jpg", "link": true, "image": true },
+		{ "url": "/pfad/mit:doppelpunkt", "link": true, "image": true },
+		{ "url": "https://example.org/äöü", "link": true, "image": true },
+		{ "url": "javascript:alert(1)", "link": false, "image": false },
+		{ "url": "JavaScript:alert(1)", "link": false, "image": false },
+		{ "url": "java\tscript:alert(1)", "link": false, "image": false },
+		{ "url": " javascript:alert(1)", "link": false, "image": false },
+		{ "url": "\njavascript:alert(1)", "link": false, "image": false },
+		{ "url": "javascript\u0000:alert(1)", "link": false, "image": false },
+		{ "url": "data:text/html;base64,PHNjcmlwdD4=", "link": false, "image": false },
+		{ "url": "vbscript:x", "link": false, "image": false },
+		{ "url": "x:y/z", "link": false, "image": false },
+		{ "url": "https://example.org/\"onmouseover=\"x", "link": false, "image": false },
+		{ "url": "https://example.org/'x", "link": false, "image": false },
+		{ "url": "https://example.org/<script>", "link": false, "image": false },
+		{ "url": "https://exa mple.org", "link": false, "image": false },
+		{ "url": "\\\\evil.example", "link": false, "image": false },
+		{ "url": "https://example.org/`x", "link": false, "image": false },
+		{ "url": "", "link": false, "image": false }
+	]
+}

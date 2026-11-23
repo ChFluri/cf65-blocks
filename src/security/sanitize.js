@@ -104,7 +104,8 @@ export function sanitizeUrl( value, schemes = LINK_SCHEMES ) {
 	if (
 		typeof value !== 'string' ||
 		value.length === 0 ||
-		value.length > URL_MAX_LENGTH ||
+		// Bytes (UTF-8) wie in PHP strlen().
+		new TextEncoder().encode( value ).length > URL_MAX_LENGTH ||
 		URL_FORBIDDEN.test( value )
 	) {
 		return null;

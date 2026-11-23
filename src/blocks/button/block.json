@@ -30,6 +30,7 @@
 		"anchor": true,
 		"className": true,
 		"cf65": {
+			"urls": { "url": "link" },
 			"styles": [
 				{
 					"attr": "textAlign",

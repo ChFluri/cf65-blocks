@@ -28,6 +28,19 @@ final class Sanitizer {
 	private const LENGTH         = '/^-?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:px|em|rem|%|vw|vh)$/D';
 	private const UNIQUE_ID      = '/^[a-z0-9]{4,16}$/D';
 
+	/** Erlaubte Schemata für Links. */
+	public const LINK_SCHEMES = array( 'http', 'https', 'mailto', 'tel' );
+
+	/** Erlaubte Schemata für Bildquellen. */
+	public const IMAGE_SCHEMES = array( 'http', 'https' );
+
+	private const URL_MAX_LENGTH = 2048;
+
+	/** Steuerzeichen, Leerzeichen, Anführungszeichen, spitze Klammern, Backslash, Backtick. */
+	private const URL_FORBIDDEN = '/[\x00-\x20\x7f"\'<>\\\\`]/';
+
+	private const URL_SCHEME = '/^([a-zA-Z][a-zA-Z0-9+.\-]*):/';
+
 	/**
 	 * Farbwert (Hex, rgb/hsl, Schlüsselwort, CSS-Variable).
 	 *
@@ -78,6 +91,27 @@ final class Sanitizer {
 	 */
 	public static function unique_id( mixed $value ): ?string {
 		return \is_string( $value ) && self::matches( self::UNIQUE_ID, $value ) ? $value : null;
+	}
+
+	/**
+	 * URL für `href`/`src`: absolute URL mit erlaubtem Schema oder relative URL.
+	 * Spiegel von `sanitizeUrl()` in src/security/sanitize.js
+	 * (gemeinsame Fälle: tests/fixtures/security/urls.json).
+	 *
+	 * @param mixed    $value   Rohwert.
+	 * @param string[] $schemes Erlaubte Schemata (Kleinbuchstaben).
+	 */
+	public static function url( mixed $value, array $schemes = self::LINK_SCHEMES ): ?string {
+		if ( ! \is_string( $value ) || '' === $value || \strlen( $value ) > self::URL_MAX_LENGTH || self::matches( self::URL_FORBIDDEN, $value ) ) {
+			return null;
+		}
+		if ( 1 === \preg_match( self::URL_SCHEME, $value, $match ) ) {
+			return \in_array( \strtolower( $match[1] ), $schemes, true ) ? $value : null;
+		}
+		// Ohne Schema: relativ. Ein ":" vor dem ersten "/", "?" oder "#" wäre ein (ungültiges) Schema.
+		$parts = \preg_split( '~[/?#]~', $value, 2 );
+		$head  = \is_array( $parts ) ? (string) $parts[0] : $value;
+		return \str_contains( $head, ':' ) ? null : $value;
 	}
 
 	/**
