@@ -30,7 +30,7 @@ final class CssGenerator {
 	);
 
 	private const STATES          = array( 'normal', 'hover' );
-	private const PROPERTY        = '/^[a-z-]+$/D';
+	private const PROPERTY        = '/^(?:[a-z-]+|--[a-z0-9-]+)$/D';
 	private const SELECTOR_SUFFIX = '/^(?: [a-z0-9_-]+| \.[a-z0-9_-]+)*$/D';
 
 	/**
@@ -69,7 +69,14 @@ final class CssGenerator {
 			if ( ! \is_string( $selector ) || 1 !== \preg_match( self::SELECTOR_SUFFIX, $selector ) ) {
 				continue;
 			}
-			$state      = ( $entry['state'] ?? null ) === 'hover' ? 'hover' : 'normal';
+			$state  = ( $entry['state'] ?? null ) === 'hover' ? 'hover' : 'normal';
+			$target = $selector;
+			if ( 'hover' === $state ) {
+				$target = ( ( $entry['hoverScope'] ?? null ) === 'selector' && '' !== $selector )
+					? $selector . ':hover'
+					: ':hover' . $selector;
+			}
+			$device_var = true === ( $entry['deviceVar'] ?? null ) && \str_starts_with( $property, '--' );
 			$responsive = ! empty( $entry['responsive'] );
 			$raw        = \array_key_exists( $attr, $attributes ) ? $attributes[ $attr ] : null;
 
@@ -84,7 +91,9 @@ final class CssGenerator {
 				if ( null === $clean ) {
 					continue;
 				}
-				$buckets[ $device ][ $state ][ $selector ][] = $property . ':' . $clean;
+				$name = ( $device_var && 'desktop' !== $device ) ? $property . '-' . $device : $property;
+
+				$buckets[ $device ][ $state ][ $target ][] = $name . ':' . $clean;
 			}
 		}
 
@@ -92,9 +101,8 @@ final class CssGenerator {
 		foreach ( self::DEVICES as $device => $media ) {
 			$rules = '';
 			foreach ( self::STATES as $state ) {
-				$prefix = '.cf65-' . $id . ( 'hover' === $state ? ':hover' : '' );
-				foreach ( $buckets[ $device ][ $state ] as $selector => $declarations ) {
-					$rules .= $prefix . $selector . '{' . \implode( ';', $declarations ) . '}';
+				foreach ( $buckets[ $device ][ $state ] as $target => $declarations ) {
+					$rules .= '.cf65-' . $id . $target . '{' . \implode( ';', $declarations ) . '}';
 				}
 			}
 			if ( '' !== $rules ) {

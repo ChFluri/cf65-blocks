@@ -1,0 +1,43 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/columns",
+	"version": "0.1.0",
+	"title": "Spalten (cf65)",
+	"category": "cf65-blocks",
+	"icon": "columns",
+	"description": "Spalten-Container mit responsivem Abstand und vertikaler Ausrichtung; stapelt auf Mobilgeräten.",
+	"keywords": [ "spalten", "columns", "layout", "raster" ],
+	"textdomain": "cf65-blocks",
+	"allowedBlocks": [ "cf65/column" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"gap": { "type": "object" },
+		"verticalAlign": { "type": "object" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"styles": [
+				{
+					"attr": "gap",
+					"property": "gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "verticalAlign",
+					"property": "align-items",
+					"type": "enum",
+					"values": [ "flex-start", "center", "flex-end", "stretch" ],
+					"responsive": true
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

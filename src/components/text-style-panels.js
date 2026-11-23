@@ -20,7 +20,21 @@ const ALIGN_OPTIONS = [
 	{ label: __( 'Blocksatz', 'cf65-blocks' ), value: 'justify' },
 ];
 
-export function AlignmentPanel( { attributes, setAttributes } ) {
+/**
+ * @param {Object}                  props
+ * @param {Object}                  props.attributes    Block-Attribute.
+ * @param {(attrs: Object) => void} props.setAttributes Setter.
+ * @param {boolean}                 [props.justify]     Blocksatz anbieten (Standard: ja).
+ * @return {Element} Panel.
+ */
+export function AlignmentPanel( {
+	attributes,
+	setAttributes,
+	justify = true,
+} ) {
+	const options = justify
+		? ALIGN_OPTIONS
+		: ALIGN_OPTIONS.filter( ( option ) => option.value !== 'justify' );
 	return (
 		<PanelBody title={ __( 'Ausrichtung', 'cf65-blocks' ) }>
 			<ResponsiveControl
@@ -35,7 +49,7 @@ export function AlignmentPanel( { attributes, setAttributes } ) {
 						label={ __( 'Ausrichtung', 'cf65-blocks' ) }
 						hideLabelFromVision
 						value={ value ?? '' }
-						options={ ALIGN_OPTIONS }
+						options={ options }
 						onChange={ onChange }
 					/>
 				) }
@@ -44,7 +58,18 @@ export function AlignmentPanel( { attributes, setAttributes } ) {
 	);
 }
 
-export function TypographyColorPanels( { attributes, setAttributes } ) {
+/**
+ * @param {Object}                  props
+ * @param {Object}                  props.attributes    Block-Attribute.
+ * @param {(attrs: Object) => void} props.setAttributes Setter.
+ * @param {Array}                   [props.extraColors] Weitere Einträge für PanelColorSettings.
+ * @return {Element} Panels.
+ */
+export function TypographyColorPanels( {
+	attributes,
+	setAttributes,
+	extraColors = [],
+} ) {
 	return (
 		<>
 			<PanelBody title={ __( 'Typografie', 'cf65-blocks' ) }>
@@ -77,6 +102,7 @@ export function TypographyColorPanels( { attributes, setAttributes } ) {
 						onChange: ( next ) =>
 							setAttributes( { textColorHover: next } ),
 					},
+					...extraColors,
 				] }
 			/>
 		</>

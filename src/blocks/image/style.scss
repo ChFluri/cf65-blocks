@@ -1,0 +1,15 @@
+// Basis-Stile mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-image) {
+	margin-inline: 0;
+}
+
+:where(.cf65-image) img {
+	max-width: 100%;
+	height: auto;
+	vertical-align: bottom;
+}
+
+:where(.cf65-image) .cf65-image__caption {
+	margin-top: 0.5em;
+	font-size: 0.875em;
+}

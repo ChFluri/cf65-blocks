@@ -5,7 +5,10 @@
 		{ "attr": "fontSize", "property": "font-size", "type": "length", "responsive": true },
 		{ "attr": "textColor", "property": "color", "type": "color" },
 		{ "attr": "textColorHover", "property": "color", "type": "color", "state": "hover" },
-		{ "attr": "iconColor", "property": "fill", "type": "color", "selector": " .cf65-icon" }
+		{ "attr": "iconColor", "property": "fill", "type": "color", "selector": " .cf65-icon" },
+		{ "attr": "linkColorHover", "property": "color", "type": "color", "state": "hover", "selector": " .cf65-link", "hoverScope": "selector" },
+		{ "attr": "width", "property": "--cf65-width", "type": "length", "responsive": true, "deviceVar": true },
+		{ "attr": "plainVar", "property": "margin", "type": "length", "responsive": true, "deviceVar": true }
 	],
 	"cases": [
 		{
@@ -103,6 +106,24 @@
 			"uniqueId": "abc12345",
 			"attributes": { "textColor": [ "#fff" ], "fontSize": "40px", "textAlign": { "desktop": 5 }, "textColorHover": { "desktop": "#fff" } },
 			"expected": ""
+		},
+		{
+			"name": "Hover am Unterselektor (hoverScope)",
+			"uniqueId": "abc12345",
+			"attributes": { "linkColorHover": "#00ff00", "textColorHover": "#0000ff" },
+			"expected": ".cf65-abc12345:hover{color:#0000ff}.cf65-abc12345 .cf65-link:hover{color:#00ff00}"
+		},
+		{
+			"name": "Variable pro Gerät (deviceVar)",
+			"uniqueId": "abc12345",
+			"attributes": { "width": { "desktop": "30%", "tablet": "50%", "mobile": "100%" } },
+			"expected": ".cf65-abc12345{--cf65-width:30%}@media (max-width:1024px){.cf65-abc12345{--cf65-width-tablet:50%}}@media (max-width:767px){.cf65-abc12345{--cf65-width-mobile:100%}}"
+		},
+		{
+			"name": "deviceVar wirkt nur bei Variablen",
+			"uniqueId": "abc12345",
+			"attributes": { "plainVar": { "mobile": "1px" } },
+			"expected": "@media (max-width:767px){.cf65-abc12345{margin:1px}}"
 		},
 		{
 			"name": "Payload: unbekannte Geräte werden ignoriert",

@@ -1,0 +1,63 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/image",
+	"version": "0.1.0",
+	"title": "Bild (cf65)",
+	"category": "cf65-blocks",
+	"icon": "format-image",
+	"description": "Bild aus der Mediathek mit responsiver Breite, Ausrichtung, Eckenradius und Bildunterschrift.",
+	"keywords": [ "bild", "image", "foto" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"id": { "type": "number" },
+		"url": { "type": "string" },
+		"alt": { "type": "string", "default": "" },
+		"caption": { "type": "string", "default": "" },
+		"width": { "type": "number" },
+		"height": { "type": "number" },
+		"textAlign": { "type": "object" },
+		"imageWidth": { "type": "object" },
+		"borderRadius": { "type": "string" },
+		"captionColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "imageWidth",
+					"property": "width",
+					"type": "length",
+					"responsive": true,
+					"selector": " img"
+				},
+				{
+					"attr": "borderRadius",
+					"property": "border-radius",
+					"type": "length",
+					"selector": " img"
+				},
+				{
+					"attr": "captionColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-image__caption"
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

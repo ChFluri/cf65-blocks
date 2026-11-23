@@ -1,0 +1,24 @@
+// Basis-Stile mit Spezifität 0 (:where), damit die generierten
+// Instanz-Stile (.cf65-<id> …) immer gewinnen.
+:where(.cf65-button) .cf65-button__link {
+	display: inline-block;
+	padding: 0.75em 1.5em;
+	border-radius: 4px;
+	background-color: #1e1e1e;
+	color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.15s, background-color 0.15s;
+}
+
+:where(.cf65-button) .cf65-button__link:focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	:where(.cf65-button) .cf65-button__link {
+		transition: none;
+	}
+}

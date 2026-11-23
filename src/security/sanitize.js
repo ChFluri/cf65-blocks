@@ -81,3 +81,40 @@ export function sanitizeEnum( value, allowed ) {
 export function sanitizeUniqueId( value ) {
 	return typeof value === 'string' && UNIQUE_ID.test( value ) ? value : null;
 }
+
+const URL_MAX_LENGTH = 2048;
+const URL_SCHEME = /^([a-zA-Z][a-zA-Z0-9+.-]*):/;
+// Steuerzeichen, Leerzeichen, Anführungszeichen, spitze Klammern, Backslash.
+
+const URL_FORBIDDEN = /[\u0000-\u0020\u007f"'<>\\`]/;
+
+/** Erlaubte Schemata für Links. */
+export const LINK_SCHEMES = [ 'http', 'https', 'mailto', 'tel' ];
+/** Erlaubte Schemata für Bildquellen. */
+export const IMAGE_SCHEMES = [ 'http', 'https' ];
+
+/**
+ * URL für `href`/`src`: absolute URL mit erlaubtem Schema oder relative URL.
+ *
+ * @param {unknown}  value     Rohwert.
+ * @param {string[]} [schemes] Erlaubte Schemata (Kleinbuchstaben).
+ * @return {string|null} URL oder null.
+ */
+export function sanitizeUrl( value, schemes = LINK_SCHEMES ) {
+	if (
+		typeof value !== 'string' ||
+		value.length === 0 ||
+		value.length > URL_MAX_LENGTH ||
+		URL_FORBIDDEN.test( value )
+	) {
+		return null;
+	}
+	const scheme = URL_SCHEME.exec( value );
+	if ( scheme ) {
+		return schemes.includes( scheme[ 1 ].toLowerCase() ) ? value : null;
+	}
+	// Ohne Schema: relativ. Ein ":" vor dem ersten "/", "?" oder "#" wäre
+	// ein (ungültiges) Schema.
+	const head = value.split( /[/?#]/, 1 )[ 0 ];
+	return head.includes( ':' ) ? null : value;
+}

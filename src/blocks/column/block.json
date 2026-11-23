@@ -1,0 +1,48 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/column",
+	"version": "0.1.0",
+	"title": "Spalte (cf65)",
+	"category": "cf65-blocks",
+	"parent": [ "cf65/columns" ],
+	"icon": "align-pull-left",
+	"description": "Einzelne Spalte mit responsiver Breite, Innenabstand und Hintergrundfarbe.",
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"width": { "type": "object" },
+		"padding": { "type": "object" },
+		"backgroundColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"reusable": false,
+		"cf65": {
+			"styles": [
+				{
+					"attr": "width",
+					"property": "--cf65-width",
+					"type": "length",
+					"responsive": true,
+					"deviceVar": true
+				},
+				{
+					"attr": "padding",
+					"property": "padding",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "backgroundColor",
+					"property": "background-color",
+					"type": "color"
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js"
+}

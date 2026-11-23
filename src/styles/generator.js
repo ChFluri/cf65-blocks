@@ -20,7 +20,7 @@ export const DEVICES = [
 ];
 
 const STATES = [ 'normal', 'hover' ];
-const PROPERTY = /^[a-z-]+$/;
+const PROPERTY = /^(?:[a-z-]+|--[a-z0-9-]+)$/;
 const SELECTOR_SUFFIX = /^(?: [a-z0-9_-]+| \.[a-z0-9_-]+)*$/;
 
 /**
@@ -32,6 +32,9 @@ const SELECTOR_SUFFIX = /^(?: [a-z0-9_-]+| \.[a-z0-9_-]+)*$/;
  * @property {boolean}                 [responsive] Wert pro Gerät.
  * @property {'hover'}                 [state]      Zustand.
  * @property {string}                  [selector]   Unterselektor, z. B. " .cf65-icon".
+ * @property {'block'|'selector'}      [hoverScope] Hover auf dem Block (Standard) oder dem Unterselektor.
+ * @property {boolean}                 [deviceVar]  Nur für `--`-Variablen: Tablet/Mobil schreiben
+ *                                                  `<name>-tablet` / `<name>-mobile`.
  */
 
 /**
@@ -76,7 +79,7 @@ export function generateCss( uniqueId, map, attributes ) {
 		return '';
 	}
 
-	// buckets[device][state] = Map<selector, string[]>
+	// buckets[device][state] = Map<Ziel-Selektor, string[]>
 	const buckets = {};
 	for ( const { key } of DEVICES ) {
 		buckets[ key ] = { normal: new Map(), hover: new Map() };
@@ -99,6 +102,15 @@ export function generateCss( uniqueId, map, attributes ) {
 			continue;
 		}
 		const state = entry.state === 'hover' ? 'hover' : 'normal';
+		let target = selector;
+		if ( state === 'hover' ) {
+			target =
+				entry.hoverScope === 'selector' && selector !== ''
+					? `${ selector }:hover`
+					: `:hover${ selector }`;
+		}
+		const deviceVar =
+			entry.deviceVar === true && entry.property.startsWith( '--' );
 		const raw = Object.prototype.hasOwnProperty.call(
 			attributes,
 			entry.attr
@@ -121,11 +133,15 @@ export function generateCss( uniqueId, map, attributes ) {
 			if ( clean === null ) {
 				continue;
 			}
+			const property =
+				deviceVar && key !== 'desktop'
+					? `${ entry.property }-${ key }`
+					: entry.property;
 			const bucket = buckets[ key ][ state ];
-			if ( ! bucket.has( selector ) ) {
-				bucket.set( selector, [] );
+			if ( ! bucket.has( target ) ) {
+				bucket.set( target, [] );
 			}
-			bucket.get( selector ).push( `${ entry.property }:${ clean }` );
+			bucket.get( target ).push( `${ property }:${ clean }` );
 		}
 	}
 
@@ -133,11 +149,8 @@ export function generateCss( uniqueId, map, attributes ) {
 	for ( const { key, media } of DEVICES ) {
 		let rules = '';
 		for ( const state of STATES ) {
-			const prefix = `.cf65-${ id }${ state === 'hover' ? ':hover' : '' }`;
-			for ( const [ selector, declarations ] of buckets[ key ][
-				state
-			] ) {
-				rules += `${ prefix }${ selector }{${ declarations.join(
+			for ( const [ target, declarations ] of buckets[ key ][ state ] ) {
+				rules += `.cf65-${ id }${ target }{${ declarations.join(
 					';'
 				) }}`;
 			}

@@ -1,0 +1,104 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/button",
+	"version": "0.1.0",
+	"title": "Button (cf65)",
+	"category": "cf65-blocks",
+	"icon": "button",
+	"description": "Link-Button mit Farben und Hintergrund inkl. Hover, responsiver Grösse und Innenabstand.",
+	"keywords": [ "button", "link", "schaltfläche" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"content": { "type": "string", "default": "" },
+		"url": { "type": "string" },
+		"opensInNewTab": { "type": "boolean", "default": false },
+		"textAlign": { "type": "object" },
+		"fontSize": { "type": "object" },
+		"paddingBlock": { "type": "object" },
+		"paddingInline": { "type": "object" },
+		"borderRadius": { "type": "string" },
+		"textColor": { "type": "string" },
+		"textColorHover": { "type": "string" },
+		"backgroundColor": { "type": "string" },
+		"backgroundColorHover": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "fontSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true,
+					"selector": " .cf65-button__link"
+				},
+				{
+					"attr": "paddingBlock",
+					"property": "padding-block",
+					"type": "length",
+					"responsive": true,
+					"selector": " .cf65-button__link"
+				},
+				{
+					"attr": "paddingInline",
+					"property": "padding-inline",
+					"type": "length",
+					"responsive": true,
+					"selector": " .cf65-button__link"
+				},
+				{
+					"attr": "borderRadius",
+					"property": "border-radius",
+					"type": "length",
+					"selector": " .cf65-button__link"
+				},
+				{
+					"attr": "textColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-button__link"
+				},
+				{
+					"attr": "backgroundColor",
+					"property": "background-color",
+					"type": "color",
+					"selector": " .cf65-button__link"
+				},
+				{
+					"attr": "textColorHover",
+					"property": "color",
+					"type": "color",
+					"state": "hover",
+					"selector": " .cf65-button__link",
+					"hoverScope": "selector"
+				},
+				{
+					"attr": "backgroundColorHover",
+					"property": "background-color",
+					"type": "color",
+					"state": "hover",
+					"selector": " .cf65-button__link",
+					"hoverScope": "selector"
+				}
+			]
+		}
+	},
+	"example": {
+		"attributes": { "content": "Mehr erfahren", "url": "#" }
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

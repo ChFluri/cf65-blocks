@@ -1,0 +1,159 @@
+import {
+	InspectorControls,
+	RichText,
+	useBlockProps,
+} from '@wordpress/block-editor';
+import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
+import { useMemo } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+
+import InspectorTabs from '../../components/inspector-tabs';
+import LengthControl from '../../components/length-control';
+import ResponsiveLength from '../../components/responsive-length';
+import {
+	AlignmentPanel,
+	TypographyColorPanels,
+} from '../../components/text-style-panels';
+import { blockClassName, useUniqueId } from '../../extensions/unique-id';
+import { sanitizeUrl } from '../../security/sanitize';
+import { generateCss } from '../../styles/generator';
+import metadata from './block.json';
+import { LINK_CLASS } from './save';
+
+const STYLE_MAP = metadata.supports.cf65.styles;
+
+export default function Edit( { attributes, setAttributes, clientId } ) {
+	const { uniqueId, content, url, opensInNewTab } = attributes;
+
+	useUniqueId( clientId, uniqueId, setAttributes );
+
+	const css = useMemo(
+		() => generateCss( uniqueId, STYLE_MAP, attributes ),
+		[ uniqueId, attributes ]
+	);
+
+	const blockProps = useBlockProps( {
+		className: blockClassName( 'button', uniqueId ),
+	} );
+	const urlInvalid = Boolean( url ) && sanitizeUrl( url ) === null;
+	const props = { attributes, setAttributes };
+
+	return (
+		<>
+			<InspectorControls>
+				<InspectorTabs
+					layout={
+						<>
+							<PanelBody title={ __( 'Link', 'cf65-blocks' ) }>
+								<TextControl
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
+									type="url"
+									label={ __( 'URL', 'cf65-blocks' ) }
+									value={ url ?? '' }
+									onChange={ ( next ) =>
+										setAttributes( {
+											url: next === '' ? undefined : next,
+										} )
+									}
+									help={
+										urlInvalid
+											? __(
+													'Ungültige oder nicht erlaubte URL – der Link wird nicht ausgegeben.',
+													'cf65-blocks'
+												)
+											: undefined
+									}
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									label={ __(
+										'In neuem Tab öffnen',
+										'cf65-blocks'
+									) }
+									checked={ Boolean( opensInNewTab ) }
+									onChange={ ( next ) =>
+										setAttributes( { opensInNewTab: next } )
+									}
+								/>
+							</PanelBody>
+							<AlignmentPanel { ...props } justify={ false } />
+						</>
+					}
+					style={
+						<>
+							<TypographyColorPanels
+								{ ...props }
+								extraColors={ [
+									{
+										label: __(
+											'Hintergrund',
+											'cf65-blocks'
+										),
+										value: attributes.backgroundColor,
+										onChange: ( next ) =>
+											setAttributes( {
+												backgroundColor: next,
+											} ),
+									},
+									{
+										label: __(
+											'Hintergrund (Hover)',
+											'cf65-blocks'
+										),
+										value: attributes.backgroundColorHover,
+										onChange: ( next ) =>
+											setAttributes( {
+												backgroundColorHover: next,
+											} ),
+									},
+								] }
+							/>
+							<PanelBody
+								title={ __( 'Abstände & Form', 'cf65-blocks' ) }
+							>
+								<ResponsiveLength
+									{ ...props }
+									attribute="paddingBlock"
+									label={ __(
+										'Innenabstand vertikal',
+										'cf65-blocks'
+									) }
+								/>
+								<ResponsiveLength
+									{ ...props }
+									attribute="paddingInline"
+									label={ __(
+										'Innenabstand horizontal',
+										'cf65-blocks'
+									) }
+								/>
+								<LengthControl
+									label={ __( 'Eckenradius', 'cf65-blocks' ) }
+									value={ attributes.borderRadius }
+									onChange={ ( next ) =>
+										setAttributes( { borderRadius: next } )
+									}
+								/>
+							</PanelBody>
+						</>
+					}
+				/>
+			</InspectorControls>
+
+			{ css && <style>{ css }</style> }
+			<div { ...blockProps }>
+				<RichText
+					identifier="content"
+					tagName="div"
+					className={ LINK_CLASS }
+					value={ content }
+					onChange={ ( next ) => setAttributes( { content: next } ) }
+					allowedFormats={ [ 'core/bold', 'core/italic' ] }
+					withoutInteractiveFormatting
+					placeholder={ __( 'Button-Text …', 'cf65-blocks' ) }
+				/>
+			</div>
+		</>
+	);
+}

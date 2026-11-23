@@ -13,8 +13,16 @@ import { join } from 'node:path';
 import { getBlockTypes, parse, registerBlockType } from '@wordpress/blocks';
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import buttonMetadata from '../button/block.json';
+import buttonSave from '../button/save';
+import columnMetadata from '../column/block.json';
+import columnSave from '../column/save';
+import columnsMetadata from '../columns/block.json';
+import columnsSave from '../columns/save';
 import headingMetadata from '../heading/block.json';
 import headingSave from '../heading/save';
+import imageMetadata from '../image/block.json';
+import imageSave from '../image/save';
 import textMetadata from '../text/block.json';
 import textSave from '../text/save';
 
@@ -24,6 +32,10 @@ const FIXTURES = join( __dirname, '../../../tests/fixtures/blocks' );
 const BLOCKS = [
 	{ metadata: headingMetadata, save: headingSave },
 	{ metadata: textMetadata, save: textSave },
+	{ metadata: buttonMetadata, save: buttonSave },
+	{ metadata: imageMetadata, save: imageSave },
+	{ metadata: columnsMetadata, save: columnsSave },
+	{ metadata: columnMetadata, save: columnSave },
 ];
 
 beforeAll( () => {
@@ -49,12 +61,14 @@ const cases = readdirSync( FIXTURES ).flatMap( ( block ) =>
 
 describe( 'Block-Fixtures bleiben gültig', () => {
 	it( 'es gibt Fixtures für jeden Block', () => {
-		const withFixtures = new Set(
-			cases.map( ( [ name ] ) => name.split( '/' )[ 0 ] )
+		const covered = ( name ) =>
+			cases.some( ( [ , path ] ) =>
+				readFileSync( path, 'utf8' ).includes( `<!-- wp:${ name } ` )
+			);
+		const missing = BLOCKS.map( ( { metadata } ) => metadata.name ).filter(
+			( name ) => ! covered( name )
 		);
-		for ( const { metadata } of BLOCKS ) {
-			expect( withFixtures ).toContain( metadata.name.split( '/' )[ 1 ] );
-		}
+		expect( missing ).toEqual( [] );
 	} );
 
 	it.each( cases )( '%s', ( _name, path ) => {
@@ -63,7 +77,12 @@ describe( 'Block-Fixtures bleiben gültig', () => {
 		);
 
 		expect( blocks.length ).toBeGreaterThan( 0 );
-		for ( const block of blocks ) {
+		const flatten = ( list ) =>
+			list.flatMap( ( block ) => [
+				block,
+				...flatten( block.innerBlocks ?? [] ),
+			] );
+		for ( const block of flatten( blocks ) ) {
 			expect( block.name.startsWith( 'cf65/' ) ).toBe( true );
 			// Zuerst die Issues vergleichen: zeigt bei Fehlern den Grund an.
 			expect( block.validationIssues ?? [] ).toEqual( [] );
