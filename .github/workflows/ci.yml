@@ -95,7 +95,8 @@ jobs:
         if: matrix.core != ''
         env:
           WP_CORE: ${{ matrix.core }}
-        run: printf '{ "core": "%s" }\n' "$WP_CORE" > .wp-env.override.json
+        run: |
+          printf '{ "core": "%s" }\n' "$WP_CORE" > .wp-env.override.json
 
       - run: npx playwright install chromium --with-deps
 
