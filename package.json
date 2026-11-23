@@ -52,9 +52,9 @@
 	},
 	"scripts": {
 		"build": "npm run build:editor && npm run build:blocks",
-		"build:editor": "wp-scripts build index=./src/editor/index.js --output-path=build/editor",
+		"build:editor": "wp-scripts build index=./index.js --webpack-src-dir=src/editor --output-path=build/editor",
 		"build:blocks": "node bin/blocks.mjs build",
-		"start:editor": "wp-scripts start index=./src/editor/index.js --output-path=build/editor",
+		"start:editor": "wp-scripts start index=./index.js --webpack-src-dir=src/editor --output-path=build/editor",
 		"start:blocks": "node bin/blocks.mjs start",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:pkg",
 		"lint:js": "wp-scripts lint-js src tests bin",
