@@ -12,7 +12,7 @@
  * Abschaltbar über den PHP-Filter `cf65_blocks/auto_recovery`.
  */
 import { store as blockEditorStore } from '@wordpress/block-editor';
-import { createBlock } from '@wordpress/blocks';
+import { cloneBlock, createBlock } from '@wordpress/blocks';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -37,81 +37,101 @@ export function isBrokenOwnBlock( block ) {
 }
 
 /**
- * Erzeugt einen ungültigen cf65-Block neu. Ungültige cf65-Nachfahren werden
- * ebenfalls neu erzeugt, alle anderen InnerBlocks unverändert übernommen.
+ * Baut einen Block-Baum neu auf, falls er ungültige cf65-Blöcke enthält:
  *
- * `markupVersion` wird entfernt, damit der neue Block die aktuelle Version
- * (Default aus block.json) erhält.
+ * - ungültiger cf65-Block → aus Attributen neu erzeugt (`createBlock`);
+ *   `markupVersion` wird entfernt, damit die aktuelle Version gilt
+ * - ungültiger Fremdblock → unverändert (samt Inhalt), kein Abstieg
+ * - gültiger Block mit betroffenen Nachfahren → `cloneBlock` mit neuen
+ *   InnerBlocks (verlustfrei, da seine Attribute vollständig geparst sind)
+ * - sonst → unverändert
  *
- * @param {BlockLike} block Ungültiger cf65-Block.
- * @return {{ block: BlockLike, count: number }} Neuer Block und Anzahl reparierter Blöcke.
+ * Ersetzt wird später immer der oberste Block: Ersetzungen verschachtelter
+ * Blöcke setzt der Editor (WP ≥ 6.8) beim initialen Abgleich teils zurück.
+ *
+ * @param {BlockLike} block Block.
+ * @return {{ block: BlockLike, count: number }} (Neuer) Block und Anzahl reparierter cf65-Blöcke.
  */
-export function rebuildBlock( block ) {
-	let count = 1;
+export function rebuildTree( block ) {
+	if ( block.isValid === false && ! isOwnBlock( block.name ) ) {
+		return { block, count: 0 };
+	}
+
+	let count = 0;
 	const innerBlocks = ( block.innerBlocks ?? [] ).map( ( inner ) => {
-		if ( ! isBrokenOwnBlock( inner ) ) {
-			return inner;
-		}
-		const result = rebuildBlock( inner );
+		const result = rebuildTree( inner );
 		count += result.count;
 		return result.block;
 	} );
 
-	const { markupVersion, ...attributes } = block.attributes ?? {};
-	return {
-		block: createBlock( block.name, attributes, innerBlocks ),
-		count,
-	};
+	if ( isBrokenOwnBlock( block ) ) {
+		const { markupVersion, ...attributes } = block.attributes ?? {};
+		return {
+			block: createBlock( block.name, attributes, innerBlocks ),
+			count: count + 1,
+		};
+	}
+	if ( count === 0 ) {
+		return { block, count };
+	}
+	return { block: cloneBlock( block, {}, innerBlocks ), count };
 }
 
 /**
- * Sucht ungültige cf65-Blöcke (oberste betroffene Ebene) im Baum.
+ * Liefert die ungültigen cf65-Blöcke eines Baums (für Protokoll/Tests).
  * Unterhalb ungültiger Fremdblöcke wird nicht gesucht.
  *
  * @param {BlockLike[]} blocks Blöcke.
- * @return {BlockLike[]} Zu ersetzende Blöcke.
+ * @return {BlockLike[]} Ungültige cf65-Blöcke (alle Ebenen).
  */
 export function findBrokenBlocks( blocks ) {
 	return blocks.flatMap( ( block ) => {
-		if ( isBrokenOwnBlock( block ) ) {
-			return [ block ];
-		}
-		if ( block.isValid === false ) {
+		if ( block.isValid === false && ! isOwnBlock( block.name ) ) {
 			return [];
 		}
-		return findBrokenBlocks( block.innerBlocks ?? [] );
+		const inner = findBrokenBlocks( block.innerBlocks ?? [] );
+		return isBrokenOwnBlock( block ) ? [ block, ...inner ] : inner;
 	} );
 }
 
-/** Maximale Reparaturversuche pro Block (Schutz vor Endlosschleifen). */
+/** Maximale Reparaturversuche pro Block der obersten Ebene. */
 const MAX_ATTEMPTS = 3;
 
 /**
- * Ersetzt alle ungültigen cf65-Blöcke im Editor.
+ * Ersetzt alle Blöcke der obersten Ebene, die ungültige cf65-Blöcke
+ * enthalten, durch ihren neu aufgebauten Baum.
  *
  * @param {Map<string, number>} [attempts] Versuche pro Block (wird fortgeschrieben).
- * @return {number} Anzahl reparierter Blöcke.
+ * @return {number} Anzahl reparierter cf65-Blöcke.
  */
 export function recoverAll( attempts = new Map() ) {
-	const broken = findBrokenBlocks( select( blockEditorStore ).getBlocks() );
 	const { replaceBlock } = dispatch( blockEditorStore );
 	let total = 0;
-	for ( const block of broken ) {
-		const key = `${ block.name }:${
-			block.attributes?.uniqueId ?? block.clientId
+	for ( const root of select( blockEditorStore ).getBlocks() ) {
+		const broken = findBrokenBlocks( [ root ] );
+		if ( broken.length === 0 ) {
+			continue;
+		}
+		const key = `${ root.name }:${
+			root.attributes?.uniqueId ?? root.clientId
 		}`;
 		const tries = attempts.get( key ) ?? 0;
 		if ( tries >= MAX_ATTEMPTS ) {
 			continue;
 		}
 		attempts.set( key, tries + 1 );
-		const { block: next, count } = rebuildBlock( block );
-		replaceBlock( block.clientId, next );
+
+		const { block: next, count } = rebuildTree( root );
+		replaceBlock( root.clientId, next );
 		total += count;
 		// eslint-disable-next-line no-console
 		console.info(
-			`[${ NAMESPACE }] ${ block.name } automatisch repariert (${ count }).`,
-			{ clientId: block.clientId, issues: block.validationIssues }
+			`[${ NAMESPACE }] ${ count } Block/Blöcke in ${ root.name } automatisch repariert.`,
+			broken.map( ( b ) => ( {
+				name: b.name,
+				uniqueId: b.attributes?.uniqueId,
+				issues: b.validationIssues,
+			} ) )
 		);
 	}
 	return total;

@@ -9,7 +9,7 @@ import * as blocksApi from '@wordpress/blocks';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { registerDefinitions } from '../../blocks/definitions';
-import { findBrokenBlocks, rebuildBlock } from '../recovery';
+import { findBrokenBlocks, rebuildTree } from '../recovery';
 
 const { parse, registerBlockType, serialize, getBlockType } = blocksApi;
 
@@ -44,7 +44,7 @@ describe( 'Auto-Recovery', () => {
 		const [ block ] = parse( BROKEN_HEADING );
 		expect( block.isValid ).toBe( false );
 
-		const { block: rebuilt, count } = rebuildBlock( block );
+		const { block: rebuilt, count } = rebuildTree( block );
 		expect( count ).toBe( 1 );
 		expect( rebuilt.attributes ).toMatchObject( {
 			uniqueId: 'a1b2c3d4',
@@ -74,8 +74,18 @@ describe( 'Auto-Recovery', () => {
 		const broken = findBrokenBlocks( blocks );
 		expect( broken.map( ( b ) => b.name ) ).toEqual( [ 'cf65/text' ] );
 
-		const { block: rebuilt } = rebuildBlock( broken[ 0 ] );
-		expect( rebuilt.attributes.content ).toBe( 'Kaputt' );
+		// Der oberste Block wird als neuer Baum ersetzt; gültige Eltern
+		// werden mit ihren Attributen übernommen.
+		const { block: rebuilt, count } = rebuildTree( blocks[ 0 ] );
+		expect( count ).toBe( 1 );
+		expect( rebuilt.clientId ).not.toBe( blocks[ 0 ].clientId );
+		expect( rebuilt.attributes.uniqueId ).toBe( 'c0l5abcd' );
+		const [ reparsed ] = parse( serialize( [ rebuilt ] ) );
+		const flat = ( b ) => [ b, ...b.innerBlocks.flatMap( flat ) ];
+		expect( flat( reparsed ).every( ( b ) => b.isValid ) ).toBe( true );
+		expect(
+			reparsed.innerBlocks[ 0 ].innerBlocks[ 0 ].attributes.content
+		).toBe( 'Kaputt' );
 	} );
 
 	it( 'repariert ungültige cf65-Kinder eines ungültigen cf65-Blocks mit', () => {
@@ -88,7 +98,7 @@ describe( 'Auto-Recovery', () => {
 		expect( column.isValid ).toBe( false );
 		expect( column.innerBlocks[ 0 ].isValid ).toBe( false );
 
-		const { block: rebuilt, count } = rebuildBlock( column );
+		const { block: rebuilt, count } = rebuildTree( column );
 		expect( count ).toBe( 2 );
 		const [ reparsed ] = parse( serialize( [ rebuilt ] ) );
 		expect( reparsed.isValid ).toBe( true );
@@ -105,6 +115,17 @@ describe( 'Auto-Recovery', () => {
 		const blocks = parse( html );
 		expect( blocks[ 0 ].isValid ).toBe( false );
 		expect( findBrokenBlocks( blocks ) ).toEqual( [] );
+		const result = rebuildTree( blocks[ 0 ] );
+		expect( result.count ).toBe( 0 );
+		expect( result.block ).toBe( blocks[ 0 ] );
+	} );
+
+	it( 'unveränderte Bäume bleiben dasselbe Objekt', () => {
+		const ok = `<!-- wp:cf65/text {"uniqueId":"t1x2t3x4","content":"Ok"} -->
+<p class="wp-block-cf65-text cf65-block cf65-text cf65-t1x2t3x4">Ok</p>
+<!-- /wp:cf65/text -->`;
+		const [ block ] = parse( ok );
+		expect( rebuildTree( block ) ).toEqual( { block, count: 0 } );
 	} );
 
 	it( 'gültige Blöcke werden nicht gemeldet', () => {
