@@ -1,0 +1,38 @@
+name: Fehler melden
+description: Ein Fehler in cf65 Blocks
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Sicherheitslücken bitte NICHT hier melden**, sondern vertraulich über
+        „Security → Report a vulnerability“ (siehe SECURITY.md).
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung
+      description: Was passiert, was wäre erwartet?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Schritte zur Reproduktion
+      placeholder: |
+        1. Block X einfügen
+        2. Einstellung Y setzen
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versionen
+      placeholder: cf65 Blocks 0.1.0, WordPress 6.9, PHP 8.5, ACF 6.x / Pods 3.x
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Fehlermeldungen / Konsole
+      render: text

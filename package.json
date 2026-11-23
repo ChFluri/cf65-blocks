@@ -1,0 +1,66 @@
+{
+	"name": "cf65-blocks",
+	"version": "0.1.0-dev",
+	"private": true,
+	"description": "Erweiterte Gutenberg-Blöcke mit Dynamic Content (ACF, Pods), Conditional Display und erweiterten Einstellungen pro Block.",
+	"author": "ChFluri",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"gutenberg",
+		"blocks",
+		"dynamic-content",
+		"acf",
+		"pods"
+	],
+	"homepage": "https://github.com/ChFluri/cf65-blocks#readme",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ChFluri/cf65-blocks.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ChFluri/cf65-blocks/issues"
+	},
+	"engines": {
+		"node": ">=22.13.0",
+		"npm": ">=10"
+	},
+	"files": [
+		"cf65-blocks.php",
+		"uninstall.php",
+		"LICENSE",
+		"includes",
+		"build",
+		"languages",
+		"vendor"
+	],
+	"devDependencies": {
+		"@playwright/test": "^1.56.0",
+		"@wordpress/e2e-test-utils-playwright": "^1.35.0",
+		"@wordpress/env": "^12.2.0",
+		"@wordpress/scripts": "^37.2.0",
+		"vite": "^8.3.8",
+		"vitest": "^5.1.1"
+	},
+	"scripts": {
+		"build": "npm run build:editor && npm run build:blocks",
+		"build:editor": "wp-scripts build index=./src/editor/index.js --output-path=build/editor",
+		"build:blocks": "node bin/blocks.mjs build",
+		"start:editor": "wp-scripts start index=./src/editor/index.js --output-path=build/editor",
+		"start:blocks": "node bin/blocks.mjs start",
+		"lint": "npm run lint:js && npm run lint:css && npm run lint:pkg",
+		"lint:js": "wp-scripts lint-js src tests bin",
+		"lint:css": "wp-scripts lint-style \"src/**/*.scss\" --allow-empty-input",
+		"lint:pkg": "wp-scripts lint-pkg-json",
+		"format": "wp-scripts format src tests bin",
+		"test:unit": "wp-scripts test-unit-js --exclude \"tests/e2e/**\"",
+		"test:e2e": "wp-scripts test-playwright --config tests/e2e/playwright.config.js",
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop",
+		"env:clean": "wp-env clean all",
+		"plugin-zip": "wp-scripts plugin-zip"
+	},
+	"overrides": {
+		"@types/node": "^24.0.0"
+	}
+}

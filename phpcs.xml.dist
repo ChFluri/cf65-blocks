@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<ruleset name="cf65-blocks">
+	<description>Coding- und Security-Standards für cf65 Blocks.</description>
+
+	<file>./cf65-blocks.php</file>
+	<file>./uninstall.php</file>
+	<file>./includes</file>
+
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/build/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+	<arg name="parallel" value="8"/>
+
+	<config name="testVersion" value="8.5-"/>
+	<config name="minimum_wp_version" value="6.7"/>
+
+	<rule ref="WordPress">
+		<!-- PSR-4-Dateinamen (Klassenname = Dateiname). -->
+		<exclude name="WordPress.Files.FileName"/>
+		<!-- Namespaces + Typdeklarationen ersetzen Hungarian-Docblocks. -->
+		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
+		<!-- Kurze Array-Syntax nicht erzwingen, lange erlaubt. -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+	</rule>
+
+	<!--
+		Sicherheits-Sniffs explizit als Fehler (nicht abschaltbar per Warnungs-Level).
+		Siehe docs/UMSETZPLAN.md Kap. 7.5.
+	-->
+	<rule ref="WordPress.Security.EscapeOutput">
+		<type>error</type>
+	</rule>
+	<rule ref="WordPress.Security.ValidatedSanitizedInput">
+		<type>error</type>
+	</rule>
+	<rule ref="WordPress.Security.NonceVerification">
+		<type>error</type>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQL">
+		<type>error</type>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQLPlaceholders">
+		<type>error</type>
+	</rule>
+	<rule ref="Squiz.PHP.Eval">
+		<type>error</type>
+	</rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+		<properties>
+			<property name="exclude" type="array"/>
+		</properties>
+		<type>error</type>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="cf65-blocks"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="cf65_blocks"/>
+				<element value="Cf65\Blocks"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Hook-Namen im Format `cf65_blocks/bereich/name` (siehe UMSETZPLAN). -->
+	<rule ref="WordPress.NamingConventions.ValidHookName">
+		<properties>
+			<property name="additionalWordDelimiters" value="/"/>
+		</properties>
+	</rule>
+
+	<rule ref="PHPCompatibilityWP"/>
+</ruleset>

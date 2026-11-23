@@ -1,0 +1,41 @@
+# Abhängigkeiten
+/node_modules/
+/vendor/
+
+# Build
+/build/
+/*.zip
+
+# Tests / Caches
+/.phpunit.cache/
+/coverage/
+/artifacts/
+/test-results/
+/playwright-report/
+/.phpcs-cache
+.eslintcache
+.stylelintcache
+
+# Umgebung
+.wp-env.override.json
+.env
+.env.*
+*.log
+
+# Editor / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Lokale Claude-Einstellungen
+.claude/settings.local.json
+
+# Office-Sperrdateien
+~$*
+
+# Interne Quelldokumente (Analyse eines Drittprodukts) – nicht öffentlich
+/docs/*.pdf
+/docs/*.docx

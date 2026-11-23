@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Plugin-ZIP bauen und veröffentlichen
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Version im Plugin-Header prüfen
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          HEADER=$(grep -m1 -E '^\s*\*\s*Version:' cf65-blocks.php | awk '{print $NF}')
+          if [ "$TAG" != "$HEADER" ]; then
+            echo "Tag ($TAG) und Plugin-Version ($HEADER) stimmen nicht überein." >&2
+            exit 1
+          fi
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+          coverage: none
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Nur Laufzeit-Abhängigkeiten installieren
+        run: composer install --no-dev --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - run: npm ci --ignore-scripts
+
+      - run: npm run build
+
+      - run: npm run plugin-zip
+
+      - name: Prüfsumme erzeugen
+        run: sha256sum cf65-blocks.zip > cf65-blocks.zip.sha256
+
+      - uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        with:
+          files: |
+            cf65-blocks.zip
+            cf65-blocks.zip.sha256
+          generate_release_notes: true
+          fail_on_unmatched_files: true

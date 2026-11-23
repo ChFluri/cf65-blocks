@@ -1,0 +1,10 @@
+parameters:
+	level: 8
+	phpVersion: 80500
+	paths:
+		- cf65-blocks.php
+		- uninstall.php
+		- includes
+	bootstrapFiles:
+		- tests/php/phpstan-bootstrap.php
+	treatPhpDocTypesAsCertain: false

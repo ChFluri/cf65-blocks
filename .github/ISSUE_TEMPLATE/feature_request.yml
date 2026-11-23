@@ -1,0 +1,25 @@
+name: Funktion vorschlagen
+description: Idee oder Erweiterung für cf65 Blocks
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Welches Problem soll gelöst werden?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Vorgeschlagene Lösung
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      options:
+        - Block
+        - Dynamic Content (ACF/Pods)
+        - Conditional Display
+        - Erweiterte Block-Einstellungen
+        - Global Styling
+        - Sonstiges

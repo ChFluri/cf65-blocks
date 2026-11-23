@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php:
+    name: PHP – Lint, Analyse, Unit-Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+          coverage: none
+
+      - run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: PHPCS (WPCS inkl. Security-Sniffs)
+        run: composer lint
+
+      - name: PHPStan
+        run: composer analyse
+
+      - name: PHPUnit
+        run: composer test
+
+      - name: Composer Audit
+        run: composer audit --abandoned=report
+
+  js:
+    name: JS – Lint, Unit-Tests, Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - run: npm run lint
+
+      - run: npm run test:unit
+
+      - run: npm run build
+
+      - name: npm Audit (Laufzeit-Abhängigkeiten)
+        run: npm audit --omit=dev --audit-level=moderate
+
+  e2e:
+    name: E2E (wp-env, PHP 8.5, WP ${{ matrix.wp }})
+    runs-on: ubuntu-latest
+    needs: [php, js]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wp: '6.7'
+            core: 'WordPress/WordPress#6.7'
+          - wp: latest
+            core: ''
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - run: npm run build
+
+      - name: WordPress-Version setzen
+        if: matrix.core != ''
+        env:
+          WP_CORE: ${{ matrix.core }}
+        run: printf '{ "core": "%s" }\n' "$WP_CORE" > .wp-env.override.json
+
+      - run: npx playwright install chromium --with-deps
+
+      - run: npm run env:start
+
+      - run: npm run test:e2e
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: e2e-artifacts-${{ matrix.wp }}
+          path: artifacts/
+          retention-days: 7
