@@ -29,6 +29,10 @@ test.describe( 'Debug-Modus', () => {
 			/cf65-render;dur=\d+\.\d{2};desc="cf65 blocks: 1"/
 		);
 		expect( timing ).toMatch( /cf65-css;dur=\d+\.\d{2};desc="css: \d+ B"/ );
+		// CSS wurde beim Speichern vorberechnet (Post-Meta) → Cache-Treffer.
+		expect( timing ).toMatch(
+			/cf65-css-cache;dur=\d+\.\d{2};desc="hits: 1, misses: 0"/
+		);
 		await expect(
 			page.locator( '#wp-admin-bar-cf65-performance' )
 		).toContainText( 'cf65 Performance' );

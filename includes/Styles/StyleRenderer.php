@@ -36,10 +36,12 @@ final class StyleRenderer {
 	 * @param CssGenerator  $generator    CSS-Generator.
 	 * @param \Closure|null $map_resolver Liefert die Style-Map zu einem Blocknamen
 	 *                                    (Standard: Block-Registry; injizierbar für Tests).
+	 * @param CssCache|null $cache        Vorberechnetes CSS (optional).
 	 */
 	public function __construct(
 		private readonly CssGenerator $generator,
-		private readonly ?\Closure $map_resolver = null
+		private readonly ?\Closure $map_resolver = null,
+		private readonly ?CssCache $cache = null
 	) {}
 
 	/**
@@ -47,6 +49,7 @@ final class StyleRenderer {
 	 */
 	public function register_hooks(): void {
 		\add_filter( 'render_block', array( $this, 'render' ), 10, 2 );
+		$this->cache?->register_hooks( $this->css_for( ... ) );
 	}
 
 	/**
@@ -62,18 +65,21 @@ final class StyleRenderer {
 			return $content;
 		}
 
-		$map = null !== $this->map_resolver ? ( $this->map_resolver )( $name ) : self::style_map( $name );
-		if ( ! \is_array( $map ) || array() === $map ) {
-			return $content;
-		}
-
-		$profiler   = Profiling::get();
-		$start      = $profiler->enabled() ? \hrtime( true ) : 0;
 		$attributes = \is_array( $block['attrs'] ?? null ) ? $block['attrs'] : array();
-		$css        = $this->generator->generate( $attributes['uniqueId'] ?? null, $map, $attributes );
+		/** @var array<string, mixed> $attributes */
+		$profiler = Profiling::get();
+		$start    = $profiler->enabled() ? \hrtime( true ) : 0;
 
-		if ( $profiler->enabled() ) {
-			$profiler->record( 'css', ( \hrtime( true ) - $start ) / 1e6, \strlen( $css ) );
+		$css = $this->cache?->get( CssCache::key( $name, $attributes ) );
+		if ( null !== $css ) {
+			if ( $profiler->enabled() ) {
+				$profiler->record( 'css_cache', ( \hrtime( true ) - $start ) / 1e6, \strlen( $css ) );
+			}
+		} else {
+			$css = $this->css_for( $name, $attributes );
+			if ( $profiler->enabled() ) {
+				$profiler->record( 'css', ( \hrtime( true ) - $start ) / 1e6, \strlen( $css ) );
+			}
 		}
 
 		if ( '' !== $css ) {
@@ -81,6 +87,20 @@ final class StyleRenderer {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Berechnet das CSS einer Blockinstanz (ohne Cache).
+	 *
+	 * @param string               $name       Blockname.
+	 * @param array<string, mixed> $attributes Attribute.
+	 */
+	public function css_for( string $name, array $attributes ): string {
+		$map = null !== $this->map_resolver ? ( $this->map_resolver )( $name ) : self::style_map( $name );
+		if ( ! \is_array( $map ) || array() === $map ) {
+			return '';
+		}
+		return $this->generator->generate( $attributes['uniqueId'] ?? null, $map, $attributes );
 	}
 
 	/**

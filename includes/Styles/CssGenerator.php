@@ -21,6 +21,12 @@ use Cf65\Blocks\Security\Sanitizer;
 final class CssGenerator {
 
 	/**
+	 * Version der Ausgabe. Erhöhen, wenn sich das erzeugte CSS für gleiche
+	 * Eingaben ändert (macht den CSS-Cache ungültig).
+	 */
+	public const VERSION = 2;
+
+	/**
 	 * Geräte in Ausgabereihenfolge (Desktop-first) mit Media Query.
 	 */
 	public const DEVICES = array(

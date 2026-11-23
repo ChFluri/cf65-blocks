@@ -2,8 +2,9 @@
 /**
  * Aufräumen bei Deinstallation.
  *
- * Entfernt nur Plugin-Optionen und Transients mit dem Präfix `cf65_blocks_`.
- * Block-Inhalte in Beiträgen bleiben erhalten (siehe Umsetzplan Kap. 2.2).
+ * Entfernt nur Plugin-Optionen und Transients mit dem Präfix `cf65_blocks_`
+ * sowie den CSS-Cache (Post-Meta `_cf65_blocks_css`). Block-Inhalte in
+ * Beiträgen bleiben erhalten (siehe Umsetzplan Kap. 2.2).
  *
  * @package Cf65\Blocks
  */
@@ -35,3 +36,6 @@ $wpdb->query(
 		$wpdb->esc_like( '_transient_timeout_cf65_blocks_' ) . '%'
 	)
 );
+
+// CSS-Cache aller Beiträge (wird bei Bedarf neu berechnet).
+delete_post_meta_by_key( '_cf65_blocks_css' );

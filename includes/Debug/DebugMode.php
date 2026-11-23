@@ -122,6 +122,7 @@ final class DebugMode {
 		$total   = (float) ( $report['total_ms'] ?? 0.0 );
 		$queries = (int) ( $report['queries'] ?? 0 );
 		$css     = \is_array( $report['metrics']['css'] ?? null ) ? $report['metrics']['css'] : array();
+		$cache   = \is_array( $report['metrics']['css_cache'] ?? null ) ? $report['metrics']['css_cache'] : array();
 
 		$parts = array(
 			\sprintf( 'cf65-render;dur=%s;desc="cf65 blocks: %d"', Stats::ms( $total ), $count ),
@@ -129,6 +130,12 @@ final class DebugMode {
 				'cf65-css;dur=%s;desc="css: %d B"',
 				Stats::ms( (float) ( $css['ms'] ?? 0.0 ) ),
 				(int) ( $css['bytes'] ?? 0 )
+			),
+			\sprintf(
+				'cf65-css-cache;dur=%s;desc="hits: %d, misses: %d"',
+				Stats::ms( (float) ( $cache['ms'] ?? 0.0 ) ),
+				(int) ( $cache['count'] ?? 0 ),
+				(int) ( $css['count'] ?? 0 )
 			),
 			\sprintf( 'cf65-queries;desc="queries: %d"', $queries ),
 		);
@@ -154,6 +161,7 @@ final class DebugMode {
 	 */
 	public static function admin_bar_nodes( array $report ): array {
 		$css   = \is_array( $report['metrics']['css'] ?? null ) ? $report['metrics']['css'] : array();
+		$cache = \is_array( $report['metrics']['css_cache'] ?? null ) ? $report['metrics']['css_cache'] : array();
 		$total = (float) ( $report['total_ms'] ?? 0.0 );
 
 		$nodes = array(
@@ -181,6 +189,12 @@ final class DebugMode {
 				\__( 'CSS: %1$s ms, %2$s', 'cf65-blocks' ),
 				Stats::ms( (float) ( $css['ms'] ?? 0.0 ) ),
 				Stats::bytes( (int) ( $css['bytes'] ?? 0 ) )
+			),
+			'cache'   => \sprintf(
+				/* translators: 1: cache hits, 2: recalculations */
+				\__( 'CSS-Cache: %1$d Treffer, %2$d neu berechnet', 'cf65-blocks' ),
+				(int) ( $cache['count'] ?? 0 ),
+				(int) ( $css['count'] ?? 0 )
 			),
 			'queries' => \sprintf(
 				/* translators: %d: number of database queries */

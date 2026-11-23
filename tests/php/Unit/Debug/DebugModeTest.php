@@ -94,14 +94,14 @@ final class DebugModeTest extends TestCase {
 
 	public function test_server_timing_header(): void {
 		self::assertSame(
-			'cf65-render;dur=12.35;desc="cf65 blocks: 3", cf65-css;dur=0.80;desc="css: 512 B", cf65-queries;desc="queries: 2"',
+			'cf65-render;dur=12.35;desc="cf65 blocks: 3", cf65-css;dur=0.80;desc="css: 512 B", cf65-css-cache;dur=0.00;desc="hits: 0, misses: 3", cf65-queries;desc="queries: 2"',
 			DebugMode::server_timing( self::REPORT )
 		);
 	}
 
 	public function test_server_timing_with_empty_report(): void {
 		self::assertSame(
-			'cf65-render;dur=0.00;desc="cf65 blocks: 0", cf65-css;dur=0.00;desc="css: 0 B", cf65-queries;desc="queries: 0"',
+			'cf65-render;dur=0.00;desc="cf65 blocks: 0", cf65-css;dur=0.00;desc="css: 0 B", cf65-css-cache;dur=0.00;desc="hits: 0, misses: 0", cf65-queries;desc="queries: 0"',
 			DebugMode::server_timing( array() )
 		);
 	}
@@ -116,9 +116,10 @@ final class DebugModeTest extends TestCase {
 
 		self::assertSame( DebugMode::NODE, $nodes[0]['id'] );
 		self::assertSame( 'cf65 Performance: 12.35 ms', $nodes[0]['title'] );
-		self::assertCount( 6, $nodes );
-		self::assertStringContainsString( '&lt;script&gt;', $nodes[5]['title'] );
-		self::assertStringContainsString( '2.0 MB', $nodes[4]['title'] );
+		self::assertCount( 7, $nodes );
+		self::assertStringContainsString( '&lt;script&gt;', $nodes[6]['title'] );
+		self::assertStringContainsString( '2.0 MB', $nodes[5]['title'] );
+		self::assertSame( 'CSS-Cache: 0 Treffer, 3 neu berechnet', $nodes[3]['title'] );
 	}
 
 	public function test_block_timer_measures_only_own_blocks(): void {
