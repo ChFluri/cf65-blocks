@@ -16,6 +16,8 @@ final class Registry {
 
 	public const CATEGORY = 'cf65-blocks';
 
+	public const BLOCK_PREFIX = 'cf65/';
+
 	/**
 	 * Konstruktor.
 	 *

@@ -1,0 +1,114 @@
+{
+	"$comment": "Gemeinsame Testfälle für den CSS-Generator. PHP (tests/php) und JS (src/styles/test) müssen für jeden Fall exakt `expected` liefern.",
+	"map": [
+		{ "attr": "textAlign", "property": "text-align", "type": "enum", "values": [ "left", "center", "right", "justify" ], "responsive": true },
+		{ "attr": "fontSize", "property": "font-size", "type": "length", "responsive": true },
+		{ "attr": "textColor", "property": "color", "type": "color" },
+		{ "attr": "textColorHover", "property": "color", "type": "color", "state": "hover" },
+		{ "attr": "iconColor", "property": "fill", "type": "color", "selector": " .cf65-icon" }
+	],
+	"cases": [
+		{
+			"name": "leere Attribute erzeugen kein CSS",
+			"uniqueId": "abc12345",
+			"attributes": {},
+			"expected": ""
+		},
+		{
+			"name": "einfache Werte",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": "#ff0000", "textAlign": { "desktop": "center" } },
+			"expected": ".cf65-abc12345{text-align:center;color:#ff0000}"
+		},
+		{
+			"name": "responsive Werte mit Media Queries",
+			"uniqueId": "abc12345",
+			"attributes": { "fontSize": { "desktop": "40px", "tablet": "2rem", "mobile": "18px" } },
+			"expected": ".cf65-abc12345{font-size:40px}@media (max-width:1024px){.cf65-abc12345{font-size:2rem}}@media (max-width:767px){.cf65-abc12345{font-size:18px}}"
+		},
+		{
+			"name": "nur mobiler Wert",
+			"uniqueId": "abc12345",
+			"attributes": { "textAlign": { "mobile": "left" } },
+			"expected": "@media (max-width:767px){.cf65-abc12345{text-align:left}}"
+		},
+		{
+			"name": "Hover-Zustand und Unterselektor",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": "#111", "textColorHover": "rgba(0, 0, 0, 0.5)", "iconColor": "var(--wp--preset--color--primary)" },
+			"expected": ".cf65-abc12345{color:#111}.cf65-abc12345 .cf65-icon{fill:var(--wp--preset--color--primary)}.cf65-abc12345:hover{color:rgba(0, 0, 0, 0.5)}"
+		},
+		{
+			"name": "Farb-Schlüsselwörter und Längen-Varianten",
+			"uniqueId": "z9",
+			"attributes": { "textColor": "transparent", "fontSize": { "desktop": "0", "tablet": "-1.5em", "mobile": ".5vw" } },
+			"expected": ""
+		},
+		{
+			"name": "Farb-Schlüsselwörter und Längen-Varianten (gültige ID)",
+			"uniqueId": "z9z9",
+			"attributes": { "textColor": "currentColor", "fontSize": { "desktop": "0", "tablet": "-1.5em", "mobile": ".5vw" } },
+			"expected": ".cf65-z9z9{font-size:0;color:currentcolor}@media (max-width:1024px){.cf65-z9z9{font-size:-1.5em}}@media (max-width:767px){.cf65-z9z9{font-size:.5vw}}"
+		},
+		{
+			"name": "Payload: Ausbruch aus dem Style-Tag in Farbe",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": "red}</style><script>alert(1)</script>" },
+			"expected": ""
+		},
+		{
+			"name": "Payload: zusätzliche Deklaration in Farbe",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": "red;background:url(javascript:alert(1))" },
+			"expected": ""
+		},
+		{
+			"name": "Payload: Funktionsfarbe mit Fremdzeichen",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": "rgb(0,0,0);x:expression(alert(1))" },
+			"expected": ""
+		},
+		{
+			"name": "Payload: var() mit Ausbruch",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": "var(--a);}body{display:none" },
+			"expected": ""
+		},
+		{
+			"name": "Payload: Zeilenumbruch am Ende",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": "#fff\n", "fontSize": { "desktop": "10px\n" } },
+			"expected": ""
+		},
+		{
+			"name": "Payload: Länge mit unbekannter Einheit oder Ausdruck",
+			"uniqueId": "abc12345",
+			"attributes": { "fontSize": { "desktop": "10px;color:red", "tablet": "calc(1px)", "mobile": "12pt" } },
+			"expected": ""
+		},
+		{
+			"name": "Payload: Enum ausserhalb der Liste",
+			"uniqueId": "abc12345",
+			"attributes": { "textAlign": { "desktop": "center;color:red", "tablet": "CENTER" } },
+			"expected": ""
+		},
+		{
+			"name": "Payload: manipulierte uniqueId",
+			"uniqueId": "x{}body{display:none}",
+			"attributes": { "textColor": "#ff0000" },
+			"expected": ""
+		},
+		{
+			"name": "Payload: falsche Typen",
+			"uniqueId": "abc12345",
+			"attributes": { "textColor": [ "#fff" ], "fontSize": "40px", "textAlign": { "desktop": 5 }, "textColorHover": { "desktop": "#fff" } },
+			"expected": ""
+		},
+		{
+			"name": "Payload: unbekannte Geräte werden ignoriert",
+			"uniqueId": "abc12345",
+			"attributes": { "fontSize": { "desktop": "10px", "watch": "1px", "__proto__": "2px" } },
+			"expected": ".cf65-abc12345{font-size:10px}"
+		}
+	]
+}

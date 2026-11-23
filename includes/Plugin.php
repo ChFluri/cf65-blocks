@@ -10,6 +10,8 @@ declare( strict_types = 1 );
 namespace Cf65\Blocks;
 
 use Cf65\Blocks\Blocks\Registry;
+use Cf65\Blocks\Styles\CssGenerator;
+use Cf65\Blocks\Styles\StyleRenderer;
 
 /**
  * Startet die Plugin-Dienste.
@@ -33,6 +35,7 @@ final class Plugin {
 		self::$booted = true;
 
 		( new Registry( PLUGIN_DIR ) )->register_hooks();
+		( new StyleRenderer( new CssGenerator() ) )->register_hooks();
 
 		/**
 		 * Wird ausgelöst, nachdem cf65 Blocks gebootet hat.
