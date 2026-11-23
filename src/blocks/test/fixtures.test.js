@@ -15,11 +15,16 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import headingMetadata from '../heading/block.json';
 import headingSave from '../heading/save';
+import textMetadata from '../text/block.json';
+import textSave from '../text/save';
 
 const FIXTURES = join( __dirname, '../../../tests/fixtures/blocks' );
 
 /** Blöcke mit save (und später deprecated) – ohne Editor-UI. */
-const BLOCKS = [ { metadata: headingMetadata, save: headingSave } ];
+const BLOCKS = [
+	{ metadata: headingMetadata, save: headingSave },
+	{ metadata: textMetadata, save: textSave },
+];
 
 beforeAll( () => {
 	for ( const { metadata, save, deprecated } of BLOCKS ) {

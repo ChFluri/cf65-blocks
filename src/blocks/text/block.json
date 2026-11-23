@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/text",
+	"version": "0.1.0",
+	"title": "Text (cf65)",
+	"category": "cf65-blocks",
+	"icon": "editor-paragraph",
+	"description": "Textabsatz mit responsiver Schriftgrösse, Ausrichtung und Farben inkl. Hover.",
+	"keywords": [ "text", "absatz", "paragraph" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"content": { "type": "string", "default": "" },
+		"textAlign": { "type": "object" },
+		"fontSize": { "type": "object" },
+		"textColor": { "type": "string" },
+		"textColorHover": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"splitting": true,
+		"cf65": {
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right", "justify" ],
+					"responsive": true
+				},
+				{
+					"attr": "fontSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" },
+				{
+					"attr": "textColorHover",
+					"property": "color",
+					"type": "color",
+					"state": "hover"
+				}
+			]
+		}
+	},
+	"example": {
+		"attributes": {
+			"content": "Ein Absatz mit cf65-Einstellungen."
+		}
+	},
+	"editorScript": "file:./index.js"
+}

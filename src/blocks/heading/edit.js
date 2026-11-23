@@ -1,7 +1,6 @@
 import {
 	BlockControls,
 	InspectorControls,
-	PanelColorSettings,
 	RichText,
 	useBlockProps,
 } from '@wordpress/block-editor';
@@ -14,8 +13,10 @@ import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 import InspectorTabs from '../../components/inspector-tabs';
-import LengthControl from '../../components/length-control';
-import ResponsiveControl from '../../components/responsive-control';
+import {
+	AlignmentPanel,
+	TypographyColorPanels,
+} from '../../components/text-style-panels';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
 import { generateCss } from '../../styles/generator';
 import metadata from './block.json';
@@ -24,24 +25,8 @@ import { safeLevel } from './save';
 const STYLE_MAP = metadata.supports.cf65.styles;
 const LEVELS = [ 1, 2, 3, 4, 5, 6 ];
 
-const ALIGN_OPTIONS = [
-	{ label: __( 'Standard', 'cf65-blocks' ), value: '' },
-	{ label: __( 'Links', 'cf65-blocks' ), value: 'left' },
-	{ label: __( 'Zentriert', 'cf65-blocks' ), value: 'center' },
-	{ label: __( 'Rechts', 'cf65-blocks' ), value: 'right' },
-	{ label: __( 'Blocksatz', 'cf65-blocks' ), value: 'justify' },
-];
-
 export default function Edit( { attributes, setAttributes, clientId } ) {
-	const {
-		uniqueId,
-		content,
-		level,
-		textAlign,
-		fontSize,
-		textColor,
-		textColorHover,
-	} = attributes;
+	const { uniqueId, content, level } = attributes;
 
 	useUniqueId( clientId, uniqueId, setAttributes );
 
@@ -78,83 +63,16 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 			<InspectorControls>
 				<InspectorTabs
 					layout={
-						<PanelBody title={ __( 'Ausrichtung', 'cf65-blocks' ) }>
-							<ResponsiveControl
-								label={ __( 'Textausrichtung', 'cf65-blocks' ) }
-								value={ textAlign }
-								onChange={ ( next ) =>
-									setAttributes( { textAlign: next } )
-								}
-							>
-								{ ( value, onChange ) => (
-									<SelectControl
-										__nextHasNoMarginBottom
-										__next40pxDefaultSize
-										label={ __(
-											'Ausrichtung',
-											'cf65-blocks'
-										) }
-										hideLabelFromVision
-										value={ value ?? '' }
-										options={ ALIGN_OPTIONS }
-										onChange={ onChange }
-									/>
-								) }
-							</ResponsiveControl>
-						</PanelBody>
+						<AlignmentPanel
+							attributes={ attributes }
+							setAttributes={ setAttributes }
+						/>
 					}
 					style={
-						<>
-							<PanelBody
-								title={ __( 'Typografie', 'cf65-blocks' ) }
-							>
-								<ResponsiveControl
-									label={ __(
-										'Schriftgrösse',
-										'cf65-blocks'
-									) }
-									value={ fontSize }
-									onChange={ ( next ) =>
-										setAttributes( { fontSize: next } )
-									}
-								>
-									{ ( value, onChange ) => (
-										<LengthControl
-											label={ __(
-												'Grösse',
-												'cf65-blocks'
-											) }
-											value={ value }
-											onChange={ onChange }
-										/>
-									) }
-								</ResponsiveControl>
-							</PanelBody>
-							<PanelColorSettings
-								title={ __( 'Farben', 'cf65-blocks' ) }
-								colorSettings={ [
-									{
-										label: __( 'Text', 'cf65-blocks' ),
-										value: textColor,
-										onChange: ( next ) =>
-											setAttributes( {
-												textColor: next,
-											} ),
-									},
-									{
-										label: __(
-											'Text (Hover)',
-											'cf65-blocks'
-										),
-										value: textColorHover,
-										onChange: ( next ) =>
-											setAttributes( {
-												textColorHover: next,
-											} ),
-									},
-								] }
-							/>
-						</>
+						<TypographyColorPanels
+							attributes={ attributes }
+							setAttributes={ setAttributes }
+						/>
 					}
 					advanced={
 						<PanelBody title={ __( 'HTML', 'cf65-blocks' ) }>
