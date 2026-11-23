@@ -39,7 +39,17 @@ jobs:
         run: composer test
 
       - name: Composer Audit
-        run: composer audit --abandoned=report
+        # Bis zu 3 Versuche nur bei Netzwerkfehlern (Exit 100); gefundene
+        # Sicherheitslücken (anderer Exit-Code) brechen sofort ab.
+        run: |
+          for attempt in 1 2 3; do
+            code=0
+            composer audit --abandoned=report || code=$?
+            if [ "$code" -ne 100 ]; then exit "$code"; fi
+            echo "Packagist nicht erreichbar (Versuch $attempt/3), neuer Versuch in 15 s …"
+            sleep 15
+          done
+          exit 100
 
   js:
     name: JS – Lint, Unit-Tests, Build
