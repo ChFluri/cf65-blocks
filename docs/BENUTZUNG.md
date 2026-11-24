@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 2.3 + gemeinsame Style-Panels (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppe A (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -12,7 +12,12 @@ Stand: Phase 2.3 + gemeinsame Style-Panels (Version 0.1.0-dev). Beschrieben sind
    - [Button](#33-button-cf65button)
    - [Bild](#34-bild-cf65image)
    - [Spalten und Spalte](#35-spalten-cf65columns-und-spalte-cf65column)
-   - [Dynamische Werte](#36-dynamische-werte)
+   - [Abstandhalter](#36-abstandhalter-cf65spacer)
+   - [Trennlinie](#37-trennlinie-cf65divider)
+   - [Trenner](#38-trenner-cf65separator)
+   - [Untertitel](#39-untertitel-cf65subtitle)
+   - [Zitat](#310-zitat-cf65blockquote)
+   - [Dynamische Werte](#311-dynamische-werte)
 4. [Erlaubte Werte](#4-erlaubte-werte)
 5. [Update-Sicherheit und Reparatur](#5-update-sicherheit-und-reparatur)
 6. [Debug-Modus und Benchmark](#6-debug-modus-und-benchmark)
@@ -91,7 +96,10 @@ Welche Blöcke welche Panels haben:
 
 | Block | Panels |
 |---|---|
-| Text, Überschrift, Spalten | alle |
+| Text, Überschrift, Untertitel, Spalten | alle |
+| Zitat | Abstände, Schatten, Hintergrundfarbe (Rahmen über die eigene Akzentlinie) |
+| Abstandhalter, Trenner | Aussenabstand, Hintergrundfarbe |
+| Trennlinie | Aussenabstand |
 | Button, Bild | Abstände (nur Aussenabstand) |
 | Spalte | Rahmen, Rahmenfarbe, Schatten, Hintergrundbild (Innenabstand und Hintergrundfarbe hat die Spalte schon selbst) |
 
@@ -117,7 +125,7 @@ Spezifität: Die Grundstile der Blöcke stehen in `:where()` (Spezifität 0), da
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Werkzeugleiste | Überschriftenebene (H1–H6) | Standard: H2 |
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.6](#36-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.11](#311-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts, Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -131,7 +139,7 @@ Textabsatz (`<p>`) mit denselben Einstellungen wie die Überschrift, ohne Ebene/
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.6](#36-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.11](#311-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; inkl. Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -150,7 +158,7 @@ Link-Button. Der Text wird direkt im Button bearbeitet; erlaubt sind **fett** un
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Layout → Link | URL | siehe unten; bei dynamischem Link die Fallback-URL |
-| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte) |
+| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.11](#311-dynamische-werte) |
 | Werkzeugleiste | Dynamischer Wert | Platzhalter in der Beschriftung, z. B. Beitragstitel |
 | Layout → Link | In neuem Tab öffnen | setzt `target="_blank"` und `rel="noopener"` |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts (Position des Buttons) |
@@ -171,7 +179,7 @@ Nach dem Einfügen erscheint ein Platzhalter mit *Hochladen*, *Mediathek* und *U
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte) |
+| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.11](#311-dynamische-werte) |
 | Layout → Bild | Alternativtext | wird aus der Mediathek übernommen; leer lassen bei rein dekorativen Bildern |
 | Layout → Ausrichtung | Textausrichtung | responsiv; richtet Bild und Bildunterschrift aus |
 | Style → Grösse & Form | Breite | responsiv |
@@ -214,7 +222,71 @@ Verhalten der Breiten:
 - Auf Desktop und Tablet brechen Spalten nie um; Breiten über 100 % werden proportional gestaucht.
 - Breiten verschachtelter Spalten wirken nur auf ihre eigene Ebene.
 
-### 3.6 Dynamische Werte
+### 3.6 Abstandhalter (`cf65/spacer`)
+
+Leerer Abstand zwischen Blöcken. Für Screenreader ausgeblendet (`aria-hidden`), im Editor gestrichelt umrandet.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Grösse | Höhe | responsiv; Standard `50px` |
+| Layout/Style | Panels | Aussenabstand, Hintergrundfarbe |
+
+### 3.7 Trennlinie (`cf65/divider`)
+
+Horizontale Linie. Ausgegeben als `<div role="separator">` statt `<hr>`, damit Theme-Stile für `<hr>` die Linie nicht verändern.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Grösse | Breite | responsiv; Standard 100 % |
+| Layout → Grösse | Ausrichtung | responsiv; Links, Mitte, Rechts (wirkt bei Breite unter 100 %) |
+| Style → Linie | Stil, Stärke | Durchgezogen, Gestrichelt, Gepunktet, Doppelt; Standard `1px` durchgezogen |
+| Style → Farben | Linie | Standard: Textfarbe |
+
+### 3.8 Trenner (`cf65/separator`)
+
+Dekorative Form als Übergang zwischen Abschnitten, z. B. unten an einem farbigen Bereich. Gefüllt ist der untere Teil der Form; als Farbe meist die Hintergrundfarbe des **folgenden** Abschnitts wählen.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Form | Form | Welle, Kurve, Schräge, Dreieck |
+| Layout → Form | Höhe | responsiv; Standard `80px` |
+| Layout → Form | Horizontal / Vertikal spiegeln | vertikal gespiegelt passt die Form an den oberen Rand eines Abschnitts |
+| Style → Farben | Form | Standard: Textfarbe |
+| Layout/Style | Panels | Aussenabstand, Hintergrundfarbe (Fläche hinter der Form) |
+
+Technisch: Das SVG wird nicht gespeichert, sondern beim Ausgeben eingesetzt (`SeparatorRenderer`, Formen in `includes/Blocks/shapes.json`). So entfernt kses nichts, wenn Autoren ohne `unfiltered_html` speichern.
+
+### 3.9 Untertitel (`cf65/subtitle`)
+
+Kurzer Text über oder unter einer Überschrift (Dachzeile). Grundstil: kleiner, fett, Grossbuchstaben mit Buchstabenabstand.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, siehe [3.11](#311-dynamische-werte) |
+| Layout → Ausrichtung | Textausrichtung | responsiv |
+| Style → Typografie, Farben | Schriftgrösse, Text, Text (Hover) | wie beim Text-Block |
+| Style → Schreibweise | Gross-/Kleinschreibung | Normal, GROSSBUCHSTABEN, kleinbuchstaben, Wortanfänge Gross |
+| Style → Schreibweise | Buchstabenabstand | z. B. `0.1em` |
+| Layout/Style | Panels | alle |
+
+Umwandeln: Untertitel ↔ Text (cf65) und Überschrift (cf65); Ausrichtung, Schriftgrösse und Farben bleiben.
+
+### 3.10 Zitat (`cf65/blockquote`)
+
+Zitat mit optionaler Quelle und Akzentlinie links.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Werkzeugleiste | Dynamischer Wert | Platzhalter in Zitat und Quelle |
+| Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts |
+| Style → Typografie | Schriftgrösse des Zitats | responsiv |
+| Style → Akzentlinie | Breite | Standard `4px`; `0` blendet sie aus |
+| Style → Farben | Zitat, Quelle, Akzentlinie | Standard: Textfarbe |
+| Layout/Style | Panels | Abstände, Schatten, Hintergrundfarbe |
+
+Leere Quelle wird nicht ausgegeben. Markup: `<blockquote>` mit `<p class="cf65-blockquote__text">` und `<cite class="cf65-blockquote__cite">`.
+
+### 3.11 Dynamische Werte
 
 Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen, etwa das Beitragsbild, ein ACF-Bild, den Link zum Beitrag oder ein ACF-Link-Feld. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt seine eigenen Werte.
 
@@ -353,7 +425,7 @@ add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 
 - **Bindungen** stehen im Block-Attribut `dynamic`, z. B. `{"url":{"source":"current-post","provider":"core","field":"featured_image"}}`. Bindbar sind nur Attribute, die der Block in `supports.cf65.dynamic` deklariert (bisher `cf65/image` → `url`, `cf65/button` → `url` und bei Blöcken mit Panel *Hintergrundbild* `styleBackgroundImage`).
 - **Ausgabe:** Das gespeicherte HTML bleibt statisch. Ein `render_block`-Filter setzt die Werte per `WP_HTML_Tag_Processor` ein. Ausgegeben werden nur Felder, die der Provider selbst anbietet, und nur aus Beiträgen, die öffentlich sichtbar sind oder die der aktuelle Benutzer bearbeiten darf.
-- **Inline-Platzhalter** im RichText: `<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="title" class="cf65-dynamic">Titel</span>`. Ersetzt wird der Inhalt nur in Blöcken mit `supports.cf65.inlineDynamic: true` (bisher `cf65/text`, `cf65/heading`, `cf65/button`). Das Finden übernimmt der HTML-Tokenizer von WordPress, verschachtelte Formatierung im Platzhalter eingeschlossen. Höchstens 200 Platzhalter pro Block.
+- **Inline-Platzhalter** im RichText: `<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="title" class="cf65-dynamic">Titel</span>`. Ersetzt wird der Inhalt nur in Blöcken mit `supports.cf65.inlineDynamic: true` (bisher `cf65/text`, `cf65/heading`, `cf65/subtitle`, `cf65/blockquote`, `cf65/button`). Das Finden übernimmt der HTML-Tokenizer von WordPress, verschachtelte Formatierung im Platzhalter eingeschlossen. Höchstens 200 Platzhalter pro Block.
 - **Ausgabetypen** (`kind`): `image` (Bildfelder), `link` (URL-Felder), `text` (Text- und URL-Felder, ohne HTML, max. 10 000 Zeichen).
 - **Provider `core`:** `title`, `excerpt`, `date` (Text), `permalink` (URL), `featured_image` (Bild).
 - **Provider `meta`:** Schlüssel aus `get_registered_meta_keys( 'post', <Post-Typ> )` mit `show_in_rest`, `single` und Typ `string`/`integer`/`number`; ausgeschlossen sind `is_protected_meta()`-Schlüssel. Label = `description` der Registrierung.
