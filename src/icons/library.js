@@ -10,6 +10,20 @@ export const ICONS = data.icons;
 export const SLOT_CLASS = 'cf65-icon-slot';
 
 const NAME = /^[a-z0-9][a-z0-9-]{0,63}$/;
+const VIEW_BOX = /^0 0 [1-9]\d{0,3} [1-9]\d{0,3}$/;
+export const DEFAULT_VIEW_BOX = '0 0 24 24';
+
+/**
+ * viewBox eines Icons (wie IconLibrary::view_box()).
+ *
+ * @param {unknown} value Wert aus icons.json.
+ * @return {string} viewBox.
+ */
+export function viewBox( value ) {
+	return typeof value === 'string' && VIEW_BOX.test( value )
+		? value
+		: DEFAULT_VIEW_BOX;
+}
 const ALLOWED = {
 	path: [ 'd' ],
 	circle: [ 'cx', 'cy', 'r' ],
@@ -85,7 +99,7 @@ export function IconSvg( { name } ) {
 	return (
 		<svg
 			className="cf65-icon"
-			viewBox="0 0 24 24"
+			viewBox={ viewBox( icon.v ) }
 			aria-hidden="true"
 			focusable="false"
 			{ ...paint }

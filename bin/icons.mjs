@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
- * Erzeugt includes/Icons/icons.json aus Lucide (ISC) und Simple Icons (CC0).
+ * Erzeugt includes/Icons/icons.json aus Lucide (ISC), Simple Icons (CC0)
+ * und – für Marken, die Simple Icons nicht führt – Font Awesome Free
+ * (Icons CC BY 4.0, Namensnennung in LICENSES.md).
  *
  * Nur die kuratierte Auswahl unten wird übernommen. Elemente und Attribute
  * werden gegen eine Whitelist geprüft und strukturiert gespeichert
@@ -212,6 +214,15 @@ const BRANDS = {
 	xing: 'XING',
 };
 
+/**
+ * Marken aus Font Awesome Free (Slug → Anzeigename, Export, Markenfarbe),
+ * nur wenn Simple Icons sie nicht führt (z. B. LinkedIn, auf Wunsch des
+ * Inhabers dort entfernt).
+ */
+const FA_BRANDS = {
+	linkedin: { label: 'LinkedIn', icon: 'faLinkedinIn', hex: '0A66C2' },
+};
+
 const ALLOWED = {
 	path: [ 'd' ],
 	circle: [ 'cx', 'cy', 'r' ],
@@ -297,6 +308,29 @@ for ( const [ slug, label ] of Object.entries( BRANDS ) ) {
 	};
 }
 
+const faBrands = require( '@fortawesome/free-brands-svg-icons' );
+for ( const [ slug, { label, icon, hex } ] of Object.entries( FA_BRANDS ) ) {
+	const definition = faBrands[ icon ]?.icon;
+	if ( ! definition ) {
+		missing.push( `brand:${ slug }` );
+		continue;
+	}
+	const [ width, height, , , path ] = definition;
+	const paths = Array.isArray( path ) ? path : [ path ];
+	brandColors[ slug ] = hex;
+	icons[ `brand-${ slug }` ] = {
+		g: 'brands',
+		t: 'f',
+		l: label,
+		c: `#${ hex.toLowerCase() }`,
+		v: `0 0 ${ width } ${ height }`,
+		e: clean(
+			slug,
+			paths.map( ( d ) => [ 'path', { d } ] )
+		),
+	};
+}
+
 /**
  * Hex-Farbe in Kurzform, wenn möglich (Stylelint: color-hex-length).
  *
@@ -314,9 +348,10 @@ const cssHex = ( hex ) => {
 // Markenfarben für cf65/social-buttons (Option „Markenfarben“).
 writeFileSync(
 	join( 'src', 'blocks', 'social-buttons', '_brands.scss' ),
-	`// Erzeugt von bin/icons.mjs – nicht von Hand bearbeiten.\n${ Object.keys(
-		BRANDS
-	)
+	`// Erzeugt von bin/icons.mjs – nicht von Hand bearbeiten.\n${ [
+		...Object.keys( BRANDS ),
+		...Object.keys( FA_BRANDS ),
+	]
 		.map(
 			( slug ) =>
 				`:where(.cf65-social-buttons__link--${ slug }) {\n\t--cf65-brand: ${ cssHex(
@@ -336,11 +371,12 @@ const version = ( pkg ) =>
 		.version;
 const lucideVersion = version( 'lucide-static' );
 const simpleVersion = version( 'simple-icons' );
+const faVersion = version( '@fortawesome/free-brands-svg-icons' );
 
 writeFileSync(
 	join( OUT, 'icons.json' ),
 	`${ JSON.stringify( {
-		$comment: `Erzeugt von bin/icons.mjs aus lucide-static ${ lucideVersion } (ISC) und simple-icons ${ simpleVersion } (CC0-1.0). Nicht von Hand bearbeiten. Lizenzen: LICENSES.md.`,
+		$comment: `Erzeugt von bin/icons.mjs aus lucide-static ${ lucideVersion } (ISC), simple-icons ${ simpleVersion } (CC0-1.0) und @fortawesome/free-brands-svg-icons ${ faVersion } (CC BY 4.0). Nicht von Hand bearbeiten. Lizenzen: LICENSES.md.`,
 		icons,
 	} ) }\n`
 );
@@ -368,6 +404,15 @@ https://simpleicons.org – CC0 1.0 Universal (gemeinfrei).
 Die Marken-Icons sind Markenzeichen ihrer jeweiligen Inhaber. Ihre Verwendung
 unterliegt deren Markenrichtlinien; sie sind hier nur zur Verlinkung auf die
 jeweiligen Profile gedacht.
+
+## Font Awesome Free ${ faVersion } (Marken: ${ Object.values( FA_BRANDS )
+		.map( ( brand ) => brand.label )
+		.join( ', ' ) })
+
+Font Awesome Free by @fontawesome – https://fontawesome.com
+Icons: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/),
+siehe https://fontawesome.com/license/free. Übernommen wurden nur die
+Pfaddaten der genannten Icons, unverändert.
 `
 );
 

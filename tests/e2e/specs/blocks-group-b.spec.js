@@ -78,6 +78,10 @@ test.describe( 'Blöcke Gruppe B', () => {
 						url: 'https://facebook.com/beispiel',
 					},
 					{ network: 'github', url: 'https://github.com/beispiel' },
+					{
+						network: 'linkedin',
+						url: 'https://www.linkedin.com/in/beispiel',
+					},
 					{ network: 'x', url: '' },
 				],
 			},
@@ -143,7 +147,7 @@ test.describe( 'Blöcke Gruppe B', () => {
 
 		// Social: Eintrag ohne URL fehlt, Markenfarbe als Hintergrund.
 		const social = front.locator( '.cf65-social-buttons__link' );
-		await expect( social ).toHaveCount( 2 );
+		await expect( social ).toHaveCount( 3 );
 		await expect( social.first() ).toHaveAttribute(
 			'aria-label',
 			'Facebook'
@@ -153,7 +157,18 @@ test.describe( 'Blöcke Gruppe B', () => {
 			'background-color',
 			'rgb(8, 102, 255)'
 		);
-		await expect( social.locator( 'svg' ) ).toHaveCount( 2 );
+		await expect( social.locator( 'svg' ) ).toHaveCount( 3 );
+		// LinkedIn (Font Awesome): eigene viewBox, Markenfarbe.
+		const linkedin = social.nth( 2 );
+		await expect( linkedin ).toHaveAttribute( 'aria-label', 'LinkedIn' );
+		await expect( linkedin.locator( 'svg' ) ).toHaveAttribute(
+			'viewBox',
+			'0 0 448 512'
+		);
+		await expect( linkedin ).toHaveCSS(
+			'background-color',
+			'rgb(10, 102, 194)'
+		);
 		await visitor.close();
 
 		await admin.editPost( postId );

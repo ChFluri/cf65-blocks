@@ -57,3 +57,10 @@ https://simpleicons.org – CC0 1.0 Universal (gemeinfrei).
 Die Marken-Icons sind Markenzeichen ihrer jeweiligen Inhaber. Ihre Verwendung
 unterliegt deren Markenrichtlinien; sie sind hier nur zur Verlinkung auf die
 jeweiligen Profile gedacht.
+
+## Font Awesome Free 7.3.1 (Marken: LinkedIn)
+
+Font Awesome Free by @fontawesome – https://fontawesome.com
+Icons: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/),
+siehe https://fontawesome.com/license/free. Übernommen wurden nur die
+Pfaddaten der genannten Icons, unverändert.

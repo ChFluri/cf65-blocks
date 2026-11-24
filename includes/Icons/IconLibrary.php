@@ -20,6 +20,8 @@ final class IconLibrary {
 
 	public const NAME_PATTERN = '/^[a-z0-9][a-z0-9-]{0,63}$/D';
 
+	public const DEFAULT_VIEW_BOX = '0 0 24 24';
+
 	private const ALLOWED = array(
 		'path'     => array( 'd' ),
 		'circle'   => array( 'cx', 'cy', 'r' ),
@@ -93,7 +95,17 @@ final class IconLibrary {
 			? 'fill="currentColor"'
 			: 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
 
-		return '<svg class="cf65-icon" viewBox="0 0 24 24" ' . $paint . ' aria-hidden="true" focusable="false">' . $body . '</svg>';
+		return '<svg class="cf65-icon" viewBox="' . self::view_box( $icon['v'] ?? null ) . '" ' . $paint . ' aria-hidden="true" focusable="false">' . $body . '</svg>';
+	}
+
+	/**
+	 * Die viewBox eines Icons: Standard 24×24, sonst `0 0 <breite> <höhe>`
+	 * (z. B. Font-Awesome-Marken).
+	 *
+	 * @param mixed $value Wert aus icons.json.
+	 */
+	public static function view_box( mixed $value ): string {
+		return \is_string( $value ) && 1 === \preg_match( '/^0 0 [1-9]\d{0,3} [1-9]\d{0,3}$/D', $value ) ? $value : self::DEFAULT_VIEW_BOX;
 	}
 
 	/**

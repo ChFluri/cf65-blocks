@@ -47,6 +47,19 @@ final class IconRendererTest extends TestCase {
 		self::assertSame( '', IconLibrary::svg( '"><script>' ) );
 	}
 
+	public function test_font_awesome_brand_keeps_its_view_box(): void {
+		$icons = IconLibrary::all();
+		self::assertSame( 'brands', $icons['brand-linkedin']['g'] );
+		self::assertSame( '#0a66c2', $icons['brand-linkedin']['c'] );
+		self::assertStringStartsWith( '<svg class="cf65-icon" viewBox="0 0 448 512" fill="currentColor"', IconLibrary::svg( 'brand-linkedin' ) );
+
+		self::assertSame( '0 0 24 24', IconLibrary::view_box( null ) );
+		self::assertSame( '0 0 640 512', IconLibrary::view_box( '0 0 640 512' ) );
+		foreach ( array( '0 0 0 24', '-1 0 24 24', '0 0 24 24"><script>', '0 0 99999 24', array( '0 0 24 24' ) ) as $bad ) {
+			self::assertSame( '0 0 24 24', IconLibrary::view_box( $bad ) );
+		}
+	}
+
 	public function test_every_icon_renders_only_whitelisted_markup(): void {
 		foreach ( \array_keys( IconLibrary::all() ) as $name ) {
 			$svg = IconLibrary::svg( $name );
