@@ -39,32 +39,46 @@ const imageMarkup = ( id ) =>
 <figure class="wp-block-cf65-image cf65-block cf65-image cf65-${ id }"><img alt=""/></figure>
 <!-- /wp:cf65/image -->`;
 
+// Nur selbst angelegte Inhalte aufräumen: andere Specs und der
+// Benchmark-Schritt der CI nutzen ihre Beiträge weiter.
+const created = [];
+
 /**
  * @param {Object} requestUtils Request-Utils.
  * @param {Object} data         Beitragsdaten.
+ * @param {string} [type]       REST-Basis (`posts` oder `pages`).
  * @return {Promise<Object>} Beitrag.
  */
-const createPost = ( requestUtils, data ) =>
-	requestUtils.rest( {
-		path: '/wp/v2/posts',
+const createPost = async ( requestUtils, data, type = 'posts' ) => {
+	const post = await requestUtils.rest( {
+		path: `/wp/v2/${ type }`,
 		method: 'POST',
 		data: { status: 'publish', ...data },
 	} );
+	created.push( { type, id: post.id } );
+	return post;
+};
 
 test.describe( 'Dynamic Content', () => {
 	let media;
 
 	test.beforeAll( async ( { requestUtils } ) => {
-		await requestUtils.deleteAllPosts();
-		await requestUtils.deleteAllMedia();
 		const file = join( tmpdir(), 'cf65-dynamic.png' );
 		writeFileSync( file, Buffer.from( PNG, 'base64' ) );
 		media = await requestUtils.uploadMedia( file );
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
-		await requestUtils.deleteAllPosts();
-		await requestUtils.deleteAllMedia();
+		for ( const { type, id } of created.splice( 0 ) ) {
+			await requestUtils.rest( {
+				path: `/wp/v2/${ type }/${ id }`,
+				method: 'DELETE',
+				params: { force: true },
+			} );
+		}
+		if ( media ) {
+			await requestUtils.deleteMedia( media.id );
+		}
 	} );
 
 	test( 'Button verlinkt auf den aktuellen Beitrag', async ( {
@@ -117,12 +131,10 @@ test.describe( 'Dynamic Content', () => {
 	} ) => {
 		const first = await createPost( requestUtils, { title: 'Eintrag A' } );
 		const second = await createPost( requestUtils, { title: 'Eintrag B' } );
-		const loop = await requestUtils.rest( {
-			path: '/wp/v2/pages',
-			method: 'POST',
-			data: {
+		const loop = await createPost(
+			requestUtils,
+			{
 				title: 'Liste',
-				status: 'publish',
 				content: `<!-- wp:query {"queryId":1,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":false}} -->
 <div class="wp-block-query"><!-- wp:post-template -->
 <!-- wp:post-title /-->
@@ -130,7 +142,8 @@ ${ buttonMarkup( 'l0o0p0b1' ) }
 <!-- /wp:post-template --></div>
 <!-- /wp:query -->`,
 			},
-		} );
+			'pages'
+		);
 
 		await page.goto( `/?page_id=${ loop.id }` );
 		const hrefs = await page
