@@ -203,7 +203,10 @@ test.describe( 'Style-Panels', () => {
 		const post = await createPost( requestUtils, {
 			title: 'Panels Editor',
 			status: 'draft',
-			content: textBlock( 'e4d1t0aa', { styleBorderWidth: '2px' } ),
+			content: textBlock( 'e4d1t0aa', {
+				styleBorderWidth: '2px',
+				styleBorderStyle: 'solid',
+			} ),
 		} );
 
 		await admin.editPost( post.id );
