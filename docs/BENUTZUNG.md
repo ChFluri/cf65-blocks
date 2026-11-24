@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 2.3 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.3 + gemeinsame Style-Panels (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -74,11 +74,39 @@ Längenfelder bestehen aus einer Zahl und einer Einheit (`px`, `em`, `rem`, `%`,
 
 Farben mit dem Zusatz *(Hover)* gelten, solange der Mauszeiger über dem Element steht. Bei Überschrift und Text ist das der ganze Block, beim Button der Button selbst.
 
+### Gemeinsame Style-Panels
+
+Viele Blöcke haben dieselben Grundeinstellungen. Sie gelten für das **äussere Element** des Blocks und stehen am Ende der Tabs:
+
+| Panel | Tab | Einstellungen |
+|---|---|---|
+| Abstände | Layout | Aussenabstand oben/unten, Innenabstand vertikal/horizontal (je responsiv) |
+| Rahmen | Style | Breite, Stil (Keiner, Durchgezogen, Gestrichelt, Gepunktet, Doppelt), Eckenradius |
+| Rahmenfarbe | Style | Rahmen, Rahmen (Hover) |
+| Schatten | Style | Keiner, Klein, Mittel, Gross – auch für Hover |
+| Hintergrundfarbe | Style | Hintergrund, Hintergrund (Hover) |
+| Hintergrundbild | Style | Bild aus der Mediathek, *Dynamischer Wert* (z. B. Beitragsbild), Grösse (Füllen, Einpassen, Originalgrösse), Position, Wiederholen |
+
+Welche Blöcke welche Panels haben:
+
+| Block | Panels |
+|---|---|
+| Text, Überschrift, Spalten | alle |
+| Button, Bild | Abstände (nur Aussenabstand) |
+| Spalte | Rahmen, Rahmenfarbe, Schatten, Hintergrundbild (Innenabstand und Hintergrundfarbe hat die Spalte schon selbst) |
+
+Hinweise:
+
+- Wer eine Rahmenbreite einträgt, bekommt automatisch den Stil *Durchgezogen*; ohne Stil zeichnet der Browser keinen Rahmen.
+- Aussenabstände setzen sich auch gegen die Abstandsregeln von WordPress-Layouts durch (z. B. beim ersten Block im Inhalt).
+- **Dynamisches Hintergrundbild:** Ist ein Wert vorhanden, setzt der Server ihn direkt am Element; sonst gilt das gewählte Bild aus der Mediathek als Fallback. Im Editor zeigt der Block eine Vorschau mit dem Wert des Beitrags bzw. des Query-Loop-Eintrags.
+- Bild-Adressen mit runden Klammern werden als Hintergrund nicht verwendet (WordPress entfernt Klammern ohnehin aus Dateinamen beim Upload).
+
 ### Wie die Stile ausgegeben werden
 
 Jeder Block erhält beim Einfügen automatisch eine eigene ID (Klasse `cf65-<id>`). Beim Duplizieren bekommt die Kopie eine neue ID. Daraus erzeugt das Plugin genau das CSS, das der Block braucht. Im Frontend landet es gesammelt im Inline-Stylesheet `cf65-blocks-dynamic`: bei Block-Themes im `<head>`, bei klassischen Themes notfalls im Footer. Leere Einstellungen erzeugen kein CSS.
 
-Spezifität: Die Grundstile der Blöcke stehen in `:where()` (Spezifität 0), daher gewinnen eingestellte Werte und Theme-CSS immer gegen sie. Eingestellte Werte haben die Spezifität einer Klasse (`.cf65-<id>`, bzw. `.cf65-<id> .cf65-button__link`). Theme-Regeln mit höherer Spezifität, etwa `.entry-content h2`, überstimmen sie.
+Spezifität: Die Grundstile der Blöcke stehen in `:where()` (Spezifität 0), daher gewinnen eingestellte Werte und Theme-CSS immer gegen sie. Eingestellte Werte haben die Spezifität einer Klasse (`.cf65-<id>`, bzw. `.cf65-<id> .cf65-button__link`). Theme-Regeln mit höherer Spezifität, etwa `.entry-content h2`, überstimmen sie. Ausnahme: Aussenabstände der Style-Panels nutzen `.cf65-<id>.cf65-<id>.cf65-<id>` (0,3,0), damit sie gegen die Layoutregeln von WordPress wirken.
 
 ## 3. Blöcke
 
@@ -248,6 +276,8 @@ Das Plugin prüft alle Stilwerte im Editor und **beim Speichern nochmals auf dem
 | Länge | Zahl mit `px`, `em`, `rem`, `%`, `vw`, `vh`; `0`; CSS-Variable | `1.5rem`, `-10px`, `var(--abstand-gross)` |
 | Link-URL | `http`, `https`, `mailto`, `tel`, relativ; max. 2048 Zeichen | `https://example.com`, `mailto:info@example.com` |
 | Bild-URL | `http`, `https`, relativ | `/wp-content/uploads/bild.jpg` |
+| Hintergrundbild | wie Bild-URL, zusätzlich ohne runde Klammern; als Objekt `{ url, id? }` gespeichert | `{"url":"/wp-content/uploads/hero.jpg","id":12}` |
+| Schatten, Rahmenstil, Hintergrund-Grösse/-Position/-Wiederholung | nur die Werte aus der Auswahl | `solid`, `cover`, `center center` |
 
 Werte sind auf 80 Zeichen begrenzt (URLs: 2048). Leerzeichen am Anfang oder Ende, Anführungszeichen und spitze Klammern machen einen Wert ungültig. CSS-Variablen bestehen aus Kleinbuchstaben, Ziffern und Bindestrichen.
 
@@ -311,9 +341,17 @@ Beispiel:
 add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 ```
 
+### Style-Panels und Style-Map
+
+- **Panels** wählt ein Block in `block.json` unter `supports.cf65.panels`, z. B. `[ "margin", "padding", "border", "shadow", "backgroundColor", "backgroundImage" ]`. Die Definitionen stehen in `includes/Styles/panels.json`. PHP (`Styles\Panels::apply()` über den Filter `block_type_metadata`) und JS (`withPanels()` in `src/extensions/panels/definitions.js`) ergänzen daraus Attribute (Präfix `style…`, bestehende bleiben), Einträge in `supports.cf65.styles` und Bindungen in `supports.cf65.dynamic`. Generator, Guard, CSS-Cache, Payload-Tests und Dynamic Content gelten damit ohne weiteren Code.
+- **Editor:** Die Panels erscheinen per Slot/Fill am Ende der Tabs *Layout* und *Style* (`LayoutPanels`, `StylePanels` aus `src/components/inspector-tabs.js`).
+- **Style-Map-Einträge** (`supports.cf65.styles`): `attr`, `property`, `type` (`color`, `length`, `enum`, `image`), optional `values` (enum), `responsive`, `state: "hover"`, `selector` (Nachfahre, z. B. `" .cf65-icon"`), `hoverScope`, `deviceVar` und neu `boost` (Blockklasse dreifach, Spezifität 0,3,0).
+- **Typ `image`:** Wert `{ url, id? }`; Ausgabe `url(…)` ohne Anführungszeichen. URL wie bei Bildern geprüft, zusätzlich ohne runde Klammern; der Guard normalisiert das Objekt.
+- **Dynamisches Hintergrundbild:** Bindung `dynamic.styleBackgroundImage` (`kind: image`, `style: background-image`). Der Renderer setzt `style="background-image:url(…)"` auf das erste Element des Blocks; ohne Wert bleibt das statische Bild aus dem CSS.
+
 ### Dynamic Content
 
-- **Bindungen** stehen im Block-Attribut `dynamic`, z. B. `{"url":{"source":"current-post","provider":"core","field":"featured_image"}}`. Bindbar sind nur Attribute, die der Block in `supports.cf65.dynamic` deklariert (bisher `cf65/image` → `url`, `cf65/button` → `url`).
+- **Bindungen** stehen im Block-Attribut `dynamic`, z. B. `{"url":{"source":"current-post","provider":"core","field":"featured_image"}}`. Bindbar sind nur Attribute, die der Block in `supports.cf65.dynamic` deklariert (bisher `cf65/image` → `url`, `cf65/button` → `url` und bei Blöcken mit Panel *Hintergrundbild* `styleBackgroundImage`).
 - **Ausgabe:** Das gespeicherte HTML bleibt statisch. Ein `render_block`-Filter setzt die Werte per `WP_HTML_Tag_Processor` ein. Ausgegeben werden nur Felder, die der Provider selbst anbietet, und nur aus Beiträgen, die öffentlich sichtbar sind oder die der aktuelle Benutzer bearbeiten darf.
 - **Inline-Platzhalter** im RichText: `<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="title" class="cf65-dynamic">Titel</span>`. Ersetzt wird der Inhalt nur in Blöcken mit `supports.cf65.inlineDynamic: true` (bisher `cf65/text`, `cf65/heading`, `cf65/button`). Das Finden übernimmt der HTML-Tokenizer von WordPress, verschachtelte Formatierung im Platzhalter eingeschlossen. Höchstens 200 Platzhalter pro Block.
 - **Ausgabetypen** (`kind`): `image` (Bildfelder), `link` (URL-Felder), `text` (Text- und URL-Felder, ohne HTML, max. 10 000 Zeichen).
