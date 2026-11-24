@@ -1,0 +1,22 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-number-box) {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	box-sizing: border-box;
+	height: 100%;
+	text-align: center;
+	overflow-wrap: break-word;
+}
+
+:where(.cf65-number-box) > * {
+	margin-block: 0;
+}
+
+// Ziffern gleich breit, damit das Hochzählen nicht springt.
+:where(.cf65-number-box__number) {
+	font-size: 3em;
+	font-weight: 700;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+}

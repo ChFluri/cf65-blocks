@@ -1,0 +1,65 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/pricing-box",
+	"version": "0.1.0",
+	"title": "Preis-Box (cf65)",
+	"category": "cf65-blocks",
+	"icon": "tag",
+	"description": "Tarif mit Titel, Preis, Leistungsliste und Button; optional hervorgehoben mit Badge (z. B. „Beliebt“).",
+	"keywords": [ "preis", "pricing", "tarif", "paket", "abo", "preistabelle" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"featured": { "type": "boolean", "default": false },
+		"badge": { "type": "string", "default": "Beliebt" },
+		"gap": { "type": "object" },
+		"textAlign": { "type": "object" },
+		"accentColor": { "type": "string" },
+		"badgeTextColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"styles": [
+				{
+					"attr": "gap",
+					"property": "gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "accentColor",
+					"property": "--cf65-pricing-accent",
+					"type": "color"
+				},
+				{
+					"attr": "badgeTextColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-pricing-box__badge"
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

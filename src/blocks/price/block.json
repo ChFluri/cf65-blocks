@@ -1,0 +1,81 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/price",
+	"version": "0.1.0",
+	"title": "Preis (cf65)",
+	"category": "cf65-blocks",
+	"icon": "money-alt",
+	"description": "Preis mit Währung, Betrag, Zeitraum und optional durchgestrichenem alten Preis.",
+	"keywords": [ "preis", "price", "betrag", "kosten", "tarif" ],
+	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"currency": { "type": "string", "default": "CHF" },
+		"amount": { "type": "string", "default": "" },
+		"period": { "type": "string", "default": "" },
+		"oldAmount": { "type": "string", "default": "" },
+		"currencyAfter": { "type": "boolean", "default": false },
+		"textAlign": { "type": "object" },
+		"amountSize": { "type": "object" },
+		"amountColor": { "type": "string" },
+		"currencyColor": { "type": "string" },
+		"periodColor": { "type": "string" },
+		"oldColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin", "padding", "backgroundColor" ],
+			"inlineDynamic": true,
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "amountSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "amountColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-price__amount"
+				},
+				{
+					"attr": "currencyColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-price__currency"
+				},
+				{
+					"attr": "periodColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-price__period"
+				},
+				{
+					"attr": "oldColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-price__old"
+				}
+			]
+		}
+	},
+	"example": {
+		"attributes": { "amount": "49", "period": "/ Monat" }
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

@@ -1,0 +1,46 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+// Ohne eigene Werte: dunkles Overlay (40 %), weisser Text unten links.
+// Die Variablen werden pro Box gesetzt, damit verschachtelte sie nicht erben.
+:where(.cf65-image-box) {
+	--cf65-overlay-color: #000;
+	--cf65-overlay-opacity: 0.4;
+	position: relative;
+	isolation: isolate;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	gap: 0.5em;
+	box-sizing: border-box;
+	height: 100%;
+	min-height: 300px;
+	padding: 1.5em;
+	overflow: hidden;
+	background-color: #333;
+	background-position: center center;
+	background-size: cover;
+	color: #fff;
+	overflow-wrap: break-word;
+}
+
+:where(.cf65-image-box)::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	background-color: var(--cf65-overlay-color);
+	opacity: var(--cf65-overlay-opacity);
+	pointer-events: none;
+	transition: opacity 0.25s ease;
+}
+
+:where(.cf65-image-box) > * {
+	margin-block: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	:where(.cf65-image-box)::before {
+		transition: none;
+	}
+}

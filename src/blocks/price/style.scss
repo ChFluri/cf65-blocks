@@ -1,0 +1,34 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+// Normaler Textfluss (kein Flex), damit die Textausrichtung umgebender
+// Container (z. B. Preis-Box) wirkt. Die Schriftgrösse des Blocks ist die
+// des Betrags; die übrigen Teile sind relativ dazu (em) und wachsen mit.
+:where(.cf65-price) {
+	box-sizing: border-box;
+	font-size: 3em;
+	line-height: 1.1;
+}
+
+:where(.cf65-price) > * + * {
+	margin-inline-start: 0.15em;
+}
+
+:where(.cf65-price__amount) {
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+:where(.cf65-price__currency) {
+	font-size: 0.45em;
+	font-weight: 600;
+}
+
+:where(.cf65-price__period) {
+	font-size: 0.35em;
+	opacity: 0.75;
+}
+
+:where(.cf65-price__old) {
+	margin-inline-end: 0.25em;
+	font-size: 0.4em;
+	opacity: 0.6;
+}

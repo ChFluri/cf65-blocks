@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/icon-box",
+	"version": "0.1.0",
+	"title": "Icon-Box (cf65)",
+	"category": "cf65-blocks",
+	"icon": "star-filled",
+	"description": "Box mit Icon, Titel und Text; Icon oben oder links neben dem Inhalt.",
+	"keywords": [ "icon box", "merkmal", "feature", "leistung", "box" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"layout": {
+			"type": "string",
+			"default": "stacked",
+			"enum": [ "stacked", "side" ]
+		},
+		"gap": { "type": "object" },
+		"textAlign": { "type": "object" },
+		"textColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"styles": [
+				{
+					"attr": "gap",
+					"property": "--cf65-box-gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" }
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

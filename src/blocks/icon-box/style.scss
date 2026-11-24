@@ -1,0 +1,45 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-icon-box) {
+	--cf65-box-gap: 0.75em;
+	display: flex;
+	flex-direction: column;
+	gap: var(--cf65-box-gap);
+	box-sizing: border-box;
+	height: 100%;
+	padding: 1.5em;
+	text-align: center;
+	overflow-wrap: break-word;
+}
+
+:where(.cf65-icon-box) > * {
+	margin-block: 0;
+}
+
+// Icon links: erster Icon-Block in der linken Spalte über alle Zeilen,
+// übriger Inhalt rechts. Ohne Zeilenabstand im Raster (leere Zeilen der
+// Icon-Spalte), der Abstand kommt als margin-top.
+:where(.cf65-icon-box.is-layout-side) {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	column-gap: calc(var(--cf65-box-gap) * 1.5);
+	row-gap: 0;
+	align-items: start;
+	text-align: left;
+}
+
+:where(.cf65-icon-box.is-layout-side) > * {
+	grid-column: 2;
+}
+
+:where(.cf65-icon-box.is-layout-side) > * + * {
+	margin-block-start: var(--cf65-box-gap);
+}
+
+:where(.cf65-icon-box.is-layout-side > .cf65-icon:first-child) {
+	grid-column: 1;
+	grid-row: 1 / span 20;
+}
+
+:where(.cf65-icon-box.is-layout-side > .cf65-icon:first-child + *) {
+	margin-block-start: 0;
+}

@@ -1,0 +1,75 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/number-box",
+	"version": "0.1.0",
+	"title": "Zahlen-Box (cf65)",
+	"category": "cf65-blocks",
+	"icon": "chart-bar",
+	"description": "Grosse Zahl (z. B. „250+“ oder „98 %“) mit Titel und Text; optional hochzählend beim Scrollen.",
+	"keywords": [ "zahl", "number", "counter", "statistik", "kennzahl" ],
+	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"number": { "type": "string", "default": "" },
+		"countUp": { "type": "boolean", "default": false },
+		"gap": { "type": "object" },
+		"textAlign": { "type": "object" },
+		"numberSize": { "type": "object" },
+		"numberColor": { "type": "string" },
+		"textColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"inlineDynamic": true,
+			"styles": [
+				{
+					"attr": "gap",
+					"property": "gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "numberSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true,
+					"selector": " .cf65-number-box__number"
+				},
+				{
+					"attr": "numberColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-number-box__number"
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" }
+			]
+		}
+	},
+	"example": {
+		"attributes": { "number": "250+" }
+	},
+	"editorScript": "file:./index.js",
+	"viewScript": "file:./view.js",
+	"style": "file:./style-index.css"
+}

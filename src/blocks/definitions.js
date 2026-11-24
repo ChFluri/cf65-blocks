@@ -73,6 +73,21 @@ import callToActionSave from './call-to-action/save';
 import notificationMetadata from './notification/block.json';
 import notificationDeprecated from './notification/deprecated';
 import notificationSave from './notification/save';
+import iconBoxMetadata from './icon-box/block.json';
+import iconBoxDeprecated from './icon-box/deprecated';
+import iconBoxSave from './icon-box/save';
+import imageBoxMetadata from './image-box/block.json';
+import imageBoxDeprecated from './image-box/deprecated';
+import imageBoxSave from './image-box/save';
+import numberBoxMetadata from './number-box/block.json';
+import numberBoxDeprecated from './number-box/deprecated';
+import numberBoxSave from './number-box/save';
+import priceMetadata from './price/block.json';
+import priceDeprecated from './price/deprecated';
+import priceSave from './price/save';
+import pricingBoxMetadata from './pricing-box/block.json';
+import pricingBoxDeprecated from './pricing-box/deprecated';
+import pricingBoxSave from './pricing-box/save';
 import { withPanels } from '../extensions/panels/definitions';
 
 const DEFINITIONS = [
@@ -182,6 +197,31 @@ const DEFINITIONS = [
 		metadata: notificationMetadata,
 		save: notificationSave,
 		deprecated: notificationDeprecated,
+	},
+	{
+		metadata: iconBoxMetadata,
+		save: iconBoxSave,
+		deprecated: iconBoxDeprecated,
+	},
+	{
+		metadata: imageBoxMetadata,
+		save: imageBoxSave,
+		deprecated: imageBoxDeprecated,
+	},
+	{
+		metadata: numberBoxMetadata,
+		save: numberBoxSave,
+		deprecated: numberBoxDeprecated,
+	},
+	{
+		metadata: priceMetadata,
+		save: priceSave,
+		deprecated: priceDeprecated,
+	},
+	{
+		metadata: pricingBoxMetadata,
+		save: pricingBoxSave,
+		deprecated: pricingBoxDeprecated,
 	},
 ];
 
