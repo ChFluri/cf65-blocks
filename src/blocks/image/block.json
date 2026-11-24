@@ -9,6 +9,7 @@
 	"description": "Bild aus der Mediathek mit responsiver Breite, Ausrichtung, Eckenradius und Bildunterschrift.",
 	"keywords": [ "bild", "image", "foto" ],
 	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
 	"attributes": {
 		"uniqueId": { "type": "string" },
 		"markupVersion": { "type": "number", "default": 1 },
@@ -21,7 +22,8 @@
 		"textAlign": { "type": "object" },
 		"imageWidth": { "type": "object" },
 		"borderRadius": { "type": "string" },
-		"captionColor": { "type": "string" }
+		"captionColor": { "type": "string" },
+		"dynamic": { "type": "object" }
 	},
 	"supports": {
 		"html": false,
@@ -29,6 +31,7 @@
 		"className": true,
 		"cf65": {
 			"urls": { "url": "image" },
+			"dynamic": { "url": { "kind": "image", "tag": "img" } },
 			"styles": [
 				{
 					"attr": "textAlign",

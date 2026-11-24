@@ -12,6 +12,9 @@ namespace Cf65\Blocks;
 use Cf65\Blocks\Blocks\Registry;
 use Cf65\Blocks\Cli\BenchCommand;
 use Cf65\Blocks\Debug\DebugMode;
+use Cf65\Blocks\Dynamic\DynamicRenderer;
+use Cf65\Blocks\Dynamic\Resolver;
+use Cf65\Blocks\Dynamic\RestController;
 use Cf65\Blocks\Security\AttributeGuard;
 use Cf65\Blocks\Styles\CssCache;
 use Cf65\Blocks\Styles\CssGenerator;
@@ -38,9 +41,13 @@ final class Plugin {
 		}
 		self::$booted = true;
 
+		$resolver = new Resolver();
+
 		( new DebugMode() )->register_hooks();
 		( new Registry( PLUGIN_DIR ) )->register_hooks();
 		( new StyleRenderer( new CssGenerator(), null, new CssCache() ) )->register_hooks();
+		( new DynamicRenderer( $resolver ) )->register_hooks();
+		( new RestController( $resolver ) )->register_hooks();
 		( new AttributeGuard() )->register_hooks();
 
 		if ( \defined( 'WP_CLI' ) && \WP_CLI ) {

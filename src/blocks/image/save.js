@@ -20,10 +20,24 @@ export function positiveInt( value ) {
 	return Number.isInteger( value ) && value > 0 ? value : undefined;
 }
 
+/**
+ * @param {Object} attributes Block-Attribute.
+ * @return {boolean} true, wenn die Bild-URL an einen dynamischen Wert gebunden ist.
+ */
+export function hasDynamicUrl( attributes ) {
+	const binding = attributes?.dynamic?.url;
+	return Boolean( binding && typeof binding === 'object' );
+}
+
+/*
+ * Dynamisch gebundenes Bild ohne statische URL: `<img>` ohne `src`; der
+ * Server setzt den Wert beim Rendern ein (includes/Dynamic/DynamicRenderer)
+ * oder lässt den Block weg. Inhalte ohne `dynamic` bleiben byte-identisch.
+ */
 export default function save( { attributes } ) {
 	const { uniqueId, id, url, alt, caption, width, height } = attributes;
-	const src = sanitizeUrl( url, IMAGE_SCHEMES );
-	if ( ! src ) {
+	const src = sanitizeUrl( url, IMAGE_SCHEMES ) ?? undefined;
+	if ( ! src && ! hasDynamicUrl( attributes ) ) {
 		return null;
 	}
 	const mediaId = positiveInt( id );

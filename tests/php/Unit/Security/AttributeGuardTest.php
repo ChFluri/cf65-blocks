@@ -169,4 +169,56 @@ final class AttributeGuardTest extends TestCase {
 		$content = '<!-- wp:cf65/text {"uniqueId":"t1x2t3x4"} --><p>x</p><!-- /wp:cf65/text -->';
 		self::assertSame( $content, $this->guard()->sanitize_content( $content ) );
 	}
+
+	public function test_valid_bindings_stay_unchanged(): void {
+		$attrs = array(
+			'url'     => 'https://example.org/fallback.jpg',
+			'dynamic' => array(
+				'url' => array(
+					'source'   => 'current-post',
+					'provider' => 'acf',
+					'field'    => 'field_abc123',
+				),
+			),
+		);
+
+		// Unbekannter Provider bleibt erhalten (z. B. ACF vorübergehend deaktiviert).
+		self::assertSame( $attrs, $this->guard()->sanitize_attributes( 'cf65/image', $attrs ) );
+	}
+
+	public function test_invalid_and_undeclared_bindings_are_removed(): void {
+		$valid = array(
+			'source'   => 'current-post',
+			'provider' => 'core',
+			'field'    => 'permalink',
+			'evil'     => '<script>',
+		);
+
+		$clean = $this->guard()->sanitize_attributes(
+			'cf65/button',
+			array(
+				'dynamic' => array(
+					'url'     => $valid,
+					'content' => $valid,
+					'href'    => array( 'source' => 'javascript:alert(1)' ),
+				),
+			)
+		);
+		self::assertSame(
+			array(
+				'dynamic' => array(
+					'url' => array(
+						'source'   => 'current-post',
+						'provider' => 'core',
+						'field'    => 'permalink',
+					),
+				),
+			),
+			$clean
+		);
+
+		self::assertSame( array(), $this->guard()->sanitize_attributes( 'cf65/button', array( 'dynamic' => array( 'url' => 'x' ) ) ) );
+		self::assertSame( array(), $this->guard()->sanitize_attributes( 'cf65/button', array( 'dynamic' => 'x' ) ) );
+		self::assertSame( array(), $this->guard()->sanitize_attributes( 'cf65/heading', array( 'dynamic' => array( 'url' => $valid ) ) ) );
+	}
 }

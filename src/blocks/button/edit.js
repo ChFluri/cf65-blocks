@@ -13,6 +13,8 @@ import {
 	AlignmentPanel,
 	TypographyColorPanels,
 } from '../../components/text-style-panels';
+import { withBinding } from '../../dynamic/binding';
+import DynamicControl from '../../dynamic/dynamic-control';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
 import { sanitizeUrl } from '../../security/sanitize';
 import useBlockCss from '../../styles/use-block-css';
@@ -21,8 +23,14 @@ import { LINK_CLASS } from './save';
 
 const STYLE_MAP = metadata.supports.cf65.styles;
 
-export default function Edit( { attributes, setAttributes, clientId } ) {
+export default function Edit( {
+	attributes,
+	setAttributes,
+	clientId,
+	context,
+} ) {
 	const { uniqueId, content, url, opensInNewTab } = attributes;
+	const isDynamic = Boolean( attributes.dynamic?.url );
 
 	useUniqueId( clientId, uniqueId, setAttributes );
 
@@ -45,7 +53,14 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 									__nextHasNoMarginBottom
 									__next40pxDefaultSize
 									type="url"
-									label={ __( 'URL', 'cf65-blocks' ) }
+									label={
+										isDynamic
+											? __(
+													'Fallback-URL',
+													'cf65-blocks'
+												)
+											: __( 'URL', 'cf65-blocks' )
+									}
 									value={ url ?? '' }
 									onChange={ ( next ) =>
 										setAttributes( {
@@ -59,6 +74,20 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 													'cf65-blocks'
 												)
 											: undefined
+									}
+								/>
+								<DynamicControl
+									kind="link"
+									binding={ attributes.dynamic?.url }
+									postType={ context?.postType }
+									onChange={ ( next ) =>
+										setAttributes( {
+											dynamic: withBinding(
+												attributes.dynamic,
+												'url',
+												next
+											),
+										} )
 									}
 								/>
 								<ToggleControl

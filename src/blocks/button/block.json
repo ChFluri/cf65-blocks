@@ -9,6 +9,7 @@
 	"description": "Link-Button mit Farben und Hintergrund inkl. Hover, responsiver Grösse und Innenabstand.",
 	"keywords": [ "button", "link", "schaltfläche" ],
 	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
 	"attributes": {
 		"uniqueId": { "type": "string" },
 		"markupVersion": { "type": "number", "default": 1 },
@@ -23,7 +24,8 @@
 		"textColor": { "type": "string" },
 		"textColorHover": { "type": "string" },
 		"backgroundColor": { "type": "string" },
-		"backgroundColorHover": { "type": "string" }
+		"backgroundColorHover": { "type": "string" },
+		"dynamic": { "type": "object" }
 	},
 	"supports": {
 		"html": false,
@@ -31,6 +33,14 @@
 		"className": true,
 		"cf65": {
 			"urls": { "url": "link" },
+			"dynamic": {
+				"url": {
+					"kind": "link",
+					"tag": "a",
+					"class": "cf65-button__link",
+					"newTab": "opensInNewTab"
+				}
+			},
 			"styles": [
 				{
 					"attr": "textAlign",

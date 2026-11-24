@@ -12,6 +12,8 @@
  * - Stilwerte aus `supports.cf65.styles` über den Sanitizer; responsive
  *   Werte nur mit bekannten Geräten
  * - URLs aus `supports.cf65.urls` (`link` oder `image`)
+ * - Bindungen im Attribut `dynamic`, nur für Attribute aus
+ *   `supports.cf65.dynamic` ({@see Binding}: rein strukturell)
  * - `uniqueId`
  * - Rechte aus `supports.cf65.capabilities` ({@see CapabilityGuard})
  *
@@ -27,6 +29,7 @@ declare( strict_types = 1 );
 namespace Cf65\Blocks\Security;
 
 use Cf65\Blocks\Blocks\Registry;
+use Cf65\Blocks\Dynamic\Binding;
 use Cf65\Blocks\Styles\CssGenerator;
 
 /**
@@ -145,7 +148,17 @@ final class AttributeGuard {
 			}
 		}
 
-		// 5. Rechte.
+		// 5. Bindungen (Dynamic Content): nur deklarierte Attribute, Struktur geprüft.
+		if ( \array_key_exists( 'dynamic', $attributes ) ) {
+			$dynamic = self::sanitize_dynamic( $attributes['dynamic'], \is_array( $cf65['dynamic'] ?? null ) ? $cf65['dynamic'] : array() );
+			if ( null === $dynamic ) {
+				unset( $attributes['dynamic'] );
+			} else {
+				$attributes['dynamic'] = $dynamic;
+			}
+		}
+
+		// 6. Rechte.
 		$capabilities = \is_array( $cf65['capabilities'] ?? null ) ? $cf65['capabilities'] : array();
 		return $this->capabilities->filter( $attributes, $capabilities );
 	}
@@ -206,6 +219,30 @@ final class AttributeGuard {
 			$device_value = self::sanitize_value( $entry, $value[ $device ] );
 			if ( null !== $device_value ) {
 				$clean[ $device ] = $device_value;
+			}
+		}
+		return array() === $clean ? null : $clean;
+	}
+
+	/**
+	 * Bereinigt das Attribut `dynamic` gegen `supports.cf65.dynamic`.
+	 *
+	 * @param mixed        $value Rohwert.
+	 * @param array<mixed> $specs Bindbare Attribute.
+	 * @return array<string, array<string, mixed>>|null Null = entfernen.
+	 */
+	private static function sanitize_dynamic( mixed $value, array $specs ): ?array {
+		if ( ! \is_array( $value ) ) {
+			return null;
+		}
+		$clean = array();
+		foreach ( $value as $attr => $raw ) {
+			if ( ! \is_string( $attr ) || ! \is_array( $specs[ $attr ] ?? null ) ) {
+				continue;
+			}
+			$binding = Binding::from_array( $raw );
+			if ( null !== $binding ) {
+				$clean[ $attr ] = $binding->to_array();
 			}
 		}
 		return array() === $clean ? null : $clean;
