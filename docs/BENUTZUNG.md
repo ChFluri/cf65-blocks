@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 2.2 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag: Bild, Button-Link und Platzhalter im Text. ACF, Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.3 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -188,11 +188,28 @@ Verhalten der Breiten:
 
 ### 3.6 Dynamische Werte
 
-Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen: das Bild sein Beitragsbild, der Button den Link zum Beitrag. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt sein eigenes Bild und seinen eigenen Link.
+Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen, etwa das Beitragsbild, ein ACF-Bild, den Link zum Beitrag oder ein ACF-Link-Feld. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt seine eigenen Werte.
 
 1. Block auswählen, Tab *Layout*.
-2. Bild: Bereich *Bild* → **Dynamischer Wert** → *Beitragsbild*. Button: Bereich *Link* → **Dynamischer Wert** → *Link zum Beitrag*.
-3. Zum Lösen der Bindung *Kein (statischer Wert)* wählen.
+2. Bild: Bereich *Bild* → **Dynamischer Wert**. Button: Bereich *Link* → **Dynamischer Wert**.
+3. Feld wählen. Die Liste ist nach Quelle gruppiert (*WordPress*, *Post-Meta*, *ACF*) und zeigt nur passende Felder.
+4. Zum Lösen der Bindung *Kein (statischer Wert)* wählen.
+
+Verfügbare Felder:
+
+| Gruppe | Bild | Link | Text (Platzhalter) |
+|---|---|---|---|
+| WordPress | Beitragsbild | Link zum Beitrag | Titel, Auszug, Datum, Link zum Beitrag |
+| Post-Meta | – | – | registrierte Meta-Felder mit `show_in_rest` (einzeln, Text/Zahl); keine geschützten (`_…`) |
+| ACF | Bild | URL, Link, Seitenlink | Text, Textbereich, Zahl, Bereich, E-Mail, WYSIWYG, Auswahl, Checkbox, Radio, Button-Gruppe, Ja/Nein, Datum, Datum/Zeit, Zeit, Farbe, Beitrag, Relation, URL, Link, Seitenlink |
+
+ACF-Felder erscheinen mit dem Namen ihrer Feldgruppe, z. B. „Projekt: Untertitel“, und nur, wenn die Feldgruppe für den Post-Typ gilt. Repeater, Flexible Content und Gruppenfelder werden noch nicht unterstützt.
+
+ACF-Besonderheiten:
+
+- **Datum** und **Auswahl** erscheinen im Rückgabeformat des Feldes (z. B. `d.m.Y`). Mehrfachauswahl wird kommagetrennt ausgegeben.
+- **Ja/Nein** wird als „Ja“ bzw. „Nein“ ausgegeben.
+- **Beitrag/Relation** zeigt die Titel der verknüpften Beiträge, **Seitenlink** den Link des ersten. Berücksichtigt werden nur Beiträge, die der Betrachter sehen darf; Entwürfe und private Beiträge bleiben für Besucher verborgen.
 
 Verhalten:
 
@@ -211,7 +228,7 @@ In **Text**, **Überschrift** und der **Button-Beschriftung** lassen sich Werte 
 
 1. Cursor an die gewünschte Stelle setzen (markierter Text wird ersetzt).
 2. In der Werkzeugleiste **Dynamischer Wert** wählen. Der Eintrag liegt meist im Menü ▾ für weitere Formatierungen, neben *Fett*, *Kursiv* und *Link*.
-3. Feld wählen: *Titel*, *Auszug*, *Datum* oder *Link zum Beitrag* (als Text).
+3. Feld wählen, z. B. *Titel*, *Datum*, ein Meta-Feld oder ein ACF-Feld (siehe Tabelle oben, Spalte *Text*).
 
 Im Editor erscheint der Feldname gestrichelt umrandet. Steht der Cursor darin, zeigt ein Popover das Feld, eine Vorschau mit dem Wert des geöffneten Beitrags und **Entfernen**.
 
@@ -301,6 +318,8 @@ add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 - **Inline-Platzhalter** im RichText: `<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="title" class="cf65-dynamic">Titel</span>`. Ersetzt wird der Inhalt nur in Blöcken mit `supports.cf65.inlineDynamic: true` (bisher `cf65/text`, `cf65/heading`, `cf65/button`). Das Finden übernimmt der HTML-Tokenizer von WordPress, verschachtelte Formatierung im Platzhalter eingeschlossen. Höchstens 200 Platzhalter pro Block.
 - **Ausgabetypen** (`kind`): `image` (Bildfelder), `link` (URL-Felder), `text` (Text- und URL-Felder, ohne HTML, max. 10 000 Zeichen).
 - **Provider `core`:** `title`, `excerpt`, `date` (Text), `permalink` (URL), `featured_image` (Bild).
+- **Provider `meta`:** Schlüssel aus `get_registered_meta_keys( 'post', <Post-Typ> )` mit `show_in_rest`, `single` und Typ `string`/`integer`/`number`; ausgeschlossen sind `is_protected_meta()`-Schlüssel. Label = `description` der Registrierung.
+- **Provider `acf`:** nur wenn ACF aktiv ist. Felder aus `acf_get_field_groups( [ 'post_type' => … ] )`, gebunden über den **Feldnamen**. Bilder werden als Attachment-ID gelesen (unformatiert), Textfelder formatiert (`get_field( …, true )`), Relationen und Seitenlinks über die Objektprüfung gefiltert. Ist ACF deaktiviert, bleiben Bindungen gespeichert und liefern keinen Wert.
 - **REST** (nur mit `edit_posts`): `GET /wp-json/cf65-blocks/v1/dynamic/fields?kind=image|link|text&postType=…` liefert die Feldliste, `POST /wp-json/cf65-blocks/v1/dynamic/preview` mit `{ kind, postId, postType, bindings }` die aufgelösten Werte. Die Vorschau unterliegt derselben Objektprüfung wie das Frontend.
 
 ### Gespeicherte Daten
