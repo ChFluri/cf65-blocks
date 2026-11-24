@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppe A (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppen A und B (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -17,7 +17,8 @@ Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppe A (Version 0.1.0-dev).
    - [Trenner](#38-trenner-cf65separator)
    - [Untertitel](#39-untertitel-cf65subtitle)
    - [Zitat](#310-zitat-cf65blockquote)
-   - [Dynamische Werte](#311-dynamische-werte)
+   - [Icon-Blöcke](#311-icon-blöcke)
+   - [Dynamische Werte](#312-dynamische-werte)
 4. [Erlaubte Werte](#4-erlaubte-werte)
 5. [Update-Sicherheit und Reparatur](#5-update-sicherheit-und-reparatur)
 6. [Debug-Modus und Benchmark](#6-debug-modus-und-benchmark)
@@ -100,6 +101,8 @@ Welche Blöcke welche Panels haben:
 | Zitat | Abstände, Schatten, Hintergrundfarbe (Rahmen über die eigene Akzentlinie) |
 | Abstandhalter, Trenner | Aussenabstand, Hintergrundfarbe |
 | Trennlinie | Aussenabstand |
+| Icon mit Text, Icon-Liste | Abstände, Rahmen, Hintergrundfarbe |
+| Icon, Icon-Button, Social Buttons | Aussenabstand |
 | Button, Bild | Abstände (nur Aussenabstand) |
 | Spalte | Rahmen, Rahmenfarbe, Schatten, Hintergrundbild (Innenabstand und Hintergrundfarbe hat die Spalte schon selbst) |
 
@@ -125,7 +128,7 @@ Spezifität: Die Grundstile der Blöcke stehen in `:where()` (Spezifität 0), da
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Werkzeugleiste | Überschriftenebene (H1–H6) | Standard: H2 |
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.11](#311-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.12](#312-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts, Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -139,7 +142,7 @@ Textabsatz (`<p>`) mit denselben Einstellungen wie die Überschrift, ohne Ebene/
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.11](#311-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.12](#312-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; inkl. Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -158,7 +161,7 @@ Link-Button. Der Text wird direkt im Button bearbeitet; erlaubt sind **fett** un
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Layout → Link | URL | siehe unten; bei dynamischem Link die Fallback-URL |
-| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.11](#311-dynamische-werte) |
+| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.12](#312-dynamische-werte) |
 | Werkzeugleiste | Dynamischer Wert | Platzhalter in der Beschriftung, z. B. Beitragstitel |
 | Layout → Link | In neuem Tab öffnen | setzt `target="_blank"` und `rel="noopener"` |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts (Position des Buttons) |
@@ -179,7 +182,7 @@ Nach dem Einfügen erscheint ein Platzhalter mit *Hochladen*, *Mediathek* und *U
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.11](#311-dynamische-werte) |
+| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.12](#312-dynamische-werte) |
 | Layout → Bild | Alternativtext | wird aus der Mediathek übernommen; leer lassen bei rein dekorativen Bildern |
 | Layout → Ausrichtung | Textausrichtung | responsiv; richtet Bild und Bildunterschrift aus |
 | Style → Grösse & Form | Breite | responsiv |
@@ -262,7 +265,7 @@ Kurzer Text über oder unter einer Überschrift (Dachzeile). Grundstil: kleiner,
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, siehe [3.11](#311-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, siehe [3.12](#312-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv |
 | Style → Typografie, Farben | Schriftgrösse, Text, Text (Hover) | wie beim Text-Block |
 | Style → Schreibweise | Gross-/Kleinschreibung | Normal, GROSSBUCHSTABEN, kleinbuchstaben, Wortanfänge Gross |
@@ -286,7 +289,74 @@ Zitat mit optionaler Quelle und Akzentlinie links.
 
 Leere Quelle wird nicht ausgegeben. Markup: `<blockquote>` mit `<p class="cf65-blockquote__text">` und `<cite class="cf65-blockquote__cite">`.
 
-### 3.11 Dynamische Werte
+### 3.11 Icon-Blöcke
+
+Alle Icon-Blöcke nutzen dasselbe mitgelieferte Set: **166 allgemeine Icons** (Lucide) und **19 Marken-Icons** (Simple Icons). Ausgewählt wird über **Icon wählen**: ein Fenster mit Suche (englische Namen, z. B. `phone`, `mail`, `check`) und den Reitern *Allgemein* und *Marken*.
+
+Icons übernehmen die Textfarbe; die Grösse steuert jeweils *Icon-Grösse* bzw. *Grösse* (responsiv, Standard `1.5em`).
+
+#### Icon (`cf65/icon`)
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Icon | Icon, Beschriftung für Screenreader | ohne Beschriftung gilt das Icon als Dekoration (`aria-hidden`), mit Beschriftung als Bild (`role="img"`) |
+| Layout → Ausrichtung | Textausrichtung | responsiv |
+| Style → Grösse | Grösse | responsiv |
+| Style → Farben | Icon, Icon (Hover), Form | *Form* = Hintergrund hinter dem Icon |
+| Style → Hintergrundform | Innenabstand, Eckenradius | z. B. `12px` und `50%` für einen Kreis |
+
+#### Icon mit Text (`cf65/icon-label`)
+
+Icon und kurzer Text nebeneinander, z. B. für Kontaktangaben.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Icon | Icon, Ausrichtung (responsiv), Abstand Icon – Text | |
+| Style → Grösse | Icon-Grösse, Schriftgrösse | responsiv |
+| Style → Farben | Icon, Text | |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text |
+
+#### Icon-Liste (`cf65/icon-list`) und Eintrag (`cf65/icon-list-item`)
+
+Liste mit Icon statt Aufzählungszeichen. **Enter** erzeugt einen neuen Eintrag, **Rücktaste** am Anfang verbindet mit dem vorherigen.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Liste: Layout → Liste | Icon | gilt für alle Einträge ohne eigenes Icon; Standard *check* |
+| Liste: Layout → Liste | Abstand zwischen Einträgen (responsiv), Abstand Icon – Text | |
+| Liste: Style | Icon-Grösse, Schriftgrösse, Farben Icon/Text | |
+| Eintrag: Seitenleiste → Eintrag | Eigenes Icon | *Zurücksetzen* = wieder Icon der Liste |
+
+Das Icon steht auf Höhe der ersten Textzeile, auch bei mehrzeiligen Einträgen.
+
+#### Icon-Button (`cf65/icon-button`)
+
+Runder Link-Button nur mit Icon (Standard: dunkel, weisses Icon, Kreis).
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Icon | Icon, **Beschriftung für Screenreader** | Pflicht; ohne Beschriftung zeigt der Editor eine Warnung |
+| Layout → Link | URL, Dynamischer Wert, In neuem Tab öffnen | wie beim Button; ungültige URL → kein Link |
+| Layout → Ausrichtung | Textausrichtung | responsiv |
+| Style → Grösse & Form | Icon-Grösse (responsiv), Innenabstand, Eckenradius | Eckenradius `4px` für ein abgerundetes Quadrat |
+| Style → Farben | Icon, Icon (Hover), Hintergrund, Hintergrund (Hover) | |
+
+#### Social Buttons (`cf65/social-buttons`)
+
+Links zu Social-Media-Profilen. Verfügbar: Facebook, Instagram, X, Threads, Bluesky, Mastodon, YouTube, Vimeo, TikTok, Pinterest, Snapchat, WhatsApp, Telegram, Discord, Reddit, Twitch, Spotify, GitHub, XING. **LinkedIn fehlt** (in beiden Icon-Sets auf Wunsch des Markeninhabers entfernt).
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Profile | Netzwerk und Profil-URL pro Eintrag; Nach oben/unten, Entfernen, Profil hinzufügen | Einträge ohne gültige URL werden nicht ausgegeben |
+| Layout → Profile | In neuem Tab öffnen | Standard: an |
+| Layout → Anordnung | Ausrichtung (responsiv), Abstand | |
+| Style → Grösse & Form | Icon-Grösse, Innenabstand, Eckenradius | |
+| Style → Farben | Markenfarben | Hintergrund in der Farbe des Netzwerks, Icon weiss |
+| Style → Eigene Farben | Icon, Hintergrund, je mit Hover | nur ohne Markenfarben |
+
+Jeder Link trägt den Netzwerknamen als `aria-label` (z. B. „Facebook“).
+
+### 3.12 Dynamische Werte
 
 Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen, etwa das Beitragsbild, ein ACF-Bild, den Link zum Beitrag oder ein ACF-Link-Feld. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt seine eigenen Werte.
 
@@ -413,6 +483,16 @@ Beispiel:
 add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 ```
 
+### Icons
+
+- **Set:** `includes/Icons/icons.json`, erzeugt mit `npm run icons` (`bin/icons.mjs`) aus `lucide-static` und `simple-icons`. Die Auswahl steht im Skript (`GENERAL`, `BRANDS`); Lizenzen in `includes/Icons/LICENSES.md`. Die Markenfarben für die Social Buttons erzeugt das Skript als `src/blocks/social-buttons/_brands.scss`.
+- **Speichern:** nur der Platzhalter `<span class="cf65-icon-slot" data-cf65-icon="star" aria-hidden="true"></span>` (mit Beschriftung `role="img" aria-label="…"`). SVG wird nie gespeichert, weil kses `<svg>` bei Benutzern ohne `unfiltered_html` entfernt.
+- **Ausgabe:** `Icons\IconRenderer` (`render_block`) setzt das SVG in leere Platzhalter ein. `Icons\IconLibrary` baut es aus einer Whitelist von Elementen (`path`, `circle`, `rect` …) und Attributen und escaped jeden Wert. Unbekannte Namen bleiben leer.
+- **Ersatz-Icon:** Platzhalter ohne `data-cf65-icon` füllt ein Elternblock mit `supports.cf65.iconFallback` (Attributname, z. B. `"icon"` bei der Icon-Liste); gelesen aus `WP_Block::$attributes`, damit auch Standardwerte greifen.
+- **Grösse:** CSS-Variable `--cf65-icon-size` (Standard `1.5em`), Basis-CSS in `src/styles/_icon-slot.scss`.
+
+Gleiches Prinzip beim **Trenner**: Formen in `includes/Blocks/shapes.json`, eingesetzt von `Blocks\SeparatorRenderer`.
+
 ### Style-Panels und Style-Map
 
 - **Panels** wählt ein Block in `block.json` unter `supports.cf65.panels`, z. B. `[ "margin", "padding", "border", "shadow", "backgroundColor", "backgroundImage" ]`. Die Definitionen stehen in `includes/Styles/panels.json`. PHP (`Styles\Panels::apply()` über den Filter `block_type_metadata`) und JS (`withPanels()` in `src/extensions/panels/definitions.js`) ergänzen daraus Attribute (Präfix `style…`, bestehende bleiben), Einträge in `supports.cf65.styles` und Bindungen in `supports.cf65.dynamic`. Generator, Guard, CSS-Cache, Payload-Tests und Dynamic Content gelten damit ohne weiteren Code.
@@ -423,9 +503,9 @@ add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 
 ### Dynamic Content
 
-- **Bindungen** stehen im Block-Attribut `dynamic`, z. B. `{"url":{"source":"current-post","provider":"core","field":"featured_image"}}`. Bindbar sind nur Attribute, die der Block in `supports.cf65.dynamic` deklariert (bisher `cf65/image` → `url`, `cf65/button` → `url` und bei Blöcken mit Panel *Hintergrundbild* `styleBackgroundImage`).
+- **Bindungen** stehen im Block-Attribut `dynamic`, z. B. `{"url":{"source":"current-post","provider":"core","field":"featured_image"}}`. Bindbar sind nur Attribute, die der Block in `supports.cf65.dynamic` deklariert (bisher `cf65/image` → `url`, `cf65/button` → `url`, `cf65/icon-button` → `url` und bei Blöcken mit Panel *Hintergrundbild* `styleBackgroundImage`).
 - **Ausgabe:** Das gespeicherte HTML bleibt statisch. Ein `render_block`-Filter setzt die Werte per `WP_HTML_Tag_Processor` ein. Ausgegeben werden nur Felder, die der Provider selbst anbietet, und nur aus Beiträgen, die öffentlich sichtbar sind oder die der aktuelle Benutzer bearbeiten darf.
-- **Inline-Platzhalter** im RichText: `<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="title" class="cf65-dynamic">Titel</span>`. Ersetzt wird der Inhalt nur in Blöcken mit `supports.cf65.inlineDynamic: true` (bisher `cf65/text`, `cf65/heading`, `cf65/subtitle`, `cf65/blockquote`, `cf65/button`). Das Finden übernimmt der HTML-Tokenizer von WordPress, verschachtelte Formatierung im Platzhalter eingeschlossen. Höchstens 200 Platzhalter pro Block.
+- **Inline-Platzhalter** im RichText: `<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="title" class="cf65-dynamic">Titel</span>`. Ersetzt wird der Inhalt nur in Blöcken mit `supports.cf65.inlineDynamic: true` (bisher `cf65/text`, `cf65/heading`, `cf65/subtitle`, `cf65/blockquote`, `cf65/button`, `cf65/icon-label`, `cf65/icon-list-item`). Das Finden übernimmt der HTML-Tokenizer von WordPress, verschachtelte Formatierung im Platzhalter eingeschlossen. Höchstens 200 Platzhalter pro Block.
 - **Ausgabetypen** (`kind`): `image` (Bildfelder), `link` (URL-Felder), `text` (Text- und URL-Felder, ohne HTML, max. 10 000 Zeichen).
 - **Provider `core`:** `title`, `excerpt`, `date` (Text), `permalink` (URL), `featured_image` (Bild).
 - **Provider `meta`:** Schlüssel aus `get_registered_meta_keys( 'post', <Post-Typ> )` mit `show_in_rest`, `single` und Typ `string`/`integer`/`number`; ausgeschlossen sind `is_protected_meta()`-Schlüssel. Label = `description` der Registrierung.
