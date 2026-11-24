@@ -9,7 +9,7 @@ Erweiterte Gutenberg-Blöcke für WordPress mit
 - **Debug-Modus** mit Performance-Messung
 
 > Status: in Entwicklung (Phase 1). Noch nicht für produktive Sites geeignet.
-> Umsetzungsplan: [docs/UMSETZPLAN.md](docs/UMSETZPLAN.md)
+> Umsetzungsplan: [docs/UMSETZPLAN.md](docs/UMSETZPLAN.md) · Benutzung der Blöcke: [docs/BENUTZUNG.md](docs/BENUTZUNG.md)
 
 ## Voraussetzungen
 
