@@ -16,14 +16,19 @@ use Cf65\Blocks\Security\Sanitizer;
  */
 final class Formatter {
 
+	public const KIND_TEXT  = 'text';
 	public const KIND_LINK  = 'link';
 	public const KIND_IMAGE = 'image';
 
 	/** Ausgabetyp → zulässige Feldtypen. */
 	public const ACCEPTS = array(
+		self::KIND_TEXT  => array( Field::TYPE_TEXT, Field::TYPE_URL ),
 		self::KIND_LINK  => array( Field::TYPE_URL ),
 		self::KIND_IMAGE => array( Field::TYPE_IMAGE ),
 	);
+
+	/** Maximale Länge eines Textwerts (Zeichen). */
+	private const MAX_TEXT_CHARS = 10000;
 
 	/**
 	 * Ob ein Feldtyp für einen Ausgabetyp passt.
@@ -44,10 +49,34 @@ final class Formatter {
 	 */
 	public static function format( string $kind, mixed $value ): string|array|null {
 		return match ( $kind ) {
+			self::KIND_TEXT  => self::text( $value ),
 			self::KIND_LINK  => self::link( $value ),
 			self::KIND_IMAGE => self::image( $value ),
 			default          => null,
 		};
+	}
+
+	/**
+	 * Reiner Text (ohne HTML, Entities aufgelöst). Escaping erst bei der Ausgabe.
+	 *
+	 * @param mixed $value Rohwert.
+	 */
+	public static function text( mixed $value ): ?string {
+		if ( \is_int( $value ) || ( \is_float( $value ) && \is_finite( $value ) ) ) {
+			return (string) $value;
+		}
+		if ( ! \is_string( $value ) ) {
+			return null;
+		}
+		$text = \html_entity_decode( \wp_strip_all_tags( $value ), \ENT_QUOTES | \ENT_HTML5, 'UTF-8' );
+		$text = \trim( (string) \preg_replace( '/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/', '', $text ) );
+		if ( '' === $text ) {
+			return null;
+		}
+		if ( \strlen( $text ) > self::MAX_TEXT_CHARS && 1 === \preg_match( '/^.{0,' . self::MAX_TEXT_CHARS . '}/su', $text, $match ) ) {
+			$text = $match[0];
+		}
+		return $text;
 	}
 
 	/**

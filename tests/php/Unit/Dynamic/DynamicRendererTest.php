@@ -81,7 +81,7 @@ final class DynamicRendererTest extends TestCase {
 		$resolver = new Resolver( new DynamicRegistry( array( new CurrentPostSource() ), array( $provider ) ) );
 		return new DynamicRenderer(
 			$resolver,
-			static fn ( string $name ): ?array => BlockTypes::all()[ $name ]['supports']['cf65']['dynamic'] ?? null
+			static fn ( string $name ): ?array => BlockTypes::all()[ $name ]['supports']['cf65'] ?? null
 		);
 	}
 

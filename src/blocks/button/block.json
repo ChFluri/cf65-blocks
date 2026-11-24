@@ -32,6 +32,7 @@
 		"anchor": true,
 		"className": true,
 		"cf65": {
+			"inlineDynamic": true,
 			"urls": { "url": "link" },
 			"dynamic": {
 				"url": {

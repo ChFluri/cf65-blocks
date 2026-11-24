@@ -266,3 +266,146 @@ ${ buttonMarkup( 'l0o0p0b1' ) }
 		expect( attrs.dynamic ).toEqual( binding( 'permalink' ) );
 	} );
 } );
+
+/**
+ * Inline-Platzhalter (Phase 2.2) im Speicherformat des Editors.
+ *
+ * @param {string} field Feld des Core-Providers.
+ * @param {string} inner Platzhaltertext (HTML).
+ * @return {string} HTML.
+ */
+const token = ( field, inner ) =>
+	`<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="${ field }" class="cf65-dynamic">${ inner }</span>`;
+
+/**
+ * @param {string} name    Blockname ohne Präfix (`heading`, `text`).
+ * @param {string} id      uniqueId.
+ * @param {string} content RichText-Inhalt.
+ * @return {string} Block-Markup.
+ */
+const richBlock = ( name, id, content ) => {
+	const tag = name === 'heading' ? 'h2' : 'p';
+	return `<!-- wp:cf65/${ name } ${ JSON.stringify( {
+		uniqueId: id,
+		content,
+	} ) } -->
+<${ tag } class="wp-block-cf65-${ name } cf65-block cf65-${ name } cf65-${ id }">${ content }</${ tag }>
+<!-- /wp:cf65/${ name } -->`;
+};
+
+test.describe( 'Dynamic Content inline', () => {
+	test.afterAll( async ( { requestUtils } ) => {
+		for ( const { type, id } of created.splice( 0 ) ) {
+			await requestUtils.rest( {
+				path: `/wp/v2/${ type }/${ id }`,
+				method: 'DELETE',
+				params: { force: true },
+			} );
+		}
+	} );
+
+	test( 'Platzhalter zeigen Werte des Beitrags, escaped', async ( {
+		page,
+		requestUtils,
+	} ) => {
+		const post = await createPost( requestUtils, {
+			title: 'Tom & <b>Jerry</b>',
+			content: [
+				richBlock(
+					'heading',
+					'i1n2l3h4',
+					`Neu: ${ token( 'title', '<strong>Titel</strong>' ) }`
+				),
+				richBlock(
+					'text',
+					'i1n2l3t4',
+					`Am ${ token( 'date', 'Datum' ) } – ${ token(
+						'post_password',
+						'Geheim'
+					) }`
+				),
+				`<!-- wp:paragraph --><p class="core">${ token(
+					'title',
+					'Bleibt'
+				) }</p><!-- /wp:paragraph -->`,
+			].join( '\n\n' ),
+		} );
+
+		await page.goto( post.link );
+		const title = page.locator( '.cf65-heading .cf65-dynamic' );
+		await expect( title ).toHaveText( 'Tom & Jerry' );
+		await expect( title.locator( 'b, strong' ) ).toHaveCount( 0 );
+
+		const tokens = page.locator( '.cf65-text .cf65-dynamic' );
+		await expect( tokens.nth( 0 ) ).toHaveText( /\d{4}/ );
+		await expect( tokens.nth( 1 ) ).toHaveText( '' );
+
+		// Nur Blöcke mit supports.cf65.inlineDynamic werden ersetzt.
+		await expect( page.locator( 'p.core .cf65-dynamic' ) ).toHaveText(
+			'Bleibt'
+		);
+	} );
+
+	test( 'Query Loop: jeder Eintrag zeigt seinen Titel', async ( {
+		page,
+		requestUtils,
+	} ) => {
+		const first = await createPost( requestUtils, { title: 'Eintrag C' } );
+		const second = await createPost( requestUtils, { title: 'Eintrag D' } );
+		const loop = await createPost(
+			requestUtils,
+			{
+				title: 'Titelliste',
+				content: `<!-- wp:query {"queryId":2,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":false}} -->
+<div class="wp-block-query"><!-- wp:post-template -->
+${ richBlock( 'heading', 'l0o0p0h1', `» ${ token( 'title', 'Titel' ) }` ) }
+<!-- /wp:post-template --></div>
+<!-- /wp:query -->`,
+			},
+			'pages'
+		);
+
+		await page.goto( loop.link );
+		const titles = await page
+			.locator( '.wp-block-post .cf65-heading .cf65-dynamic' )
+			.allTextContents();
+		expect( titles ).toEqual(
+			expect.arrayContaining( [
+				first.title.rendered,
+				second.title.rendered,
+			] )
+		);
+		expect( titles ).not.toContain( 'Titel' );
+	} );
+
+	test( 'Editor: Popover zeigt die Vorschau, Block bleibt gültig', async ( {
+		admin,
+		editor,
+		page,
+		requestUtils,
+	} ) => {
+		const post = await createPost( requestUtils, {
+			title: 'Vorschau-Titel',
+			status: 'draft',
+			content: richBlock(
+				'text',
+				'p0p0v3r1',
+				`Hallo ${ token( 'title', 'Titel' ) }!`
+			),
+		} );
+
+		await admin.editPost( post.id );
+		await editor.canvas.locator( '.cf65-text .cf65-dynamic' ).click();
+		await expect(
+			page.locator( '.cf65-dynamic-popover__preview' )
+		).toContainText( 'Vorschau-Titel' );
+
+		const valid = await page.evaluate( () =>
+			window.wp.data
+				.select( 'core/block-editor' )
+				.getBlocks()
+				.every( ( block ) => block.isValid )
+		);
+		expect( valid ).toBe( true );
+	} );
+} );

@@ -28,6 +28,13 @@ final class Resolver {
 	private array $cache = array();
 
 	/**
+	 * Gerade berechnete Schlüssel (Rekursionsschutz).
+	 *
+	 * @var array<string, true>
+	 */
+	private array $resolving = array();
+
+	/**
 	 * Konstruktor.
 	 *
 	 * @param DynamicRegistry $registry Quellen und Provider.
@@ -57,8 +64,18 @@ final class Resolver {
 		if ( \array_key_exists( $key, $this->cache ) ) {
 			return $this->cache[ $key ];
 		}
+		// Rekursionsschutz: ein Feld, dessen Wert beim Berechnen denselben
+		// Wert wieder anfordert (z. B. ein Auszug, der den Inhalt rendert).
+		if ( isset( $this->resolving[ $key ] ) ) {
+			return null;
+		}
 
-		$value = $this->lookup( $binding, $ref, $kind );
+		$this->resolving[ $key ] = true;
+		try {
+			$value = $this->lookup( $binding, $ref, $kind );
+		} finally {
+			unset( $this->resolving[ $key ] );
+		}
 		if ( \count( $this->cache ) >= self::MAX_CACHE ) {
 			$this->cache = array();
 		}

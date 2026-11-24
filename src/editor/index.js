@@ -5,10 +5,14 @@
  * Datenstores, RichText-Formate). Die Konfiguration kommt aus PHP
  * (`window.cf65BlocksConfig`, siehe Registry::enqueue_editor_assets()).
  */
+import { registerDynamicFormat } from '../dynamic/format';
 import { NAMESPACE } from './constants';
 import { startAutoRecovery } from './recovery';
+import './editor.scss';
 
 const config = window.cf65BlocksConfig ?? {};
+
+registerDynamicFormat();
 
 if ( config.autoRecovery !== false ) {
 	startAutoRecovery();

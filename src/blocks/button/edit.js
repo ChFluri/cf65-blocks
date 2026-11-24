@@ -174,7 +174,11 @@ export default function Edit( {
 					className={ LINK_CLASS }
 					value={ content }
 					onChange={ ( next ) => setAttributes( { content: next } ) }
-					allowedFormats={ [ 'core/bold', 'core/italic' ] }
+					allowedFormats={ [
+						'core/bold',
+						'core/italic',
+						'cf65/dynamic',
+					] }
 					withoutInteractiveFormatting
 					placeholder={ __( 'Button-Text …', 'cf65-blocks' ) }
 				/>

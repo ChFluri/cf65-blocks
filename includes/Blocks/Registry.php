@@ -34,6 +34,37 @@ final class Registry {
 		\add_action( 'init', array( $this, 'register_blocks' ) );
 		\add_filter( 'block_categories_all', array( $this, 'register_category' ), 10, 1 );
 		\add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
+		\add_action( 'enqueue_block_assets', array( $this, 'enqueue_editor_content_styles' ) );
+	}
+
+	/**
+	 * Editor-CSS (Platzhalter, Popover) – in der Editor-Seite und im
+	 * Editor-Iframe, nie im Frontend.
+	 */
+	public function enqueue_editor_content_styles(): void {
+		if ( ! \is_admin() ) {
+			return;
+		}
+		$this->enqueue_editor_style();
+	}
+
+	/**
+	 * Registriert und lädt `build/editor/index.css`, falls gebaut.
+	 */
+	private function enqueue_editor_style(): void {
+		$css        = $this->plugin_dir . '/build/editor/index.css';
+		$asset_file = $this->plugin_dir . '/build/editor/index.asset.php';
+		if ( ! \is_readable( $css ) || ! \is_readable( $asset_file ) ) {
+			return;
+		}
+		/** @var array{dependencies: list<non-empty-string>, version: string} $asset */
+		$asset = require $asset_file;
+		\wp_enqueue_style(
+			'cf65-blocks-editor',
+			\plugins_url( 'build/editor/index.css', $this->plugin_dir . '/cf65-blocks.php' ),
+			array(),
+			$asset['version']
+		);
 	}
 
 	/**
@@ -98,6 +129,7 @@ final class Registry {
 			$asset['version'],
 			array( 'in_footer' => true )
 		);
+		$this->enqueue_editor_style();
 		\wp_set_script_translations( 'cf65-blocks-editor', 'cf65-blocks', $this->plugin_dir . '/languages' );
 		\wp_add_inline_script(
 			'cf65-blocks-editor',

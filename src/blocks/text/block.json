@@ -9,6 +9,7 @@
 	"description": "Textabsatz mit responsiver Schriftgrösse, Ausrichtung und Farben inkl. Hover.",
 	"keywords": [ "text", "absatz", "paragraph" ],
 	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
 	"attributes": {
 		"uniqueId": { "type": "string" },
 		"markupVersion": { "type": "number", "default": 1 },
@@ -24,6 +25,7 @@
 		"className": true,
 		"splitting": true,
 		"cf65": {
+			"inlineDynamic": true,
 			"styles": [
 				{
 					"attr": "textAlign",

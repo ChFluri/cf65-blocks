@@ -9,6 +9,7 @@
 	"description": "Überschrift mit responsiver Schriftgrösse, Ausrichtung und Farben inkl. Hover.",
 	"keywords": [ "heading", "titel", "überschrift" ],
 	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
 	"attributes": {
 		"uniqueId": { "type": "string" },
 		"markupVersion": { "type": "number", "default": 1 },
@@ -24,6 +25,7 @@
 		"anchor": true,
 		"className": true,
 		"cf65": {
+			"inlineDynamic": true,
 			"styles": [
 				{
 					"attr": "textAlign",

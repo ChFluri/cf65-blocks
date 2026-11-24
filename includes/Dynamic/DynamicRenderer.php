@@ -3,9 +3,13 @@
  * Laufzeit-Anreicherung: dynamische Werte ins gespeicherte Markup einsetzen
  * (UMSETZPLAN Kap. 2.2 Schicht 1 und Kap. 3).
  *
- * Blöcke deklarieren bindbare Attribute in `supports.cf65.dynamic`, z. B.
- * `{"url":{"kind":"image","tag":"img"}}`. Das gespeicherte HTML bleibt
- * unverändert; der statische Wert dient als Fallback.
+ * - Attribut-Bindungen: Blöcke deklarieren bindbare Attribute in
+ *   `supports.cf65.dynamic`, z. B. `{"url":{"kind":"image","tag":"img"}}`.
+ *   Der statische Wert dient als Fallback.
+ * - Inline-Platzhalter (`<span class="cf65-dynamic" …>`) im RichText von
+ *   Blöcken mit `supports.cf65.inlineDynamic: true` ({@see InlineScanner}).
+ *
+ * Das gespeicherte HTML bleibt unverändert.
  *
  * @package Cf65\Blocks
  */
@@ -28,13 +32,13 @@ final class DynamicRenderer {
 	/**
 	 * Konstruktor.
 	 *
-	 * @param Resolver      $resolver      Auflösung.
-	 * @param \Closure|null $spec_resolver Liefert `supports.cf65.dynamic` zu einem
-	 *                                     Blocknamen (Standard: Block-Registry).
+	 * @param Resolver      $resolver          Auflösung.
+	 * @param \Closure|null $supports_resolver Liefert `supports.cf65` zu einem
+	 *                                         Blocknamen (Standard: Block-Registry).
 	 */
 	public function __construct(
 		private readonly Resolver $resolver = new Resolver(),
-		private readonly ?\Closure $spec_resolver = null
+		private readonly ?\Closure $supports_resolver = null
 	) {}
 
 	/**
@@ -56,8 +60,10 @@ final class DynamicRenderer {
 		if ( ! \is_string( $name ) || ! \str_starts_with( $name, Registry::BLOCK_PREFIX ) ) {
 			return $content;
 		}
-		$attributes = \is_array( $block['attrs'] ?? null ) ? $block['attrs'] : array();
-		if ( ! \is_array( $attributes['dynamic'] ?? null ) || array() === $attributes['dynamic'] ) {
+		$attributes   = \is_array( $block['attrs'] ?? null ) ? $block['attrs'] : array();
+		$has_bindings = \is_array( $attributes['dynamic'] ?? null ) && array() !== $attributes['dynamic'];
+		$has_tokens   = InlineReplacer::has_tokens( $content ) && true === ( $this->supports( $name )['inlineDynamic'] ?? null );
+		if ( ! $has_bindings && ! $has_tokens ) {
 			return $content;
 		}
 
@@ -66,13 +72,38 @@ final class DynamicRenderer {
 
 		/** @var array<string, mixed> $attributes */
 		$context = null !== $instance && \is_array( $instance->context ) ? $instance->context : array();
-		$patches = $this->plan( $name, $attributes, $context );
-		$result  = array() === $patches ? $content : HtmlPatcher::apply( $content, $patches );
+		$result  = $content;
+		$count   = 0;
+
+		if ( $has_bindings ) {
+			$patches = $this->plan( $name, $attributes, $context );
+			$count  += \count( $patches );
+			$result  = array() === $patches ? $result : HtmlPatcher::apply( $result, $patches );
+		}
+
+		if ( $has_tokens && '' !== $result ) {
+			$tokens = ( new InlineScanner( $result ) )->scan();
+			$count += \count( $tokens );
+			$result = InlineReplacer::replace( $result, $tokens, $this->text_resolver( $context ) );
+		}
 
 		if ( $profiler->enabled() ) {
-			$profiler->record( 'dynamic', ( \hrtime( true ) - $start ) / 1e6, \count( $patches ) );
+			$profiler->record( 'dynamic', ( \hrtime( true ) - $start ) / 1e6, $count );
 		}
 		return $result;
+	}
+
+	/**
+	 * Liefert Texte für Inline-Platzhalter im Block-Kontext.
+	 *
+	 * @param array<string, mixed> $context Block-Kontext.
+	 * @return \Closure(Binding): ?string
+	 */
+	public function text_resolver( array $context ): \Closure {
+		return function ( Binding $binding ) use ( $context ): ?string {
+			$value = $this->resolver->resolve( $binding, $context, Formatter::KIND_TEXT );
+			return \is_string( $value ) ? $value : null;
+		};
 	}
 
 	/**
@@ -194,17 +225,27 @@ final class DynamicRenderer {
 	 * @return array<mixed>
 	 */
 	private function specs( string $name ): array {
-		if ( null !== $this->spec_resolver ) {
-			$specs = ( $this->spec_resolver )( $name );
-			return \is_array( $specs ) ? $specs : array();
+		$specs = $this->supports( $name )['dynamic'] ?? null;
+		return \is_array( $specs ) ? $specs : array();
+	}
+
+	/**
+	 * `supports.cf65` eines Blocktyps.
+	 *
+	 * @param string $name Blockname.
+	 * @return array<mixed>
+	 */
+	private function supports( string $name ): array {
+		if ( null !== $this->supports_resolver ) {
+			$supports = ( $this->supports_resolver )( $name );
+			return \is_array( $supports ) ? $supports : array();
 		}
 		$type = \WP_Block_Type_Registry::get_instance()->get_registered( $name );
 		if ( null === $type || ! \is_array( $type->supports ) ) {
 			return array();
 		}
-		$cf65  = $type->supports['cf65'] ?? null;
-		$specs = \is_array( $cf65 ) ? ( $cf65['dynamic'] ?? null ) : null;
-		return \is_array( $specs ) ? $specs : array();
+		$cf65 = $type->supports['cf65'] ?? null;
+		return \is_array( $cf65 ) ? $cf65 : array();
 	}
 
 	/**

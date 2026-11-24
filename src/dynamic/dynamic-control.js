@@ -10,11 +10,13 @@ import { bindingFromValue, bindingValue } from './binding';
 import { useDynamicFields } from './hooks';
 
 /**
- * @param {Object}                           props
- * @param {string}                           props.kind       `image` oder `link`.
- * @param {Object|undefined}                 props.binding    Aktuelle Bindung.
- * @param {(next: Object|undefined) => void} props.onChange   Neue Bindung oder undefined.
- * @param {string}                           [props.postType] Post-Typ aus dem Block-Kontext.
+ * @param {Object}                                          props
+ * @param {string}                                          props.kind         `image`, `link` oder `text`.
+ * @param {Object|undefined}                                [props.binding]    Aktuelle Bindung.
+ * @param {(next: Object|undefined, label: string) => void} props.onChange     Neue Bindung (oder undefined) und Feldname.
+ * @param {string}                                          [props.postType]   Post-Typ aus dem Block-Kontext.
+ * @param {string}                                          [props.emptyLabel] Text der leeren Option.
+ * @param {string}                                          [props.help]       Eigener Hilfetext.
  * @return {Element} Control.
  */
 export default function DynamicControl( {
@@ -22,6 +24,8 @@ export default function DynamicControl( {
 	binding,
 	onChange,
 	postType,
+	emptyLabel,
+	help: customHelp,
 } ) {
 	const fields = useDynamicFields( kind, postType ?? '' );
 	const value = bindingValue( binding );
@@ -36,10 +40,24 @@ export default function DynamicControl( {
 		)
 	);
 
-	let help = __(
-		'Optional: Wert aus dem aktuellen Beitrag, auch im Query Loop.',
-		'cf65-blocks'
-	);
+	const labelOf = ( optionValue ) => {
+		for ( const provider of providers ) {
+			const field = provider.fields?.find(
+				( entry ) => `${ provider.id }:${ entry.name }` === optionValue
+			);
+			if ( field ) {
+				return field.label;
+			}
+		}
+		return '';
+	};
+
+	let help =
+		customHelp ??
+		__(
+			'Optional: Wert aus dem aktuellen Beitrag, auch im Query Loop.',
+			'cf65-blocks'
+		);
 	if ( fields.status === 'error' ) {
 		help = __( 'Felder konnten nicht geladen werden.', 'cf65-blocks' );
 	} else if ( value ) {
@@ -57,13 +75,16 @@ export default function DynamicControl( {
 			label={ __( 'Dynamischer Wert', 'cf65-blocks' ) }
 			value={ value }
 			disabled={ fields.status === 'loading' }
-			onChange={ ( next ) => onChange( bindingFromValue( next ) ) }
+			onChange={ ( next ) =>
+				onChange( bindingFromValue( next ), labelOf( next ) )
+			}
 			help={ help }
 		>
 			<option value="">
 				{ fields.status === 'loading'
 					? __( 'Wird geladen …', 'cf65-blocks' )
-					: __( 'Kein (statischer Wert)', 'cf65-blocks' ) }
+					: ( emptyLabel ??
+						__( 'Kein (statischer Wert)', 'cf65-blocks' ) ) }
 			</option>
 			{ providers.map( ( provider ) => (
 				<optgroup key={ provider.id } label={ provider.label }>
