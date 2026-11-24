@@ -127,7 +127,9 @@ test.describe( 'Blöcke Gruppe D', () => {
 		const number = front.locator( '.cf65-number-box__number' );
 		await expect( number ).toHaveAttribute( 'data-cf65-count-up', '' );
 		await number.scrollIntoViewIfNeeded();
-		await expect( number ).toHaveText( "1'250+", { timeout: 5000 } );
+		// WordPress (wptexturize) macht aus ' im Frontend ’ – der Zähler
+		// übernimmt das Zeichen als Tausendertrennzeichen.
+		await expect( number ).toHaveText( '1’250+', { timeout: 5000 } );
 
 		// Preis-Box: Badge, Hervorhebung, Preise in der richtigen Reihenfolge.
 		const pricing = front.locator( '.cf65-pricing-box' );
