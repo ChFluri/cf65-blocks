@@ -1,0 +1,25 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-separator) {
+	height: 80px;
+	overflow: hidden;
+	line-height: 0;
+}
+
+:where(.cf65-separator) svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	fill: currentcolor;
+}
+
+:where(.cf65-separator--flip-x) svg {
+	transform: scaleX(-1);
+}
+
+:where(.cf65-separator--flip-y) svg {
+	transform: scaleY(-1);
+}
+
+:where(.cf65-separator--flip-x.cf65-separator--flip-y) svg {
+	transform: scale(-1);
+}

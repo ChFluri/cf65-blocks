@@ -1,0 +1,9 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-divider) {
+	box-sizing: border-box;
+	width: 100%;
+	height: 0;
+	margin-inline: auto;
+	border: 0;
+	border-top: 1px solid currentcolor;
+}

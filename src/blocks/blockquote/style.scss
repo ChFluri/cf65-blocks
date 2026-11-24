@@ -1,0 +1,20 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-blockquote) {
+	box-sizing: border-box;
+	margin-inline: 0;
+	padding-inline-start: 1.25em;
+	border: 0;
+	border-inline-start: 4px solid currentcolor;
+}
+
+:where(.cf65-blockquote) .cf65-blockquote__text {
+	margin: 0;
+	font-size: 1.25em;
+}
+
+:where(.cf65-blockquote) .cf65-blockquote__cite {
+	display: block;
+	margin-top: 0.75em;
+	font-size: 0.875em;
+	font-style: normal;
+}

@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/spacer",
+	"version": "0.1.0",
+	"title": "Abstandhalter (cf65)",
+	"category": "cf65-blocks",
+	"icon": "image-flip-vertical",
+	"description": "Leerer Abstand mit responsiver Höhe.",
+	"keywords": [ "abstand", "spacer", "leerraum" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"height": { "type": "object" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin", "backgroundColor" ],
+			"styles": [
+				{
+					"attr": "height",
+					"property": "height",
+					"type": "length",
+					"responsive": true
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

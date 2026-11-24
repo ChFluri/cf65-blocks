@@ -1,0 +1,71 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/subtitle",
+	"version": "0.1.0",
+	"title": "Untertitel (cf65)",
+	"category": "cf65-blocks",
+	"icon": "editor-textcolor",
+	"description": "Kurzer Text über oder unter einer Überschrift, z. B. in Grossbuchstaben mit Buchstabenabstand.",
+	"keywords": [ "untertitel", "subtitle", "kicker", "dachzeile" ],
+	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"content": { "type": "string", "default": "" },
+		"textAlign": { "type": "object" },
+		"fontSize": { "type": "object" },
+		"textColor": { "type": "string" },
+		"textColorHover": { "type": "string" },
+		"textTransform": { "type": "string" },
+		"letterSpacing": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin", "padding", "border", "shadow", "backgroundColor", "backgroundImage" ],
+			"inlineDynamic": true,
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right", "justify" ],
+					"responsive": true
+				},
+				{
+					"attr": "fontSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" },
+				{
+					"attr": "textColorHover",
+					"property": "color",
+					"type": "color",
+					"state": "hover"
+				},
+				{
+					"attr": "textTransform",
+					"property": "text-transform",
+					"type": "enum",
+					"values": [ "none", "uppercase", "lowercase", "capitalize" ]
+				},
+				{
+					"attr": "letterSpacing",
+					"property": "letter-spacing",
+					"type": "length"
+				}
+			]
+		}
+	},
+	"example": {
+		"attributes": { "content": "Neu im Angebot" }
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

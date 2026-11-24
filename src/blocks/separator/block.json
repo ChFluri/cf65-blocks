@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/separator",
+	"version": "0.1.0",
+	"title": "Trenner (cf65)",
+	"category": "cf65-blocks",
+	"icon": "chart-area",
+	"description": "Dekorative Form (Welle, Kurve, Schräge, Dreieck) als Übergang zwischen Abschnitten.",
+	"keywords": [ "trenner", "separator", "welle", "form", "shape" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"design": { "type": "string", "default": "wave" },
+		"flipX": { "type": "boolean", "default": false },
+		"flipY": { "type": "boolean", "default": false },
+		"height": { "type": "object" },
+		"color": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin", "backgroundColor" ],
+			"styles": [
+				{
+					"attr": "height",
+					"property": "height",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "color",
+					"property": "fill",
+					"type": "color",
+					"selector": " svg"
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

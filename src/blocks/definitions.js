@@ -22,6 +22,21 @@ import imageSave from './image/save';
 import textMetadata from './text/block.json';
 import textDeprecated from './text/deprecated';
 import textSave from './text/save';
+import spacerMetadata from './spacer/block.json';
+import spacerDeprecated from './spacer/deprecated';
+import spacerSave from './spacer/save';
+import dividerMetadata from './divider/block.json';
+import dividerDeprecated from './divider/deprecated';
+import dividerSave from './divider/save';
+import separatorMetadata from './separator/block.json';
+import separatorDeprecated from './separator/deprecated';
+import separatorSave from './separator/save';
+import subtitleMetadata from './subtitle/block.json';
+import subtitleDeprecated from './subtitle/deprecated';
+import subtitleSave from './subtitle/save';
+import blockquoteMetadata from './blockquote/block.json';
+import blockquoteDeprecated from './blockquote/deprecated';
+import blockquoteSave from './blockquote/save';
 import { withPanels } from '../extensions/panels/definitions';
 
 const DEFINITIONS = [
@@ -46,6 +61,31 @@ const DEFINITIONS = [
 		metadata: columnMetadata,
 		save: columnSave,
 		deprecated: columnDeprecated,
+	},
+	{
+		metadata: spacerMetadata,
+		save: spacerSave,
+		deprecated: spacerDeprecated,
+	},
+	{
+		metadata: dividerMetadata,
+		save: dividerSave,
+		deprecated: dividerDeprecated,
+	},
+	{
+		metadata: separatorMetadata,
+		save: separatorSave,
+		deprecated: separatorDeprecated,
+	},
+	{
+		metadata: subtitleMetadata,
+		save: subtitleSave,
+		deprecated: subtitleDeprecated,
+	},
+	{
+		metadata: blockquoteMetadata,
+		save: blockquoteSave,
+		deprecated: blockquoteDeprecated,
 	},
 ];
 

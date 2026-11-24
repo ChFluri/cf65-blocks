@@ -1,0 +1,8 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-subtitle) {
+	margin-bottom: 0.5em;
+	font-size: 0.875em;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}

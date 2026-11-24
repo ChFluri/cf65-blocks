@@ -27,6 +27,12 @@
 	overflow-wrap: anywhere;
 }
 
+// Leere Blöcke im Editor sichtbar machen (nur Umriss, keine Grösse).
+.cf65-spacer {
+	outline: 1px dashed rgba(0, 0, 0, 0.25);
+	outline-offset: -1px;
+}
+
 // Vorschau im Panel „Hintergrundbild“.
 .cf65-panel-background__preview {
 	display: block;

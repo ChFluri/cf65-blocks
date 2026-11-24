@@ -1,0 +1,80 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/blockquote",
+	"version": "0.1.0",
+	"title": "Zitat (cf65)",
+	"category": "cf65-blocks",
+	"icon": "format-quote",
+	"description": "Zitat mit Quellenangabe, Akzentlinie und responsiver Schriftgrösse.",
+	"keywords": [ "zitat", "quote", "blockquote" ],
+	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"content": { "type": "string", "default": "" },
+		"citation": { "type": "string", "default": "" },
+		"textAlign": { "type": "object" },
+		"fontSize": { "type": "object" },
+		"textColor": { "type": "string" },
+		"citationColor": { "type": "string" },
+		"accentColor": { "type": "string" },
+		"accentWidth": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin", "padding", "shadow", "backgroundColor" ],
+			"inlineDynamic": true,
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "fontSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true,
+					"selector": " .cf65-blockquote__text"
+				},
+				{
+					"attr": "textColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-blockquote__text"
+				},
+				{
+					"attr": "citationColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-blockquote__cite"
+				},
+				{
+					"attr": "accentColor",
+					"property": "border-inline-start-color",
+					"type": "color"
+				},
+				{
+					"attr": "accentWidth",
+					"property": "border-inline-start-width",
+					"type": "length"
+				}
+			]
+		}
+	},
+	"example": {
+		"attributes": {
+			"content": "Einfachheit ist die höchste Stufe der Vollendung.",
+			"citation": "Leonardo da Vinci"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

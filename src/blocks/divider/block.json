@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/divider",
+	"version": "0.1.0",
+	"title": "Trennlinie (cf65)",
+	"category": "cf65-blocks",
+	"icon": "minus",
+	"description": "Horizontale Linie mit Stil, Stärke, Farbe sowie responsiver Breite und Ausrichtung.",
+	"keywords": [ "linie", "trennlinie", "divider", "hr" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"lineStyle": { "type": "string" },
+		"thickness": { "type": "string" },
+		"color": { "type": "string" },
+		"width": { "type": "object" },
+		"align": { "type": "object" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin" ],
+			"styles": [
+				{
+					"attr": "lineStyle",
+					"property": "border-top-style",
+					"type": "enum",
+					"values": [ "solid", "dashed", "dotted", "double" ]
+				},
+				{
+					"attr": "thickness",
+					"property": "border-top-width",
+					"type": "length"
+				},
+				{ "attr": "color", "property": "border-top-color", "type": "color" },
+				{
+					"attr": "width",
+					"property": "width",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "align",
+					"property": "margin-inline",
+					"type": "enum",
+					"values": [ "0 auto", "auto", "auto 0" ],
+					"responsive": true
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

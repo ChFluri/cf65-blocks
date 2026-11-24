@@ -10,6 +10,7 @@ declare( strict_types = 1 );
 namespace Cf65\Blocks;
 
 use Cf65\Blocks\Blocks\Registry;
+use Cf65\Blocks\Blocks\SeparatorRenderer;
 use Cf65\Blocks\Cli\BenchCommand;
 use Cf65\Blocks\Debug\DebugMode;
 use Cf65\Blocks\Dynamic\DynamicRenderer;
@@ -47,6 +48,7 @@ final class Plugin {
 		( new DebugMode() )->register_hooks();
 		( new Panels() )->register_hooks();
 		( new Registry( PLUGIN_DIR ) )->register_hooks();
+		( new SeparatorRenderer() )->register_hooks();
 		( new StyleRenderer( new CssGenerator(), null, new CssCache() ) )->register_hooks();
 		( new DynamicRenderer( $resolver ) )->register_hooks();
 		( new RestController( $resolver ) )->register_hooks();
