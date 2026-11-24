@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 2.1 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher für Bild und Button aus dem aktuellen Beitrag. ACF, Pods, Text-Felder, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.2 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag: Bild, Button-Link und Platzhalter im Text. ACF, Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -12,7 +12,7 @@ Stand: Phase 2.1 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Pl
    - [Button](#33-button-cf65button)
    - [Bild](#34-bild-cf65image)
    - [Spalten und Spalte](#35-spalten-cf65columns-und-spalte-cf65column)
-   - [Dynamische Werte](#36-dynamische-werte-bild-und-button)
+   - [Dynamische Werte](#36-dynamische-werte)
 4. [Erlaubte Werte](#4-erlaubte-werte)
 5. [Update-Sicherheit und Reparatur](#5-update-sicherheit-und-reparatur)
 6. [Debug-Modus und Benchmark](#6-debug-modus-und-benchmark)
@@ -89,6 +89,7 @@ Spezifität: Die Grundstile der Blöcke stehen in `:where()` (Spezifität 0), da
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Werkzeugleiste | Überschriftenebene (H1–H6) | Standard: H2 |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.6](#36-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts, Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -102,6 +103,7 @@ Textabsatz (`<p>`) mit denselben Einstellungen wie die Überschrift, ohne Ebene/
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.6](#36-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; inkl. Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -120,7 +122,8 @@ Link-Button. Der Text wird direkt im Button bearbeitet; erlaubt sind **fett** un
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Layout → Link | URL | siehe unten; bei dynamischem Link die Fallback-URL |
-| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte-bild-und-button) |
+| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter in der Beschriftung, z. B. Beitragstitel |
 | Layout → Link | In neuem Tab öffnen | setzt `target="_blank"` und `rel="noopener"` |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts (Position des Buttons) |
 | Style → Typografie | Schriftgrösse | responsiv |
@@ -140,7 +143,7 @@ Nach dem Einfügen erscheint ein Platzhalter mit *Hochladen*, *Mediathek* und *U
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte-bild-und-button) |
+| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte) |
 | Layout → Bild | Alternativtext | wird aus der Mediathek übernommen; leer lassen bei rein dekorativen Bildern |
 | Layout → Ausrichtung | Textausrichtung | responsiv; richtet Bild und Bildunterschrift aus |
 | Style → Grösse & Form | Breite | responsiv |
@@ -183,7 +186,7 @@ Verhalten der Breiten:
 - Auf Desktop und Tablet brechen Spalten nie um; Breiten über 100 % werden proportional gestaucht.
 - Breiten verschachtelter Spalten wirken nur auf ihre eigene Ebene.
 
-### 3.6 Dynamische Werte (Bild und Button)
+### 3.6 Dynamische Werte
 
 Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen: das Bild sein Beitragsbild, der Button den Link zum Beitrag. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt sein eigenes Bild und seinen eigenen Link.
 
@@ -201,6 +204,22 @@ Verhalten:
 | Beitrag nicht öffentlich (Entwurf, privat, Passwortschutz) | Kein Wert für Besucher. Wer den Beitrag bearbeiten darf, sieht den Wert. |
 
 Im Editor zeigt der Block eine Vorschau mit dem Wert des Beitrags bzw. des Query-Loop-Eintrags. Ohne Beitrag, etwa in einem Template, erscheint ein Hinweis anstelle des Bildes. Den Wert pro Beitrag gibt es dann erst im Frontend.
+
+#### Platzhalter im Text
+
+In **Text**, **Überschrift** und der **Button-Beschriftung** lassen sich Werte mitten in den Text setzen, z. B. „Neu: ‹Titel›“ oder „Veröffentlicht am ‹Datum›“.
+
+1. Cursor an die gewünschte Stelle setzen (markierter Text wird ersetzt).
+2. In der Werkzeugleiste **Dynamischer Wert** wählen. Der Eintrag liegt meist im Menü ▾ für weitere Formatierungen, neben *Fett*, *Kursiv* und *Link*.
+3. Feld wählen: *Titel*, *Auszug*, *Datum* oder *Link zum Beitrag* (als Text).
+
+Im Editor erscheint der Feldname gestrichelt umrandet. Steht der Cursor darin, zeigt ein Popover das Feld, eine Vorschau mit dem Wert des geöffneten Beitrags und **Entfernen**.
+
+| Situation | Ergebnis |
+|---|---|
+| Wert vorhanden | Ersetzt den Platzhalter, als reiner Text (HTML im Titel wird entfernt, Sonderzeichen korrekt dargestellt). Formatierung um den Platzhalter (fett, Farbe des Blocks) bleibt. |
+| Kein Wert, Beitrag nicht öffentlich oder Feld unbekannt | Die Stelle bleibt leer; der Platzhaltertext aus dem Editor erscheint nie im Frontend. |
+| Block ohne Platzhalter-Unterstützung (z. B. WordPress-Absatz nach dem Umwandeln) | Der Platzhaltertext bleibt stehen, wird aber nicht ersetzt. |
 
 ## 4. Erlaubte Werte
 
@@ -279,8 +298,10 @@ add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 
 - **Bindungen** stehen im Block-Attribut `dynamic`, z. B. `{"url":{"source":"current-post","provider":"core","field":"featured_image"}}`. Bindbar sind nur Attribute, die der Block in `supports.cf65.dynamic` deklariert (bisher `cf65/image` → `url`, `cf65/button` → `url`).
 - **Ausgabe:** Das gespeicherte HTML bleibt statisch. Ein `render_block`-Filter setzt die Werte per `WP_HTML_Tag_Processor` ein. Ausgegeben werden nur Felder, die der Provider selbst anbietet, und nur aus Beiträgen, die öffentlich sichtbar sind oder die der aktuelle Benutzer bearbeiten darf.
-- **Provider `core`:** `title`, `excerpt`, `date` (Text, ab Phase 2.2 nutzbar), `permalink` (URL), `featured_image` (Bild).
-- **REST** (nur mit `edit_posts`): `GET /wp-json/cf65-blocks/v1/dynamic/fields?kind=image|link&postType=…` liefert die Feldliste, `POST /wp-json/cf65-blocks/v1/dynamic/preview` mit `{ kind, postId, postType, bindings }` die aufgelösten Werte. Die Vorschau unterliegt derselben Objektprüfung wie das Frontend.
+- **Inline-Platzhalter** im RichText: `<span data-cf65-source="current-post" data-cf65-provider="core" data-cf65-field="title" class="cf65-dynamic">Titel</span>`. Ersetzt wird der Inhalt nur in Blöcken mit `supports.cf65.inlineDynamic: true` (bisher `cf65/text`, `cf65/heading`, `cf65/button`). Das Finden übernimmt der HTML-Tokenizer von WordPress, verschachtelte Formatierung im Platzhalter eingeschlossen. Höchstens 200 Platzhalter pro Block.
+- **Ausgabetypen** (`kind`): `image` (Bildfelder), `link` (URL-Felder), `text` (Text- und URL-Felder, ohne HTML, max. 10 000 Zeichen).
+- **Provider `core`:** `title`, `excerpt`, `date` (Text), `permalink` (URL), `featured_image` (Bild).
+- **REST** (nur mit `edit_posts`): `GET /wp-json/cf65-blocks/v1/dynamic/fields?kind=image|link|text&postType=…` liefert die Feldliste, `POST /wp-json/cf65-blocks/v1/dynamic/preview` mit `{ kind, postId, postType, bindings }` die aufgelösten Werte. Die Vorschau unterliegt derselben Objektprüfung wie das Frontend.
 
 ### Gespeicherte Daten
 
