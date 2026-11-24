@@ -24,7 +24,7 @@ final class CssGenerator {
 	 * Version der Ausgabe. Erhöhen, wenn sich das erzeugte CSS für gleiche
 	 * Eingaben ändert (macht den CSS-Cache ungültig).
 	 */
-	public const VERSION = 2;
+	public const VERSION = 3;
 
 	/**
 	 * Geräte in Ausgabereihenfolge (Desktop-first) mit Media Query.
@@ -81,6 +81,11 @@ final class CssGenerator {
 				$target = ( ( $entry['hoverScope'] ?? null ) === 'selector' && '' !== $selector )
 					? $selector . ':hover'
 					: ':hover' . $selector;
+			}
+			// `boost`: Klasse dreifach (Spezifität 0,3,0) – z. B. gegen die
+			// Abstandsregeln der WordPress-Layouts (`… > :first-child`).
+			if ( true === ( $entry['boost'] ?? null ) ) {
+				$target = '.cf65-' . $id . '.cf65-' . $id . $target;
 			}
 			$device_var = true === ( $entry['deviceVar'] ?? null ) && \str_starts_with( $property, '--' );
 			$responsive = ! empty( $entry['responsive'] );

@@ -7,8 +7,8 @@
 			"styleMarginBottom": { "type": "object" }
 		},
 		"styles": [
-			{ "attr": "styleMarginTop", "property": "margin-top", "type": "length", "responsive": true },
-			{ "attr": "styleMarginBottom", "property": "margin-bottom", "type": "length", "responsive": true }
+			{ "attr": "styleMarginTop", "property": "margin-top", "type": "length", "responsive": true, "boost": true },
+			{ "attr": "styleMarginBottom", "property": "margin-bottom", "type": "length", "responsive": true, "boost": true }
 		]
 	},
 	"padding": {

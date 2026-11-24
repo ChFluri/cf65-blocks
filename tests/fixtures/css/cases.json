@@ -9,7 +9,8 @@
 		{ "attr": "linkColorHover", "property": "color", "type": "color", "state": "hover", "selector": " .cf65-link", "hoverScope": "selector" },
 		{ "attr": "width", "property": "--cf65-width", "type": "length", "responsive": true, "deviceVar": true },
 		{ "attr": "plainVar", "property": "margin", "type": "length", "responsive": true, "deviceVar": true },
-		{ "attr": "bgImage", "property": "background-image", "type": "image" }
+		{ "attr": "bgImage", "property": "background-image", "type": "image" },
+		{ "attr": "gapTop", "property": "margin-top", "type": "length", "responsive": true, "boost": true }
 	],
 	"cases": [
 		{
@@ -173,6 +174,12 @@
 			"uniqueId": "abc12345",
 			"attributes": { "bgImage": { "url": "/bild(1).jpg" } },
 			"expected": ""
+		},
+		{
+			"name": "boost: Klasse dreifach, auch in Media Queries",
+			"uniqueId": "abc12345",
+			"attributes": { "gapTop": { "desktop": "2rem", "mobile": "1rem" }, "textColor": "#000" },
+			"expected": ".cf65-abc12345{color:#000}.cf65-abc12345.cf65-abc12345.cf65-abc12345{margin-top:2rem}@media (max-width:767px){.cf65-abc12345.cf65-abc12345.cf65-abc12345{margin-top:1rem}}"
 		}
 	]
 }

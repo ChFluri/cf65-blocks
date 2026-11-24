@@ -34,6 +34,7 @@ const SELECTOR_SUFFIX = /^(?: [a-z0-9_-]+| \.[a-z0-9_-]+)*$/;
  * @property {'hover'}                         [state]      Zustand.
  * @property {string}                          [selector]   Unterselektor, z. B. " .cf65-icon".
  * @property {'block'|'selector'}              [hoverScope] Hover auf dem Block (Standard) oder dem Unterselektor.
+ * @property {boolean}                         [boost]      Klasse dreifach (Spezifität 0,3,0).
  * @property {boolean}                         [deviceVar]  Nur für `--`-Variablen: Tablet/Mobil schreiben
  *                                                          `<name>-tablet` / `<name>-mobile`.
  */
@@ -111,6 +112,11 @@ export function generateCss( uniqueId, map, attributes ) {
 				entry.hoverScope === 'selector' && selector !== ''
 					? `${ selector }:hover`
 					: `:hover${ selector }`;
+		}
+		// `boost`: Klasse dreifach (Spezifität 0,3,0) – z. B. gegen die
+		// Abstandsregeln der WordPress-Layouts (`… > :first-child`).
+		if ( entry.boost === true ) {
+			target = `.cf65-${ id }.cf65-${ id }${ target }`;
 		}
 		const deviceVar =
 			entry.deviceVar === true && entry.property.startsWith( '--' );

@@ -222,7 +222,9 @@ test.describe( 'Style-Panels', () => {
 
 		await sidebar.getByRole( 'tab', { name: 'Style' } ).click();
 		await expect(
-			sidebar.getByRole( 'button', { name: 'Rahmen', exact: true } )
+			sidebar.locator( '.components-panel__body-toggle', {
+				hasText: /^Rahmen$/,
+			} )
 		).toBeVisible();
 		await expect(
 			sidebar.getByRole( 'button', { name: 'Hintergrundbild' } )

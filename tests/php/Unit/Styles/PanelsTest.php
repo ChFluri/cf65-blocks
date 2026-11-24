@@ -116,9 +116,9 @@ final class PanelsTest extends TestCase {
 		);
 
 		self::assertSame(
-			".cf65-abcd1234{margin-top:2rem;border-width:1px;border-style:solid;box-shadow:0 4px 12px rgba(0,0,0,.15);background-image:url(/wp-content/uploads/a.jpg);background-position:center center}"
+			".cf65-abcd1234.cf65-abcd1234.cf65-abcd1234{margin-top:2rem}.cf65-abcd1234{border-width:1px;border-style:solid;box-shadow:0 4px 12px rgba(0,0,0,.15);background-image:url(/wp-content/uploads/a.jpg);background-position:center center}"
 			. '.cf65-abcd1234:hover{border-color:#ff0000}'
-			. '@media (max-width:767px){.cf65-abcd1234{margin-top:1rem}}',
+			. '@media (max-width:767px){.cf65-abcd1234.cf65-abcd1234.cf65-abcd1234{margin-top:1rem}}',
 			$css
 		);
 	}
