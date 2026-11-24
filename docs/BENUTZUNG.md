@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 1 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content, Conditional Display, Motion Effects und Custom CSS folgen in späteren Phasen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.1 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher für Bild und Button aus dem aktuellen Beitrag. ACF, Pods, Text-Felder, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -12,6 +12,7 @@ Stand: Phase 1 (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plug
    - [Button](#33-button-cf65button)
    - [Bild](#34-bild-cf65image)
    - [Spalten und Spalte](#35-spalten-cf65columns-und-spalte-cf65column)
+   - [Dynamische Werte](#36-dynamische-werte-bild-und-button)
 4. [Erlaubte Werte](#4-erlaubte-werte)
 5. [Update-Sicherheit und Reparatur](#5-update-sicherheit-und-reparatur)
 6. [Debug-Modus und Benchmark](#6-debug-modus-und-benchmark)
@@ -118,7 +119,8 @@ Link-Button. Der Text wird direkt im Button bearbeitet; erlaubt sind **fett** un
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Layout → Link | URL | siehe unten |
+| Layout → Link | URL | siehe unten; bei dynamischem Link die Fallback-URL |
+| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte-bild-und-button) |
 | Layout → Link | In neuem Tab öffnen | setzt `target="_blank"` und `rel="noopener"` |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts (Position des Buttons) |
 | Style → Typografie | Schriftgrösse | responsiv |
@@ -138,6 +140,7 @@ Nach dem Einfügen erscheint ein Platzhalter mit *Hochladen*, *Mediathek* und *U
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
+| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.6](#36-dynamische-werte-bild-und-button) |
 | Layout → Bild | Alternativtext | wird aus der Mediathek übernommen; leer lassen bei rein dekorativen Bildern |
 | Layout → Ausrichtung | Textausrichtung | responsiv; richtet Bild und Bildunterschrift aus |
 | Style → Grösse & Form | Breite | responsiv |
@@ -179,6 +182,25 @@ Verhalten der Breiten:
 - **Mobil werden die Spalten untereinander gestapelt** (je 100 % breit), solange keine mobile Breite gesetzt ist. Mobil dürfen die Spalten umbrechen, und der Abstand zählt mit: `50%` + `50%` + Abstand `2em` stapelt trotzdem. Für zwei Spalten auf dem Handy z. B. bei Mobil Breite `48%` und Abstand `4%` setzen.
 - Auf Desktop und Tablet brechen Spalten nie um; Breiten über 100 % werden proportional gestaucht.
 - Breiten verschachtelter Spalten wirken nur auf ihre eigene Ebene.
+
+### 3.6 Dynamische Werte (Bild und Button)
+
+Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen: das Bild sein Beitragsbild, der Button den Link zum Beitrag. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt sein eigenes Bild und seinen eigenen Link.
+
+1. Block auswählen, Tab *Layout*.
+2. Bild: Bereich *Bild* → **Dynamischer Wert** → *Beitragsbild*. Button: Bereich *Link* → **Dynamischer Wert** → *Link zum Beitrag*.
+3. Zum Lösen der Bindung *Kein (statischer Wert)* wählen.
+
+Verhalten:
+
+| Situation | Ergebnis |
+|---|---|
+| Wert vorhanden | Wird im Frontend eingesetzt. Beim Bild auch Breite, Höhe, `wp-image-<id>` (für `srcset` und Lazy Loading) und der Alternativtext aus der Mediathek. |
+| Kein Wert (z. B. kein Beitragsbild) | Es gilt der statische Wert als Fallback: Fallback-Bild (Werkzeugleiste) bzw. Fallback-URL. |
+| Kein Wert und kein Fallback | Das Bild wird nicht ausgegeben; der Button erscheint ohne Link. |
+| Beitrag nicht öffentlich (Entwurf, privat, Passwortschutz) | Kein Wert für Besucher. Wer den Beitrag bearbeiten darf, sieht den Wert. |
+
+Im Editor zeigt der Block eine Vorschau mit dem Wert des Beitrags bzw. des Query-Loop-Eintrags. Ohne Beitrag, etwa in einem Template, erscheint ein Hinweis anstelle des Bildes. Den Wert pro Beitrag gibt es dann erst im Frontend.
 
 ## 4. Erlaubte Werte
 
@@ -243,12 +265,22 @@ In der lokalen Entwicklungsumgebung mit `npx wp-env run cli` voranstellen.
 | `cf65_blocks/auto_recovery` | Filter (`bool`, Standard `true`) | Automatische Reparatur im Editor ein/aus |
 | `cf65_blocks/debug_enabled` | Filter (`bool`) | Debug-Modus unabhängig von Konstante/Option erzwingen oder abschalten |
 | `cf65_blocks/loaded` | Action | Plugin ist vollständig geladen |
+| `cf65_blocks/dynamic/sources` | Filter (`list<SourceInterface>`) | Eigene Quellen für dynamische Werte registrieren |
+| `cf65_blocks/dynamic/providers` | Filter (`list<ProviderInterface>`) | Eigene Provider (Feldquellen) registrieren |
+| `cf65_blocks/dynamic/allow_field` | Filter (`bool`, Feld, Objekt, Bindung) | Einzelne Felder von der Ausgabe ausschliessen |
 
 Beispiel:
 
 ```php
 add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 ```
+
+### Dynamic Content
+
+- **Bindungen** stehen im Block-Attribut `dynamic`, z. B. `{"url":{"source":"current-post","provider":"core","field":"featured_image"}}`. Bindbar sind nur Attribute, die der Block in `supports.cf65.dynamic` deklariert (bisher `cf65/image` → `url`, `cf65/button` → `url`).
+- **Ausgabe:** Das gespeicherte HTML bleibt statisch. Ein `render_block`-Filter setzt die Werte per `WP_HTML_Tag_Processor` ein. Ausgegeben werden nur Felder, die der Provider selbst anbietet, und nur aus Beiträgen, die öffentlich sichtbar sind oder die der aktuelle Benutzer bearbeiten darf.
+- **Provider `core`:** `title`, `excerpt`, `date` (Text, ab Phase 2.2 nutzbar), `permalink` (URL), `featured_image` (Bild).
+- **REST** (nur mit `edit_posts`): `GET /wp-json/cf65-blocks/v1/dynamic/fields?kind=image|link&postType=…` liefert die Feldliste, `POST /wp-json/cf65-blocks/v1/dynamic/preview` mit `{ kind, postId, postType, bindings }` die aufgelösten Werte. Die Vorschau unterliegt derselben Objektprüfung wie das Frontend.
 
 ### Gespeicherte Daten
 
@@ -263,6 +295,7 @@ Blöcke aus Templates, Patterns oder anderen Beiträgen (z. B. im Query Loop) re
 
 - Geprüft werden nur Attribute, die ein Block in seiner `block.json` deklariert. Unbekannte Attribute bleiben erhalten, werden aber nie ausgegeben. So gehen bei einem Downgrade keine Daten verloren.
 - Blöcke können einzelne Attribute an eine Berechtigung binden (`supports.cf65.capabilities`). Fehlt sie dem speichernden Benutzer, wird das Attribut entfernt. Kein Phase-1-Block nutzt das bisher; vorgesehen ist es für Custom CSS.
+- Bindungen (`dynamic`) werden nur auf ihre Struktur geprüft: bekannte Schlüssel, gültige Kennungen, deklarierte Attribute. Bindungen an nicht verfügbare Provider bleiben erhalten, damit z. B. ein vorübergehend deaktiviertes ACF keine Bindungen löscht.
 - Texte in Blöcken (RichText) filtert WordPress wie üblich über kses.
 
 ## 8. Deinstallation
