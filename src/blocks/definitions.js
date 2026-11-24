@@ -55,6 +55,24 @@ import iconButtonSave from './icon-button/save';
 import socialButtonsMetadata from './social-buttons/block.json';
 import socialButtonsDeprecated from './social-buttons/deprecated';
 import socialButtonsSave from './social-buttons/save';
+import cardMetadata from './card/block.json';
+import cardDeprecated from './card/deprecated';
+import cardSave from './card/save';
+import heroMetadata from './hero/block.json';
+import heroDeprecated from './hero/deprecated';
+import heroSave from './hero/save';
+import featureMetadata from './feature/block.json';
+import featureDeprecated from './feature/deprecated';
+import featureSave from './feature/save';
+import featureGridMetadata from './feature-grid/block.json';
+import featureGridDeprecated from './feature-grid/deprecated';
+import featureGridSave from './feature-grid/save';
+import callToActionMetadata from './call-to-action/block.json';
+import callToActionDeprecated from './call-to-action/deprecated';
+import callToActionSave from './call-to-action/save';
+import notificationMetadata from './notification/block.json';
+import notificationDeprecated from './notification/deprecated';
+import notificationSave from './notification/save';
 import { withPanels } from '../extensions/panels/definitions';
 
 const DEFINITIONS = [
@@ -134,6 +152,36 @@ const DEFINITIONS = [
 		metadata: socialButtonsMetadata,
 		save: socialButtonsSave,
 		deprecated: socialButtonsDeprecated,
+	},
+	{
+		metadata: cardMetadata,
+		save: cardSave,
+		deprecated: cardDeprecated,
+	},
+	{
+		metadata: heroMetadata,
+		save: heroSave,
+		deprecated: heroDeprecated,
+	},
+	{
+		metadata: featureMetadata,
+		save: featureSave,
+		deprecated: featureDeprecated,
+	},
+	{
+		metadata: featureGridMetadata,
+		save: featureGridSave,
+		deprecated: featureGridDeprecated,
+	},
+	{
+		metadata: callToActionMetadata,
+		save: callToActionSave,
+		deprecated: callToActionDeprecated,
+	},
+	{
+		metadata: notificationMetadata,
+		save: notificationSave,
+		deprecated: notificationDeprecated,
 	},
 ];
 

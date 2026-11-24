@@ -10,7 +10,8 @@
 		{ "attr": "width", "property": "--cf65-width", "type": "length", "responsive": true, "deviceVar": true },
 		{ "attr": "plainVar", "property": "margin", "type": "length", "responsive": true, "deviceVar": true },
 		{ "attr": "bgImage", "property": "background-image", "type": "image" },
-		{ "attr": "gapTop", "property": "margin-top", "type": "length", "responsive": true, "boost": true }
+		{ "attr": "gapTop", "property": "margin-top", "type": "length", "responsive": true, "boost": true },
+		{ "attr": "gridColumns", "property": "--cf65-columns", "type": "enum", "values": [ "1", "2", "3", "4", "5", "6" ], "responsive": true, "deviceVar": true }
 	],
 	"cases": [
 		{
@@ -180,6 +181,12 @@
 			"uniqueId": "abc12345",
 			"attributes": { "gapTop": { "desktop": "2rem", "mobile": "1rem" }, "textColor": "#000" },
 			"expected": ".cf65-abc12345{color:#000}.cf65-abc12345.cf65-abc12345.cf65-abc12345{margin-top:2rem}@media (max-width:767px){.cf65-abc12345.cf65-abc12345.cf65-abc12345{margin-top:1rem}}"
+		},
+		{
+			"name": "deviceVar mit enum: Spaltenzahl pro Gerät, ungültige Werte entfallen",
+			"uniqueId": "abc12345",
+			"attributes": { "gridColumns": { "desktop": "4", "tablet": "7", "mobile": "1" } },
+			"expected": ".cf65-abc12345{--cf65-columns:4}@media (max-width:767px){.cf65-abc12345{--cf65-columns-mobile:1}}"
 		}
 	]
 }

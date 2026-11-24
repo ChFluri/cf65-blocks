@@ -1,0 +1,72 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/notification",
+	"version": "0.1.0",
+	"title": "Hinweis (cf65)",
+	"category": "cf65-blocks",
+	"icon": "warning",
+	"description": "Hinweisbox (Info, Erfolg, Warnung, Fehler) mit Icon und optionalem Schliessen-Button.",
+	"keywords": [
+		"hinweis",
+		"notification",
+		"alert",
+		"info",
+		"warnung",
+		"meldung"
+	],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"type": {
+			"type": "string",
+			"default": "info",
+			"enum": [ "info", "success", "warning", "error" ]
+		},
+		"icon": { "type": "string", "default": "info" },
+		"showIcon": { "type": "boolean", "default": true },
+		"dismissible": { "type": "boolean", "default": false },
+		"closeLabel": { "type": "string", "default": "Schliessen" },
+		"accentColor": { "type": "string" },
+		"iconColor": { "type": "string" },
+		"iconSize": { "type": "object" },
+		"textColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor"
+			],
+			"styles": [
+				{
+					"attr": "accentColor",
+					"property": "--cf65-note-accent",
+					"type": "color"
+				},
+				{
+					"attr": "iconColor",
+					"property": "--cf65-note-icon",
+					"type": "color"
+				},
+				{
+					"attr": "iconSize",
+					"property": "--cf65-icon-size",
+					"type": "length",
+					"responsive": true
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" }
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"viewScript": "file:./view.js",
+	"style": "file:./style-index.css"
+}

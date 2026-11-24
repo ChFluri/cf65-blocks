@@ -5,7 +5,7 @@
 	"version": "0.1.0",
 	"title": "Spalte (cf65)",
 	"category": "cf65-blocks",
-	"parent": [ "cf65/columns" ],
+	"parent": [ "cf65/columns", "cf65/feature" ],
 	"icon": "align-pull-left",
 	"description": "Einzelne Spalte mit responsiver Breite, Innenabstand und Hintergrundfarbe.",
 	"textdomain": "cf65-blocks",

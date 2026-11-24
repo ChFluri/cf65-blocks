@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/call-to-action",
+	"version": "0.1.0",
+	"title": "Call to Action (cf65)",
+	"category": "cf65-blocks",
+	"icon": "megaphone",
+	"description": "Handlungsaufforderung mit Titel, Text und Button; untereinander oder Button rechts daneben.",
+	"keywords": [ "cta", "call to action", "aufforderung", "banner", "aktion" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"layout": {
+			"type": "string",
+			"default": "stacked",
+			"enum": [ "stacked", "inline" ]
+		},
+		"gap": { "type": "object" },
+		"textAlign": { "type": "object" },
+		"textColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"styles": [
+				{
+					"attr": "gap",
+					"property": "--cf65-cta-gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" }
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

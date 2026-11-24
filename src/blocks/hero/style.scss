@@ -1,0 +1,46 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+// Die Variablen werden pro Hero gesetzt, damit verschachtelte sie nicht erben.
+:where(.cf65-hero) {
+	--cf65-overlay-color: transparent;
+	--cf65-overlay-opacity: 0.5;
+	--cf65-content-width: 800px;
+	--cf65-hero-gap: 1em;
+	position: relative;
+	isolation: isolate;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	min-height: 400px;
+	padding: 4em 1.5em;
+	text-align: center;
+	background-position: center center;
+	background-size: cover;
+	overflow-wrap: break-word;
+}
+
+// Overlay über dem Hintergrundbild, unter dem Inhalt.
+:where(.cf65-hero)::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	background-color: var(--cf65-overlay-color);
+	opacity: var(--cf65-overlay-opacity);
+	pointer-events: none;
+}
+
+:where(.cf65-hero__inner) {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cf65-hero-gap);
+	box-sizing: border-box;
+	width: 100%;
+	max-width: var(--cf65-content-width);
+}
+
+:where(.cf65-hero__inner) > * {
+	margin-block: 0;
+}

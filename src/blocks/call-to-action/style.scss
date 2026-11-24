@@ -1,0 +1,45 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-call-to-action) {
+	--cf65-cta-gap: 1em;
+	display: flex;
+	flex-direction: column;
+	gap: var(--cf65-cta-gap);
+	box-sizing: border-box;
+	padding: 2.5em 2em;
+	text-align: center;
+	overflow-wrap: break-word;
+}
+
+:where(.cf65-call-to-action) > * {
+	margin-block: 0;
+}
+
+// „Button rechts daneben“ ab Tablet: Buttons in der rechten Spalte über
+// alle Zeilen, übriger Inhalt links. Ohne Zeilenabstand im Raster (leere
+// Zeilen der Button-Spalte), der Abstand kommt als margin-top.
+@media (min-width: 768px) {
+
+	:where(.cf65-call-to-action.is-layout-inline) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		column-gap: calc(var(--cf65-cta-gap) * 2);
+		row-gap: 0;
+		align-items: start;
+		text-align: left;
+	}
+
+	:where(.cf65-call-to-action.is-layout-inline) > * {
+		grid-column: 1;
+	}
+
+	:where(.cf65-call-to-action.is-layout-inline) > * + * {
+		margin-block-start: var(--cf65-cta-gap);
+	}
+
+	:where(.cf65-call-to-action.is-layout-inline) > :is(.cf65-button, .cf65-icon-button) {
+		grid-column: 2;
+		grid-row: 1 / span 20;
+		align-self: center;
+		margin-block-start: 0;
+	}
+}

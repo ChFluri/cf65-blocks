@@ -1,0 +1,52 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/feature",
+	"version": "0.1.0",
+	"title": "Feature (cf65)",
+	"category": "cf65-blocks",
+	"icon": "align-pull-left",
+	"description": "Bild und Inhalt nebeneinander (zwei Spalten); Bild links oder rechts, auf Mobilgeräten immer oben.",
+	"keywords": [ "feature", "bild und text", "media", "merkmal" ],
+	"textdomain": "cf65-blocks",
+	"allowedBlocks": [ "cf65/column" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"reversed": { "type": "boolean", "default": false },
+		"gap": { "type": "object" },
+		"verticalAlign": { "type": "object" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"styles": [
+				{
+					"attr": "gap",
+					"property": "gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "verticalAlign",
+					"property": "align-items",
+					"type": "enum",
+					"values": [ "flex-start", "center", "flex-end", "stretch" ],
+					"responsive": true
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

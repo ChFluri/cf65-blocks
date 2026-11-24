@@ -1,0 +1,24 @@
+@use "../../styles/column";
+
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-feature) {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 2em;
+	align-items: center;
+	box-sizing: border-box;
+}
+
+:where(.cf65-feature.is-reversed) {
+	flex-direction: row-reverse;
+}
+
+// Mobil: gestapelt, Bild (erste Spalte) immer oben.
+@media (max-width: 767px) {
+
+	:where(.cf65-feature),
+	:where(.cf65-feature.is-reversed) {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+}

@@ -1,0 +1,15 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+// Volle Höhe, damit Karten im Raster gleich hoch sind.
+:where(.cf65-card) {
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	box-sizing: border-box;
+	height: 100%;
+	padding: 1.5em;
+	overflow-wrap: break-word;
+}
+
+:where(.cf65-card) > * {
+	margin-block: 0;
+}

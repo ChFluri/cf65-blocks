@@ -1,0 +1,34 @@
+// Basis für cf65/column – eingebunden von cf65/columns und cf65/feature,
+// weil Block-Styles nur für vorhandene Blöcke geladen werden.
+
+// Spaltenbreite über Variablen pro Gerät (block.json "deviceVar"):
+// Tablet erbt Desktop, Mobil stapelt (100 %), solange keine mobile Breite
+// gesetzt ist. Die Variablen werden pro Spalte zurückgesetzt, damit
+// verschachtelte Spalten sie nicht erben.
+
+:where(.cf65-column) {
+	--cf65-width: initial;
+	--cf65-width-tablet: initial;
+	--cf65-width-mobile: initial;
+	flex: 1 1 var(--cf65-width, 0%);
+	min-width: 0;
+	max-width: var(--cf65-width, none);
+	box-sizing: border-box;
+	overflow-wrap: break-word;
+}
+
+@media (max-width: 1024px) {
+
+	:where(.cf65-column) {
+		flex-basis: var(--cf65-width-tablet, var(--cf65-width, 0%));
+		max-width: var(--cf65-width-tablet, var(--cf65-width, none));
+	}
+}
+
+@media (max-width: 767px) {
+
+	:where(.cf65-column) {
+		flex-basis: var(--cf65-width-mobile, 100%);
+		max-width: var(--cf65-width-mobile, none);
+	}
+}

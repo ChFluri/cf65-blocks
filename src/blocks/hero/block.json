@@ -1,0 +1,108 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/hero",
+	"version": "0.1.0",
+	"title": "Hero (cf65)",
+	"category": "cf65-blocks",
+	"icon": "cover-image",
+	"description": "Grosser Einstiegsbereich mit Hintergrundbild, Farb-Overlay, Mindesthöhe und begrenzter Inhaltsbreite.",
+	"keywords": [ "hero", "banner", "header", "cover", "titelbild" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"minHeight": { "type": "object" },
+		"verticalAlign": { "type": "object" },
+		"horizontalAlign": { "type": "object" },
+		"textAlign": { "type": "object" },
+		"contentWidth": { "type": "object" },
+		"gap": { "type": "object" },
+		"overlayColor": { "type": "string" },
+		"overlayOpacity": { "type": "string" },
+		"textColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"align": [ "wide", "full" ],
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"styles": [
+				{
+					"attr": "minHeight",
+					"property": "min-height",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "verticalAlign",
+					"property": "justify-content",
+					"type": "enum",
+					"values": [ "flex-start", "center", "flex-end" ],
+					"responsive": true
+				},
+				{
+					"attr": "horizontalAlign",
+					"property": "align-items",
+					"type": "enum",
+					"values": [ "flex-start", "center", "flex-end" ],
+					"responsive": true
+				},
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "contentWidth",
+					"property": "--cf65-content-width",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "gap",
+					"property": "--cf65-hero-gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "overlayColor",
+					"property": "--cf65-overlay-color",
+					"type": "color"
+				},
+				{
+					"attr": "overlayOpacity",
+					"property": "--cf65-overlay-opacity",
+					"type": "enum",
+					"values": [
+						"0",
+						"0.1",
+						"0.2",
+						"0.3",
+						"0.4",
+						"0.5",
+						"0.6",
+						"0.7",
+						"0.8",
+						"0.9",
+						"1"
+					]
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" }
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

@@ -1,0 +1,33 @@
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+// Spaltenzahl über Variablen pro Gerät (block.json "deviceVar"); ohne
+// eigene Angabe: Desktop 3, Tablet wie Desktop (sonst 2), Mobil 1.
+// Die Variablen werden pro Raster zurückgesetzt, damit verschachtelte
+// Raster sie nicht erben.
+:where(.cf65-feature-grid) {
+	--cf65-columns: initial;
+	--cf65-columns-tablet: initial;
+	--cf65-columns-mobile: initial;
+	display: grid;
+	grid-template-columns: repeat(var(--cf65-columns, 3), minmax(0, 1fr));
+	gap: 2em;
+	box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+
+	:where(.cf65-feature-grid) {
+		grid-template-columns: repeat(var(--cf65-columns-tablet, var(--cf65-columns, 2)), minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767px) {
+
+	:where(.cf65-feature-grid) {
+		grid-template-columns: repeat(var(--cf65-columns-mobile, 1), minmax(0, 1fr));
+	}
+}
+
+:where(.cf65-feature-grid) > * {
+	min-width: 0;
+	margin-block: 0;
+}

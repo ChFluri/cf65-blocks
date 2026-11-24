@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/card",
+	"version": "0.1.0",
+	"title": "Karte (cf65)",
+	"category": "cf65-blocks",
+	"icon": "id-alt",
+	"description": "Karte mit Bild, Titel, Text und Button als frei änderbare Innenblöcke.",
+	"keywords": [ "karte", "card", "box", "teaser" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"gap": { "type": "object" },
+		"textAlign": { "type": "object" },
+		"verticalAlign": { "type": "object" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"styles": [
+				{
+					"attr": "gap",
+					"property": "gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "verticalAlign",
+					"property": "justify-content",
+					"type": "enum",
+					"values": [ "flex-start", "center", "flex-end" ],
+					"responsive": true
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

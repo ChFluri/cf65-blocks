@@ -1,0 +1,66 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/feature-grid",
+	"version": "0.1.0",
+	"title": "Feature-Raster (cf65)",
+	"category": "cf65-blocks",
+	"icon": "grid-view",
+	"description": "Raster mit gleich breiten Zellen, z. B. Karten; Spaltenzahl pro Gerät einstellbar.",
+	"keywords": [ "raster", "grid", "karten", "features", "kacheln" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"columns": { "type": "object" },
+		"gap": { "type": "object" },
+		"rowGap": { "type": "object" },
+		"verticalAlign": { "type": "object" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [
+				"margin",
+				"padding",
+				"border",
+				"shadow",
+				"backgroundColor",
+				"backgroundImage"
+			],
+			"styles": [
+				{
+					"attr": "columns",
+					"property": "--cf65-columns",
+					"type": "enum",
+					"values": [ "1", "2", "3", "4", "5", "6" ],
+					"responsive": true,
+					"deviceVar": true
+				},
+				{
+					"attr": "gap",
+					"property": "column-gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "rowGap",
+					"property": "row-gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "verticalAlign",
+					"property": "align-items",
+					"type": "enum",
+					"values": [ "start", "center", "end", "stretch" ],
+					"responsive": true
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}
