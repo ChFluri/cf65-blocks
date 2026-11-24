@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppen A und B (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppen A bis C (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -18,7 +18,8 @@ Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppen A und B (Version 0.1.
    - [Untertitel](#39-untertitel-cf65subtitle)
    - [Zitat](#310-zitat-cf65blockquote)
    - [Icon-Blöcke](#311-icon-blöcke)
-   - [Dynamische Werte](#312-dynamische-werte)
+   - [Container-Blöcke](#312-container-blöcke)
+   - [Dynamische Werte](#313-dynamische-werte)
 4. [Erlaubte Werte](#4-erlaubte-werte)
 5. [Update-Sicherheit und Reparatur](#5-update-sicherheit-und-reparatur)
 6. [Debug-Modus und Benchmark](#6-debug-modus-und-benchmark)
@@ -128,7 +129,7 @@ Spezifität: Die Grundstile der Blöcke stehen in `:where()` (Spezifität 0), da
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Werkzeugleiste | Überschriftenebene (H1–H6) | Standard: H2 |
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.12](#312-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.13](#313-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts, Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -142,7 +143,7 @@ Textabsatz (`<p>`) mit denselben Einstellungen wie die Überschrift, ohne Ebene/
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.12](#312-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.13](#313-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; inkl. Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -161,7 +162,7 @@ Link-Button. Der Text wird direkt im Button bearbeitet; erlaubt sind **fett** un
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Layout → Link | URL | siehe unten; bei dynamischem Link die Fallback-URL |
-| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.12](#312-dynamische-werte) |
+| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.13](#313-dynamische-werte) |
 | Werkzeugleiste | Dynamischer Wert | Platzhalter in der Beschriftung, z. B. Beitragstitel |
 | Layout → Link | In neuem Tab öffnen | setzt `target="_blank"` und `rel="noopener"` |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts (Position des Buttons) |
@@ -182,7 +183,7 @@ Nach dem Einfügen erscheint ein Platzhalter mit *Hochladen*, *Mediathek* und *U
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.12](#312-dynamische-werte) |
+| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.13](#313-dynamische-werte) |
 | Layout → Bild | Alternativtext | wird aus der Mediathek übernommen; leer lassen bei rein dekorativen Bildern |
 | Layout → Ausrichtung | Textausrichtung | responsiv; richtet Bild und Bildunterschrift aus |
 | Style → Grösse & Form | Breite | responsiv |
@@ -265,7 +266,7 @@ Kurzer Text über oder unter einer Überschrift (Dachzeile). Grundstil: kleiner,
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, siehe [3.12](#312-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, siehe [3.13](#313-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv |
 | Style → Typografie, Farben | Schriftgrösse, Text, Text (Hover) | wie beim Text-Block |
 | Style → Schreibweise | Gross-/Kleinschreibung | Normal, GROSSBUCHSTABEN, kleinbuchstaben, Wortanfänge Gross |
@@ -291,7 +292,7 @@ Leere Quelle wird nicht ausgegeben. Markup: `<blockquote>` mit `<p class="cf65-b
 
 ### 3.11 Icon-Blöcke
 
-Alle Icon-Blöcke nutzen dasselbe mitgelieferte Set: **166 allgemeine Icons** (Lucide) und **19 Marken-Icons** (Simple Icons). Ausgewählt wird über **Icon wählen**: ein Fenster mit Suche (englische Namen, z. B. `phone`, `mail`, `check`) und den Reitern *Allgemein* und *Marken*.
+Alle Icon-Blöcke nutzen dasselbe mitgelieferte Set: **168 allgemeine Icons** (Lucide) und **19 Marken-Icons** (Simple Icons). Ausgewählt wird über **Icon wählen**: ein Fenster mit Suche (englische Namen, z. B. `phone`, `mail`, `check`) und den Reitern *Allgemein* und *Marken*.
 
 Icons übernehmen die Textfarbe; die Grösse steuert jeweils *Icon-Grösse* bzw. *Grösse* (responsiv, Standard `1.5em`).
 
@@ -356,7 +357,86 @@ Links zu Social-Media-Profilen. Verfügbar: Facebook, Instagram, X, Threads, Blu
 
 Jeder Link trägt den Netzwerknamen als `aria-label` (z. B. „Facebook“).
 
-### 3.12 Dynamische Werte
+### 3.12 Container-Blöcke
+
+Container enthalten normale cf65-Blöcke als **Innenblöcke**. Ein neu eingefügter Container startet mit einer Vorlage, z. B. Titel, Text und Button. Diese Blöcke lassen sich wie überall bearbeiten, löschen, verschieben und ergänzen (Ausnahme: Feature, siehe unten). Alle Container haben die gemeinsamen Style-Panels Aussenabstand, Innenabstand, Rahmen, Schatten, Hintergrundfarbe und Hintergrundbild, auch dynamisch. Der Hinweis hat kein Hintergrundbild.
+
+#### Karte (`cf65/card`)
+
+Vorlage: Bild, Überschrift (H3), Text, Button. Die Karte ist so hoch wie ihr Platz, im Feature-Raster sind alle Karten einer Zeile also gleich hoch.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Karte | Abstand zwischen Elementen | responsiv, Standard `1em` |
+| Layout → Karte | Textausrichtung, Vertikale Ausrichtung | responsiv; *Vertikal* verteilt den Inhalt bei gleich hohen Karten |
+
+Standard-Innenabstand `1.5em`, über das Panel *Innenabstand* änderbar.
+
+#### Hero (`cf65/hero`)
+
+Grosser Einstiegsbereich, als `<section>` ausgegeben. Vorlage: Untertitel, Überschrift (H1), Text, Button. Die Werkzeugleiste bietet die Breiten *Weit* und *Volle Breite*, sofern das Theme sie unterstützt.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Hero | Mindesthöhe | responsiv, Standard `400px` |
+| Layout → Hero | Maximale Inhaltsbreite | responsiv, Standard `800px` |
+| Layout → Hero | Inhalt vertikal, Inhalt horizontal, Textausrichtung | responsiv, Standard zentriert |
+| Layout → Hero | Abstand zwischen Elementen | responsiv |
+| Style → Farben | Text, Overlay | *Overlay* liegt über dem Hintergrundbild und unter dem Inhalt |
+| Style → Overlay | Deckkraft | 0–100 % in 10er-Schritten, Standard 50 %; wirkt nur mit Overlay-Farbe |
+
+Das Hintergrundbild kommt aus dem Panel *Hintergrundbild*, beim Hero standardmässig *cover* und zentriert.
+
+#### Feature (`cf65/feature`)
+
+Bild und Inhalt nebeneinander. Das Feature besteht aus **genau zwei Spalten** (`cf65/column`). Die Spalten selbst lassen sich weder löschen noch verschieben, ihr Inhalt ist frei. Vorlage: links ein Bild, rechts Überschrift (H2), Text und Button.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Feature | Bild rechts | tauscht die Spalten auf Desktop und Tablet; mobil steht die erste Spalte (Bild) immer oben |
+| Layout → Feature | Abstand | responsiv, Standard `2em` |
+| Layout → Feature | Vertikale Ausrichtung | responsiv; Standard *Mitte* |
+| Spalte | Breite, Innenabstand, Hintergrund | wie bei [Spalten](#35-spalten-cf65columns-und-spalte-cf65column), z. B. Bildspalte `40%` |
+
+#### Feature-Raster (`cf65/feature-grid`)
+
+Raster mit gleich breiten Zellen. Vorlage: drei Karten. Zellen können beliebige Blöcke sein.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Raster | Spalten | 1–6, pro Gerät; ohne Angabe Desktop 3, Tablet wie Desktop (sonst 2), Mobil 1 |
+| Layout → Raster | Abstand horizontal, Abstand vertikal | responsiv, Standard `2em` |
+| Layout → Raster | Vertikale Ausrichtung | Standard *Gleich hoch* |
+
+Tipp: Bei 4 Spalten auf Desktop für Tablet *2 Spalten* wählen, sonst übernimmt das Tablet die 4.
+
+#### Call to Action (`cf65/call-to-action`)
+
+Handlungsaufforderung. Vorlage: Überschrift (H2), Text, Button.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Call to Action | Anordnung | *Untereinander* (Standard, zentriert) oder *Button rechts daneben* |
+| Layout → Call to Action | Abstand zwischen Elementen, Textausrichtung | responsiv |
+| Style → Farben | Text | |
+
+*Button rechts daneben* gilt ab Tablet (ab 768 px), mobil steht alles untereinander. Vorgesehen ist **ein** Button (Button oder Icon-Button). Weitere Buttons landen unter dem Inhalt. Für zwei Buttons nebeneinander *Untereinander* wählen.
+
+#### Hinweis (`cf65/notification`)
+
+Hinweisbox mit farbigem Rand links, als `<div role="note">` ausgegeben. Vorlage: ein Text; weitere Blöcke sind möglich.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Hinweis | Typ | *Info* (blau), *Erfolg* (grün), *Warnung* (orange), *Fehler* (rot): Standardfarben und -icon |
+| Layout → Hinweis | Icon anzeigen, Icon | Beim Typwechsel wechselt das Icon mit, solange es nicht von Hand geändert wurde |
+| Layout → Hinweis | Schliessen-Button, Beschriftung für Screenreader | Besucher blenden den Hinweis aus, beim nächsten Seitenaufruf erscheint er wieder; Standard-Beschriftung „Schliessen“ |
+| Style → Icon | Icon-Grösse | responsiv, Standard `1.5em` |
+| Style → Farben | Akzent, Icon, Text | *Akzent* = Randfarbe und Standard-Icon-Farbe; den Hintergrund steuert das Panel *Hintergrundfarbe* |
+
+Der Schliessen-Button funktioniert nur im Frontend. Im Editor ist er bloss als Vorschau zu sehen.
+
+### 3.13 Dynamische Werte
 
 Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen, etwa das Beitragsbild, ein ACF-Bild, den Link zum Beitrag oder ein ACF-Link-Feld. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt seine eigenen Werte.
 
