@@ -1,6 +1,6 @@
 # cf65 Blocks – Benutzung
 
-Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppen A bis C (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
+Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppen A bis D (Version 0.1.0-dev). Beschrieben sind nur Funktionen, die im Plugin bereits umgesetzt sind. Dynamic Content gibt es bisher aus dem aktuellen Beitrag (WordPress-Felder, Post-Meta, ACF) für Bild, Button-Link, Hintergrundbild und Platzhalter im Text. Pods, weitere Quellen, Formatierung, Conditional Display, Motion Effects und Custom CSS folgen (siehe [UMSETZPLAN.md](UMSETZPLAN.md)).
 
 ## Inhalt
 
@@ -19,7 +19,8 @@ Stand: Phase 2.3, Style-Panels und Blöcke Welle 1 Gruppen A bis C (Version 0.1.
    - [Zitat](#310-zitat-cf65blockquote)
    - [Icon-Blöcke](#311-icon-blöcke)
    - [Container-Blöcke](#312-container-blöcke)
-   - [Dynamische Werte](#313-dynamische-werte)
+   - [Boxen und Preise](#313-boxen-und-preise)
+   - [Dynamische Werte](#314-dynamische-werte)
 4. [Erlaubte Werte](#4-erlaubte-werte)
 5. [Update-Sicherheit und Reparatur](#5-update-sicherheit-und-reparatur)
 6. [Debug-Modus und Benchmark](#6-debug-modus-und-benchmark)
@@ -129,7 +130,7 @@ Spezifität: Die Grundstile der Blöcke stehen in `:where()` (Spezifität 0), da
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Werkzeugleiste | Überschriftenebene (H1–H6) | Standard: H2 |
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.13](#313-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Beitragstitel, siehe [3.14](#314-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts, Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -143,7 +144,7 @@ Textabsatz (`<p>`) mit denselben Einstellungen wie die Überschrift, ohne Ebene/
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.13](#313-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, z. B. Datum, siehe [3.14](#314-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv; inkl. Blocksatz |
 | Style → Typografie | Schriftgrösse | responsiv |
 | Style → Farben | Text, Text (Hover) | |
@@ -162,7 +163,7 @@ Link-Button. Der Text wird direkt im Button bearbeitet; erlaubt sind **fett** un
 | Ort | Einstellung | Hinweis |
 |---|---|---|
 | Layout → Link | URL | siehe unten; bei dynamischem Link die Fallback-URL |
-| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.13](#313-dynamische-werte) |
+| Layout → Link | Dynamischer Wert | *Link zum Beitrag* des aktuellen Beitrags, siehe [3.14](#314-dynamische-werte) |
 | Werkzeugleiste | Dynamischer Wert | Platzhalter in der Beschriftung, z. B. Beitragstitel |
 | Layout → Link | In neuem Tab öffnen | setzt `target="_blank"` und `rel="noopener"` |
 | Layout → Ausrichtung | Textausrichtung | responsiv; Links, Zentriert, Rechts (Position des Buttons) |
@@ -183,7 +184,7 @@ Nach dem Einfügen erscheint ein Platzhalter mit *Hochladen*, *Mediathek* und *U
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.13](#313-dynamische-werte) |
+| Layout → Bild | Dynamischer Wert | *Beitragsbild* des aktuellen Beitrags, siehe [3.14](#314-dynamische-werte) |
 | Layout → Bild | Alternativtext | wird aus der Mediathek übernommen; leer lassen bei rein dekorativen Bildern |
 | Layout → Ausrichtung | Textausrichtung | responsiv; richtet Bild und Bildunterschrift aus |
 | Style → Grösse & Form | Breite | responsiv |
@@ -266,7 +267,7 @@ Kurzer Text über oder unter einer Überschrift (Dachzeile). Grundstil: kleiner,
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
-| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, siehe [3.13](#313-dynamische-werte) |
+| Werkzeugleiste | Dynamischer Wert | Platzhalter im Text, siehe [3.14](#314-dynamische-werte) |
 | Layout → Ausrichtung | Textausrichtung | responsiv |
 | Style → Typografie, Farben | Schriftgrösse, Text, Text (Hover) | wie beim Text-Block |
 | Style → Schreibweise | Gross-/Kleinschreibung | Normal, GROSSBUCHSTABEN, kleinbuchstaben, Wortanfänge Gross |
@@ -292,7 +293,7 @@ Leere Quelle wird nicht ausgegeben. Markup: `<blockquote>` mit `<p class="cf65-b
 
 ### 3.11 Icon-Blöcke
 
-Alle Icon-Blöcke nutzen dasselbe mitgelieferte Set: **168 allgemeine Icons** (Lucide) und **19 Marken-Icons** (Simple Icons). Ausgewählt wird über **Icon wählen**: ein Fenster mit Suche (englische Namen, z. B. `phone`, `mail`, `check`) und den Reitern *Allgemein* und *Marken*.
+Alle Icon-Blöcke nutzen dasselbe mitgelieferte Set: **168 allgemeine Icons** (Lucide) und **20 Marken-Icons** (Simple Icons, LinkedIn aus Font Awesome Free). Ausgewählt wird über **Icon wählen**: ein Fenster mit Suche (englische Namen, z. B. `phone`, `mail`, `check`) und den Reitern *Allgemein* und *Marken*.
 
 Icons übernehmen die Textfarbe; die Grösse steuert jeweils *Icon-Grösse* bzw. *Grösse* (responsiv, Standard `1.5em`).
 
@@ -344,7 +345,7 @@ Runder Link-Button nur mit Icon (Standard: dunkel, weisses Icon, Kreis).
 
 #### Social Buttons (`cf65/social-buttons`)
 
-Links zu Social-Media-Profilen. Verfügbar: Facebook, Instagram, X, Threads, Bluesky, Mastodon, YouTube, Vimeo, TikTok, Pinterest, Snapchat, WhatsApp, Telegram, Discord, Reddit, Twitch, Spotify, GitHub, XING. **LinkedIn fehlt** (in beiden Icon-Sets auf Wunsch des Markeninhabers entfernt).
+Links zu Social-Media-Profilen. Verfügbar: Facebook, Instagram, X, Threads, Bluesky, Mastodon, YouTube, Vimeo, TikTok, Pinterest, Snapchat, WhatsApp, Telegram, Discord, Reddit, Twitch, Spotify, GitHub, XING, LinkedIn. LinkedIn stammt aus Font Awesome Free (CC BY 4.0, Namensnennung in `includes/Icons/LICENSES.md`), weil Simple Icons das Logo auf Wunsch des Inhabers entfernt hat.
 
 | Ort | Einstellung | Hinweis |
 |---|---|---|
@@ -436,7 +437,70 @@ Hinweisbox mit farbigem Rand links, als `<div role="note">` ausgegeben. Vorlage:
 
 Der Schliessen-Button funktioniert nur im Frontend. Im Editor ist er bloss als Vorschau zu sehen.
 
-### 3.13 Dynamische Werte
+### 3.13 Boxen und Preise
+
+Container wie in 3.12, mit Vorlage und frei änderbaren Innenblöcken. Ausnahme ist der Preis, ein einzelner Block. Alle Boxen haben die gemeinsamen Style-Panels. Der Preis hat nur Aussenabstand, Innenabstand und Hintergrundfarbe.
+
+#### Icon-Box (`cf65/icon-box`)
+
+Vorlage: Icon (48px), Überschrift (H3), Text.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Icon-Box | Anordnung | *Icon oben* (Standard, zentriert) oder *Icon links*: Der **erste** Icon-Block steht links neben dem übrigen Inhalt, auch mobil |
+| Layout → Icon-Box | Abstand zwischen Elementen, Textausrichtung | responsiv |
+| Style → Farben | Text | Icon-Farbe und -Grösse stellt der Icon-Block selbst ein |
+
+#### Bild-Box (`cf65/image-box`)
+
+Kachel mit Text auf einem Bild, z. B. für Projekte oder Kategorien. Vorlage: Überschrift (H3), Text. Das Bild kommt aus dem Panel *Hintergrundbild*, auch dynamisch, z. B. als Beitragsbild im Query Loop.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Bild-Box | Mindesthöhe | responsiv, Standard `300px` |
+| Layout → Bild-Box | Inhalt vertikal, Textausrichtung, Abstand | Standard: unten links |
+| Style → Farben | Text, Overlay | Standard: weisser Text, schwarzes Overlay |
+| Style → Overlay | Deckkraft, Deckkraft (Hover) | Standard 40 %; beim Überfahren sanft überblendet (nicht bei „Bewegung reduzieren“) |
+
+Setzt das Theme eigene Farben für Überschriften, gilt die weisse Textfarbe dort nicht. Dann die Farbe direkt an der Überschrift einstellen.
+
+#### Zahlen-Box (`cf65/number-box`)
+
+Kennzahl wie „250+“ oder „98 %“ mit Titel und Text. Die Zahl wird direkt in den Block getippt und kann einen Platzhalter enthalten (siehe 3.14).
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Zahlen-Box | Hochzählen | zählt beim Sichtbarwerden in 1,5 s von 0 hoch; nur auf der Website, nicht bei „Bewegung reduzieren“ |
+| Layout → Zahlen-Box | Abstand, Textausrichtung | responsiv |
+| Style → Zahl | Schriftgrösse | responsiv, Standard `3em` |
+| Style → Farben | Zahl, Text | |
+
+Beim Hochzählen wird die erste Zahl im Text animiert, Text davor und danach bleibt stehen. Das Format bleibt erhalten: `1'250`, `1.250`, `4,5` und `19.90` erscheinen am Ende genau wie eingegeben. Ein einzelnes `.` oder `,` gefolgt von genau drei Ziffern gilt als Tausendertrennzeichen.
+
+#### Preis (`cf65/price`)
+
+Preisangabe, direkt im Block bearbeitet: alter Preis (durchgestrichen), Währung (Standard *CHF*), Betrag, Zeitraum (z. B. `/ Monat`). Leere Teile werden nicht ausgegeben. Jeder Teil kann einen Platzhalter enthalten, z. B. den Preis aus einem ACF-Feld.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Preis | Währung nach dem Betrag | z. B. `19.90 €` |
+| Layout → Preis | Ausrichtung | responsiv; ohne Angabe gilt die des Containers |
+| Style → Grösse | Grösse des Betrags | Standard `3em`; Währung, Zeitraum und alter Preis sind relativ dazu und wachsen mit |
+| Style → Farben | Betrag, Währung, Zeitraum, Alter Preis | |
+
+#### Preis-Box (`cf65/pricing-box`)
+
+Tarif für Preistabellen, mehrere davon z. B. im Feature-Raster. Vorlage: Überschrift (H3), Preis, Text, Icon-Liste, Button. Ist der Button das letzte Element, sitzt er unten, die Buttons nebeneinander stehender Boxen stehen also auf einer Linie.
+
+| Ort | Einstellung | Hinweis |
+|---|---|---|
+| Layout → Preis-Box | Hervorheben, Badge-Text | Rahmen 2px in der Akzentfarbe und Badge oben mittig; Standard-Text „Beliebt“, leer = kein Badge |
+| Layout → Preis-Box | Abstand, Textausrichtung | responsiv; die Icon-Liste bleibt linksbündig |
+| Style → Farben | Akzent, Badge-Text | *Akzent* = Rahmen (hervorgehoben) und Badge-Hintergrund |
+
+Das Panel *Rahmen* überschreibt den Standardrahmen, auch den hervorgehobenen.
+
+### 3.14 Dynamische Werte
 
 Bild und Button können ihren Wert aus dem **aktuellen Beitrag** holen, etwa das Beitragsbild, ein ACF-Bild, den Link zum Beitrag oder ein ACF-Link-Feld. Im **Query Loop** gilt das pro Eintrag. So lässt sich ein Teaser einmal gestalten, und jeder Eintrag zeigt seine eigenen Werte.
 
@@ -565,7 +629,7 @@ add_filter( 'cf65_blocks/auto_recovery', '__return_false' );
 
 ### Icons
 
-- **Set:** `includes/Icons/icons.json`, erzeugt mit `npm run icons` (`bin/icons.mjs`) aus `lucide-static` und `simple-icons`. Die Auswahl steht im Skript (`GENERAL`, `BRANDS`); Lizenzen in `includes/Icons/LICENSES.md`. Die Markenfarben für die Social Buttons erzeugt das Skript als `src/blocks/social-buttons/_brands.scss`.
+- **Set:** `includes/Icons/icons.json`, erzeugt mit `npm run icons` (`bin/icons.mjs`) aus `lucide-static`, `simple-icons` und – für Marken, die Simple Icons nicht führt – `@fortawesome/free-brands-svg-icons`. Die Auswahl steht im Skript (`GENERAL`, `BRANDS`, `FA_BRANDS`); Font-Awesome-Icons haben eine eigene viewBox (Schlüssel `v`); Lizenzen in `includes/Icons/LICENSES.md`. Die Markenfarben für die Social Buttons erzeugt das Skript als `src/blocks/social-buttons/_brands.scss`.
 - **Speichern:** nur der Platzhalter `<span class="cf65-icon-slot" data-cf65-icon="star" aria-hidden="true"></span>` (mit Beschriftung `role="img" aria-label="…"`). SVG wird nie gespeichert, weil kses `<svg>` bei Benutzern ohne `unfiltered_html` entfernt.
 - **Ausgabe:** `Icons\IconRenderer` (`render_block`) setzt das SVG in leere Platzhalter ein. `Icons\IconLibrary` baut es aus einer Whitelist von Elementen (`path`, `circle`, `rect` …) und Attributen und escaped jeden Wert. Unbekannte Namen bleiben leer.
 - **Ersatz-Icon:** Platzhalter ohne `data-cf65-icon` füllt ein Elternblock mit `supports.cf65.iconFallback` (Attributname, z. B. `"icon"` bei der Icon-Liste); gelesen aus `WP_Block::$attributes`, damit auch Standardwerte greifen.
