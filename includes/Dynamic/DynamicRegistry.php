@@ -9,7 +9,9 @@ declare( strict_types = 1 );
 
 namespace Cf65\Blocks\Dynamic;
 
+use Cf65\Blocks\Dynamic\Providers\AcfProvider;
 use Cf65\Blocks\Dynamic\Providers\CoreProvider;
+use Cf65\Blocks\Dynamic\Providers\PostMetaProvider;
 use Cf65\Blocks\Dynamic\Providers\ProviderInterface;
 use Cf65\Blocks\Dynamic\Sources\CurrentPostSource;
 use Cf65\Blocks\Dynamic\Sources\SourceInterface;
@@ -79,7 +81,7 @@ final class DynamicRegistry {
 			 *
 			 * @param list<ProviderInterface> $providers Provider.
 			 */
-			$list            = \apply_filters( 'cf65_blocks/dynamic/providers', $this->default_providers ?? array( new CoreProvider() ) );
+			$list            = \apply_filters( 'cf65_blocks/dynamic/providers', $this->default_providers ?? array( new CoreProvider(), new PostMetaProvider(), new AcfProvider() ) );
 			$this->providers = array();
 			foreach ( \is_array( $list ) ? $list : array() as $provider ) {
 				if ( $provider instanceof ProviderInterface ) {

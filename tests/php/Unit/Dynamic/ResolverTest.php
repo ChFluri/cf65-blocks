@@ -62,6 +62,13 @@ final class ResolverTest extends TestCase {
 		Functions\when( 'wp_strip_all_tags' )->alias( 'strip_tags' );
 	}
 
+	/**
+	 * Resolver nur mit dem Core-Provider (unabhängig von ACF / Meta).
+	 */
+	private static function core(): Resolver {
+		return new Resolver( new DynamicRegistry( array( new CurrentPostSource() ), array( new CoreProvider() ) ) );
+	}
+
 	private static function binding( string $field, string $provider = 'core' ): Binding {
 		$binding = Binding::from_array(
 			array(
@@ -79,7 +86,7 @@ final class ResolverTest extends TestCase {
 
 		self::assertSame(
 			'https://example.org/?p=10',
-			( new Resolver() )->resolve( self::binding( 'permalink' ), array( 'postId' => 10 ), Formatter::KIND_LINK )
+			self::core()->resolve( self::binding( 'permalink' ), array( 'postId' => 10 ), Formatter::KIND_LINK )
 		);
 	}
 
@@ -94,7 +101,7 @@ final class ResolverTest extends TestCase {
 				'width'  => 1200,
 				'height' => 800,
 			),
-			( new Resolver() )->resolve( self::binding( 'featured_image' ), array( 'postId' => 10 ), Formatter::KIND_IMAGE )
+			self::core()->resolve( self::binding( 'featured_image' ), array( 'postId' => 10 ), Formatter::KIND_IMAGE )
 		);
 	}
 
@@ -104,20 +111,20 @@ final class ResolverTest extends TestCase {
 
 		self::assertSame(
 			'https://example.org/?p=10',
-			( new Resolver() )->resolve( self::binding( 'permalink' ), array(), Formatter::KIND_LINK )
+			self::core()->resolve( self::binding( 'permalink' ), array(), Formatter::KIND_LINK )
 		);
 	}
 
 	public function test_no_post_gives_null(): void {
 		$this->wordpress();
 
-		self::assertNull( ( new Resolver() )->resolve( self::binding( 'permalink' ), array( 'postId' => 0 ), Formatter::KIND_LINK ) );
-		self::assertNull( ( new Resolver() )->resolve( self::binding( 'permalink' ), array( 'postId' => 99 ), Formatter::KIND_LINK ) );
+		self::assertNull( self::core()->resolve( self::binding( 'permalink' ), array( 'postId' => 0 ), Formatter::KIND_LINK ) );
+		self::assertNull( self::core()->resolve( self::binding( 'permalink' ), array( 'postId' => 99 ), Formatter::KIND_LINK ) );
 	}
 
 	public function test_private_and_protected_posts_are_hidden_from_visitors(): void {
 		$this->wordpress();
-		$resolver = new Resolver();
+		$resolver = self::core();
 
 		self::assertNull( $resolver->resolve( self::binding( 'permalink' ), array( 'postId' => 20 ), Formatter::KIND_LINK ) );
 		self::assertNull( $resolver->resolve( self::binding( 'permalink' ), array( 'postId' => 30 ), Formatter::KIND_LINK ) );
@@ -128,13 +135,13 @@ final class ResolverTest extends TestCase {
 
 		self::assertSame(
 			'https://example.org/?p=20',
-			( new Resolver() )->resolve( self::binding( 'permalink' ), array( 'postId' => 20 ), Formatter::KIND_LINK )
+			self::core()->resolve( self::binding( 'permalink' ), array( 'postId' => 20 ), Formatter::KIND_LINK )
 		);
 	}
 
 	public function test_unknown_field_provider_and_source_give_null(): void {
 		$this->wordpress();
-		$resolver = new Resolver();
+		$resolver = self::core();
 
 		self::assertNull( $resolver->resolve( self::binding( 'post_password' ), array( 'postId' => 10 ), Formatter::KIND_LINK ) );
 		self::assertNull( $resolver->resolve( self::binding( 'permalink', 'acf' ), array( 'postId' => 10 ), Formatter::KIND_LINK ) );
@@ -152,7 +159,7 @@ final class ResolverTest extends TestCase {
 
 	public function test_field_type_must_match_kind(): void {
 		$this->wordpress();
-		$resolver = new Resolver();
+		$resolver = self::core();
 
 		self::assertNull( $resolver->resolve( self::binding( 'title' ), array( 'postId' => 10 ), Formatter::KIND_LINK ) );
 		self::assertNull( $resolver->resolve( self::binding( 'permalink' ), array( 'postId' => 10 ), Formatter::KIND_IMAGE ) );
@@ -162,7 +169,7 @@ final class ResolverTest extends TestCase {
 		$this->wordpress();
 		Filters\expectApplied( 'cf65_blocks/dynamic/allow_field' )->once()->andReturn( false );
 
-		self::assertNull( ( new Resolver() )->resolve( self::binding( 'permalink' ), array( 'postId' => 10 ), Formatter::KIND_LINK ) );
+		self::assertNull( self::core()->resolve( self::binding( 'permalink' ), array( 'postId' => 10 ), Formatter::KIND_LINK ) );
 	}
 
 	public function test_unsafe_values_are_dropped(): void {
@@ -170,7 +177,7 @@ final class ResolverTest extends TestCase {
 		Functions\when( 'get_permalink' )->justReturn( 'javascript:alert(1)' );
 		Functions\when( 'get_post_thumbnail_id' )->justReturn( 0 );
 
-		$resolver = new Resolver();
+		$resolver = self::core();
 		self::assertNull( $resolver->resolve( self::binding( 'permalink' ), array( 'postId' => 10 ), Formatter::KIND_LINK ) );
 		self::assertNull( $resolver->resolve( self::binding( 'featured_image' ), array( 'postId' => 10 ), Formatter::KIND_IMAGE ) );
 	}
@@ -212,7 +219,7 @@ final class ResolverTest extends TestCase {
 	}
 
 	public function test_fields_are_grouped_and_filtered_by_kind(): void {
-		$resolver = new Resolver();
+		$resolver = self::core();
 		$ref   = new ObjectRef( ObjectRef::TYPE_POST, 0, 'post' );
 
 		self::assertSame(

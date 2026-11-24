@@ -409,3 +409,165 @@ ${ richBlock( 'heading', 'l0o0p0h1', `» ${ token( 'title', 'Titel' ) }` ) }
 		expect( valid ).toBe( true );
 	} );
 } );
+
+test.describe( 'Dynamic Content: ACF und Post-Meta', () => {
+	let media;
+
+	const tokenOf = ( provider, field ) =>
+		`<span data-cf65-source="current-post" data-cf65-provider="${ provider }" data-cf65-field="${ field }" class="cf65-dynamic">${ field }</span>`;
+
+	const bound = ( provider, field ) => ( {
+		url: { source: 'current-post', provider, field },
+	} );
+
+	test.beforeAll( async ( { requestUtils } ) => {
+		const file = join( tmpdir(), 'cf65-acf.png' );
+		writeFileSync( file, Buffer.from( PNG, 'base64' ) );
+		media = await requestUtils.uploadMedia( file );
+	} );
+
+	test.afterAll( async ( { requestUtils } ) => {
+		for ( const { type, id } of created.splice( 0 ) ) {
+			await requestUtils.rest( {
+				path: `/wp/v2/${ type }/${ id }`,
+				method: 'DELETE',
+				params: { force: true },
+			} );
+		}
+		if ( media ) {
+			await requestUtils.deleteMedia( media.id );
+		}
+	} );
+
+	test( 'Feldliste enthält ACF und öffentliche Meta, keine geschützte', async ( {
+		requestUtils,
+	} ) => {
+		const text = await requestUtils.rest( {
+			path: '/cf65-blocks/v1/dynamic/fields',
+			params: { kind: 'text', postType: 'post' },
+		} );
+		const names = ( id ) =>
+			(
+				text.providers.find( ( group ) => group.id === id )?.fields ??
+				[]
+			).map( ( field ) => field.name );
+		expect( names( 'acf' ) ).toEqual(
+			expect.arrayContaining( [
+				'cf65_text',
+				'cf65_zahl',
+				'cf65_datum',
+				'cf65_verwandt',
+				'cf65_aktiv',
+				'cf65_webseite',
+			] )
+		);
+		expect( names( 'acf' ) ).not.toContain( 'cf65_bild' );
+		expect( names( 'meta' ) ).toContain( 'cf65_untertitel' );
+		expect( names( 'meta' ) ).not.toContain( '_cf65_geheim' );
+
+		const image = await requestUtils.rest( {
+			path: '/cf65-blocks/v1/dynamic/fields',
+			params: { kind: 'image', postType: 'post' },
+		} );
+		expect(
+			image.providers
+				.find( ( group ) => group.id === 'acf' )
+				?.fields.map( ( field ) => field.name )
+		).toEqual( [ 'cf65_bild' ] );
+	} );
+
+	test( 'ACF- und Meta-Werte im Frontend', async ( {
+		page,
+		requestUtils,
+	} ) => {
+		const visible = await createPost( requestUtils, {
+			title: 'Verwandt öffentlich',
+		} );
+		const draft = await createPost( requestUtils, {
+			title: 'Verwandt Entwurf',
+			status: 'draft',
+		} );
+		const content = [
+			richBlock(
+				'text',
+				'a1c2f3t4',
+				[
+					tokenOf( 'acf', 'cf65_text' ),
+					tokenOf( 'acf', 'cf65_zahl' ),
+					tokenOf( 'acf', 'cf65_datum' ),
+					tokenOf( 'acf', 'cf65_verwandt' ),
+					tokenOf( 'acf', 'cf65_aktiv' ),
+					tokenOf( 'meta', 'cf65_untertitel' ),
+					tokenOf( 'meta', '_cf65_geheim' ),
+				].join( ' | ' )
+			),
+			`<!-- wp:cf65/image ${ JSON.stringify( {
+				uniqueId: 'a1c2f3i4',
+				dynamic: bound( 'acf', 'cf65_bild' ),
+			} ) } -->
+<figure class="wp-block-cf65-image cf65-block cf65-image cf65-a1c2f3i4"><img alt=""/></figure>
+<!-- /wp:cf65/image -->`,
+			`<!-- wp:cf65/button ${ JSON.stringify( {
+				uniqueId: 'a1c2f3b4',
+				content: 'Link',
+				dynamic: bound( 'acf', 'cf65_link' ),
+			} ) } -->
+<div class="wp-block-cf65-button cf65-block cf65-button cf65-a1c2f3b4"><a class="cf65-button__link">Link</a></div>
+<!-- /wp:cf65/button -->`,
+			`<!-- wp:cf65/button ${ JSON.stringify( {
+				uniqueId: 'a1c2f3b5',
+				content: 'Webseite',
+				dynamic: bound( 'acf', 'cf65_webseite' ),
+			} ) } -->
+<div class="wp-block-cf65-button cf65-block cf65-button cf65-a1c2f3b5"><a class="cf65-button__link">Webseite</a></div>
+<!-- /wp:cf65/button -->`,
+		].join( '\n\n' );
+
+		const post = await createPost( requestUtils, {
+			title: 'ACF-Beitrag',
+			content,
+			meta: {
+				cf65_untertitel: 'Meta-Untertitel',
+				_cf65_geheim: 'geheim',
+			},
+			acf: {
+				cf65_text: 'Hallo ACF',
+				cf65_zahl: 42,
+				cf65_datum: '20261231',
+				cf65_webseite: 'https://example.org/acf',
+				cf65_link: {
+					title: 'Link',
+					url: 'https://example.org/link',
+					target: '',
+				},
+				cf65_bild: media.id,
+				cf65_verwandt: [ visible.id, draft.id ],
+				cf65_aktiv: true,
+			},
+		} );
+
+		await page.goto( post.link );
+		await expect( page.locator( '.cf65-text .cf65-dynamic' ) ).toHaveText( [
+			'Hallo ACF',
+			'42',
+			'31.12.2026',
+			'Verwandt öffentlich',
+			'Ja',
+			'Meta-Untertitel',
+			'',
+		] );
+		await expect( page.locator( '.cf65-image img' ) ).toHaveAttribute(
+			'src',
+			media.source_url
+		);
+		const links = page.locator( '.cf65-button__link' );
+		await expect( links.nth( 0 ) ).toHaveAttribute(
+			'href',
+			'https://example.org/link'
+		);
+		await expect( links.nth( 1 ) ).toHaveAttribute(
+			'href',
+			'https://example.org/acf'
+		);
+	} );
+} );
