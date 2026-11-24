@@ -36,26 +36,46 @@ final class IconRenderer {
 	 * Hooks registrieren.
 	 */
 	public function register_hooks(): void {
-		\add_filter( 'render_block', array( $this, 'render' ), 10, 2 );
+		\add_filter( 'render_block', array( $this, 'render' ), 10, 3 );
 	}
 
 	/**
 	 * `render_block`-Filter.
 	 *
-	 * @param string       $content Gerendertes HTML.
-	 * @param array<mixed> $block   Geparster Block.
+	 * @param string         $content  Gerendertes HTML.
+	 * @param array<mixed>   $block    Geparster Block.
+	 * @param \WP_Block|null $instance Blockinstanz (Attribute inkl. Standardwerte).
 	 */
-	public function render( string $content, array $block ): string {
+	public function render( string $content, array $block, ?\WP_Block $instance = null ): string {
 		$name = $block['blockName'] ?? null;
 		if ( ! \is_string( $name ) || ! \str_starts_with( $name, Registry::BLOCK_PREFIX ) || ! \str_contains( $content, self::SLOT_CLASS ) ) {
 			return $content;
 		}
 
-		$fallback_attr = $this->supports( $name )['iconFallback'] ?? null;
-		$attributes    = \is_array( $block['attrs'] ?? null ) ? $block['attrs'] : array();
-		$fallback      = \is_string( $fallback_attr ) ? ( $attributes[ $fallback_attr ] ?? null ) : null;
+		return self::fill( $content, ( new IconSlotScanner( $content ) )->scan(), $this->fallback( $name, $block, $instance ) );
+	}
 
-		return self::fill( $content, ( new IconSlotScanner( $content ) )->scan(), $fallback );
+	/**
+	 * Icon des Elternblocks für Platzhalter ohne Namen.
+	 *
+	 * Standardwerte stehen nicht im Block-Kommentar (`attrs`), daher zuerst
+	 * die Attribute der Instanz.
+	 *
+	 * @param string         $name     Blockname.
+	 * @param array<mixed>   $block    Geparster Block.
+	 * @param \WP_Block|null $instance Blockinstanz.
+	 */
+	public function fallback( string $name, array $block, ?\WP_Block $instance ): mixed {
+		$attr = $this->supports( $name )['iconFallback'] ?? null;
+		if ( ! \is_string( $attr ) ) {
+			return null;
+		}
+		$attributes = null !== $instance && \is_array( $instance->attributes ) ? $instance->attributes : array();
+		if ( \array_key_exists( $attr, $attributes ) ) {
+			return $attributes[ $attr ];
+		}
+		$parsed = \is_array( $block['attrs'] ?? null ) ? $block['attrs'] : array();
+		return $parsed[ $attr ] ?? null;
 	}
 
 	/**

@@ -106,6 +106,25 @@ final class IconRendererTest extends TestCase {
 		self::assertSame( $html, $result );
 	}
 
+	public function test_fallback_uses_instance_attributes_with_defaults(): void {
+		$renderer = new IconRenderer( static fn (): array => array( 'iconFallback' => 'icon' ) );
+		$block    = array(
+			'blockName' => 'cf65/icon-list',
+			'attrs'     => array( 'uniqueId' => 'l1i2s3t4' ),
+		);
+		$instance = \Mockery::mock( \WP_Block::class );
+		// Standardwert, der nicht im Block-Kommentar steht.
+		$instance->attributes = array(
+			'uniqueId' => 'l1i2s3t4',
+			'icon'     => 'check',
+		);
+
+		self::assertSame( 'check', $renderer->fallback( 'cf65/icon-list', $block, $instance ) );
+		self::assertNull( $renderer->fallback( 'cf65/icon-list', $block, null ) );
+		self::assertSame( 'x', $renderer->fallback( 'cf65/icon-list', array( 'attrs' => array( 'icon' => 'x' ) ), null ) );
+		self::assertNull( ( new IconRenderer( static fn (): array => array() ) )->fallback( 'cf65/icon', $block, $instance ) );
+	}
+
 	public function test_render_ignores_foreign_blocks_and_blocks_without_slots(): void {
 		$renderer = new IconRenderer( static fn (): array => array() );
 
