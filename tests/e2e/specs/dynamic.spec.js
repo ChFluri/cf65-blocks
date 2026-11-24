@@ -477,7 +477,8 @@ test.describe( 'Dynamic Content: ACF und Post-Meta', () => {
 	} );
 
 	test( 'ACF- und Meta-Werte im Frontend', async ( {
-		page,
+		browser,
+		page: adminPage,
 		requestUtils,
 	} ) => {
 		const visible = await createPost( requestUtils, {
@@ -546,6 +547,12 @@ test.describe( 'Dynamic Content: ACF und Post-Meta', () => {
 			},
 		} );
 
+		// Besucher (nicht angemeldet): der verknüpfte Entwurf bleibt verborgen.
+		const visitor = await browser.newContext( {
+			baseURL: BASE_URL,
+			storageState: { cookies: [], origins: [] },
+		} );
+		const page = await visitor.newPage();
 		await page.goto( post.link );
 		await expect( page.locator( '.cf65-text .cf65-dynamic' ) ).toHaveText( [
 			'Hallo ACF',
@@ -569,5 +576,12 @@ test.describe( 'Dynamic Content: ACF und Post-Meta', () => {
 			'href',
 			'https://example.org/acf'
 		);
+		await visitor.close();
+
+		// Wer den Entwurf bearbeiten darf, sieht ihn.
+		await adminPage.goto( post.link );
+		await expect(
+			adminPage.locator( '.cf65-text .cf65-dynamic' ).nth( 3 )
+		).toHaveText( 'Verwandt öffentlich, Verwandt Entwurf' );
 	} );
 } );
