@@ -8,7 +8,8 @@
 		{ "attr": "iconColor", "property": "fill", "type": "color", "selector": " .cf65-icon" },
 		{ "attr": "linkColorHover", "property": "color", "type": "color", "state": "hover", "selector": " .cf65-link", "hoverScope": "selector" },
 		{ "attr": "width", "property": "--cf65-width", "type": "length", "responsive": true, "deviceVar": true },
-		{ "attr": "plainVar", "property": "margin", "type": "length", "responsive": true, "deviceVar": true }
+		{ "attr": "plainVar", "property": "margin", "type": "length", "responsive": true, "deviceVar": true },
+		{ "attr": "bgImage", "property": "background-image", "type": "image" }
 	],
 	"cases": [
 		{
@@ -130,6 +131,48 @@
 			"uniqueId": "abc12345",
 			"attributes": { "fontSize": { "desktop": "10px", "watch": "1px", "__proto__": "2px" } },
 			"expected": ".cf65-abc12345{font-size:10px}"
+		},
+		{
+			"name": "Hintergrundbild als url()",
+			"uniqueId": "abc12345",
+			"attributes": { "bgImage": { "url": "https://example.org/a.jpg", "id": 5 } },
+			"expected": ".cf65-abc12345{background-image:url(https://example.org/a.jpg)}"
+		},
+		{
+			"name": "Hintergrundbild relativ",
+			"uniqueId": "abc12345",
+			"attributes": { "bgImage": { "url": "/wp-content/uploads/b.png" } },
+			"expected": ".cf65-abc12345{background-image:url(/wp-content/uploads/b.png)}"
+		},
+		{
+			"name": "Hintergrundbild: Ausbruch aus dem CSS-String",
+			"uniqueId": "abc12345",
+			"attributes": { "bgImage": { "url": "a.jpg');}body{display:none" } },
+			"expected": ""
+		},
+		{
+			"name": "Hintergrundbild: javascript-URL",
+			"uniqueId": "abc12345",
+			"attributes": { "bgImage": { "url": "javascript:alert(1)" } },
+			"expected": ""
+		},
+		{
+			"name": "Hintergrundbild: String statt Objekt",
+			"uniqueId": "abc12345",
+			"attributes": { "bgImage": "https://example.org/a.jpg" },
+			"expected": ""
+		},
+		{
+			"name": "Hintergrundbild: Liste statt Objekt",
+			"uniqueId": "abc12345",
+			"attributes": { "bgImage": [ "https://example.org/a.jpg" ] },
+			"expected": ""
+		},
+		{
+			"name": "Hintergrundbild: runde Klammern in der URL",
+			"uniqueId": "abc12345",
+			"attributes": { "bgImage": { "url": "/bild(1).jpg" } },
+			"expected": ""
 		}
 	]
 }

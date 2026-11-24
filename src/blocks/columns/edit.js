@@ -14,9 +14,10 @@ import ResponsiveControl from '../../components/responsive-control';
 import ResponsiveLength from '../../components/responsive-length';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
 import useBlockCss from '../../styles/use-block-css';
+import { withPanels } from '../../extensions/panels/definitions';
 import metadata from './block.json';
 
-const STYLE_MAP = metadata.supports.cf65.styles;
+const STYLE_MAP = withPanels( metadata ).supports.cf65.styles;
 const ALLOWED_BLOCKS = [ 'cf65/column' ];
 const TEMPLATE = [ [ 'cf65/column' ], [ 'cf65/column' ] ];
 const MAX_COLUMNS = 6;

@@ -14,9 +14,10 @@ import InspectorTabs from '../../components/inspector-tabs';
 import ResponsiveLength from '../../components/responsive-length';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
 import useBlockCss from '../../styles/use-block-css';
+import { withPanels } from '../../extensions/panels/definitions';
 import metadata from './block.json';
 
-const STYLE_MAP = metadata.supports.cf65.styles;
+const STYLE_MAP = withPanels( metadata ).supports.cf65.styles;
 
 export default function Edit( { attributes, setAttributes, clientId } ) {
 	const { uniqueId } = attributes;

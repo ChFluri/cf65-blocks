@@ -25,6 +25,7 @@
 		"className": true,
 		"splitting": true,
 		"cf65": {
+			"panels": [ "margin", "padding", "border", "shadow", "backgroundColor", "backgroundImage" ],
 			"inlineDynamic": true,
 			"styles": [
 				{

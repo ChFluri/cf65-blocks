@@ -23,19 +23,31 @@ final class HtmlPatcher {
 	/**
 	 * Wendet alle Änderungen an.
 	 *
-	 * @param string                                                                                                                                                       $html    Block-HTML.
-	 * @param list<array{tag: string, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null}> $patches Änderungen.
+	 * @param string                                                                                                                                                                                          $html    Block-HTML.
+	 * @param list<array{tag: string|null, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null, style: array<string, string>}> $patches Änderungen (`tag` null = erstes Element).
 	 * @return string Neues HTML ('' = Block nicht ausgeben).
 	 */
 	public static function apply( string $html, array $patches ): string {
 		foreach ( $patches as $patch ) {
 			$processor = new \WP_HTML_Tag_Processor( $html );
-			$query     = array( 'tag_name' => $patch['tag'] );
+			$query     = array();
+			if ( null !== $patch['tag'] ) {
+				$query['tag_name'] = $patch['tag'];
+			}
 			if ( null !== $patch['class'] ) {
 				$query['class_name'] = $patch['class'];
 			}
 			if ( ! $processor->next_tag( $query ) ) {
 				continue;
+			}
+
+			if ( array() !== $patch['style'] ) {
+				$style = $processor->get_attribute( 'style' );
+				$rules = \is_string( $style ) ? \rtrim( \trim( $style ), ';' ) : '';
+				foreach ( $patch['style'] as $property => $value ) {
+					$rules .= ( '' === $rules ? '' : ';' ) . $property . ':' . $value;
+				}
+				$processor->set_attribute( 'style', $rules );
 			}
 
 			foreach ( $patch['set'] as $name => $value ) {

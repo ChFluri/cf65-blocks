@@ -18,6 +18,7 @@ use Cf65\Blocks\Dynamic\RestController;
 use Cf65\Blocks\Security\AttributeGuard;
 use Cf65\Blocks\Styles\CssCache;
 use Cf65\Blocks\Styles\CssGenerator;
+use Cf65\Blocks\Styles\Panels;
 use Cf65\Blocks\Styles\StyleRenderer;
 
 /**
@@ -44,6 +45,7 @@ final class Plugin {
 		$resolver = new Resolver();
 
 		( new DebugMode() )->register_hooks();
+		( new Panels() )->register_hooks();
 		( new Registry( PLUGIN_DIR ) )->register_hooks();
 		( new StyleRenderer( new CssGenerator(), null, new CssCache() ) )->register_hooks();
 		( new DynamicRenderer( $resolver ) )->register_hooks();

@@ -129,6 +129,7 @@ final class CssGenerator {
 			'color'  => Sanitizer::color( $value ),
 			'length' => Sanitizer::length( $value ),
 			'enum'   => Sanitizer::enum( $value, \is_array( $entry['values'] ?? null ) ? $entry['values'] : array() ),
+			'image'  => Sanitizer::css_image( $value ),
 			default  => null,
 		};
 	}

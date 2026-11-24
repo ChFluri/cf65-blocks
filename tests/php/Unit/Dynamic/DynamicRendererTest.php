@@ -122,6 +122,7 @@ final class DynamicRendererTest extends TestCase {
 					'add_class'    => array(),
 					'remove_class' => null,
 					'drop_without' => null,
+					'style'        => array(),
 				),
 			),
 			$plan

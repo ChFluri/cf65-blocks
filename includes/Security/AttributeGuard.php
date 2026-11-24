@@ -205,6 +205,10 @@ final class AttributeGuard {
 	 * @return mixed Bereinigter Wert oder null (entfernen).
 	 */
 	private static function sanitize_style( array $entry, mixed $value ): mixed {
+		// Bilder bleiben Objekte ({ url, id? }), werden aber normalisiert.
+		if ( 'image' === ( $entry['type'] ?? null ) ) {
+			return empty( $entry['responsive'] ) ? Sanitizer::image( $value ) : null;
+		}
 		if ( empty( $entry['responsive'] ) ) {
 			return self::sanitize_value( $entry, $value );
 		}

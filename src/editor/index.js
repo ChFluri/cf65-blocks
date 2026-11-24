@@ -6,6 +6,7 @@
  * (`window.cf65BlocksConfig`, siehe Registry::enqueue_editor_assets()).
  */
 import { registerDynamicFormat } from '../dynamic/format';
+import { registerPanels } from '../extensions/panels';
 import { NAMESPACE } from './constants';
 import { startAutoRecovery } from './recovery';
 import './editor.scss';
@@ -13,6 +14,7 @@ import './editor.scss';
 const config = window.cf65BlocksConfig ?? {};
 
 registerDynamicFormat();
+registerPanels();
 
 if ( config.autoRecovery !== false ) {
 	startAutoRecovery();

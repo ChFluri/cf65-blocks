@@ -27,6 +27,16 @@
 	overflow-wrap: anywhere;
 }
 
+// Vorschau im Panel „Hintergrundbild“.
+.cf65-panel-background__preview {
+	display: block;
+	width: 100%;
+	max-height: 120px;
+	margin-bottom: 8px;
+	border-radius: 2px;
+	object-fit: cover;
+}
+
 .cf65-dynamic-popover__help {
 	color: #757575;
 	font-size: 12px;

@@ -7,6 +7,7 @@
  */
 import {
 	sanitizeColor,
+	sanitizeCssImage,
 	sanitizeEnum,
 	sanitizeLength,
 	sanitizeUniqueId,
@@ -25,16 +26,16 @@ const SELECTOR_SUFFIX = /^(?: [a-z0-9_-]+| \.[a-z0-9_-]+)*$/;
 
 /**
  * @typedef {Object} StyleEntry
- * @property {string}                  attr         Attributname.
- * @property {string}                  property     CSS-Eigenschaft.
- * @property {'color'|'length'|'enum'} type         Werttyp.
- * @property {string[]}                [values]     Erlaubte Werte bei `enum`.
- * @property {boolean}                 [responsive] Wert pro Gerät.
- * @property {'hover'}                 [state]      Zustand.
- * @property {string}                  [selector]   Unterselektor, z. B. " .cf65-icon".
- * @property {'block'|'selector'}      [hoverScope] Hover auf dem Block (Standard) oder dem Unterselektor.
- * @property {boolean}                 [deviceVar]  Nur für `--`-Variablen: Tablet/Mobil schreiben
- *                                                  `<name>-tablet` / `<name>-mobile`.
+ * @property {string}                          attr         Attributname.
+ * @property {string}                          property     CSS-Eigenschaft.
+ * @property {'color'|'length'|'enum'|'image'} type         Werttyp.
+ * @property {string[]}                        [values]     Erlaubte Werte bei `enum`.
+ * @property {boolean}                         [responsive] Wert pro Gerät.
+ * @property {'hover'}                         [state]      Zustand.
+ * @property {string}                          [selector]   Unterselektor, z. B. " .cf65-icon".
+ * @property {'block'|'selector'}              [hoverScope] Hover auf dem Block (Standard) oder dem Unterselektor.
+ * @property {boolean}                         [deviceVar]  Nur für `--`-Variablen: Tablet/Mobil schreiben
+ *                                                          `<name>-tablet` / `<name>-mobile`.
  */
 
 /**
@@ -50,6 +51,8 @@ function sanitizeValue( entry, value ) {
 			return sanitizeLength( value );
 		case 'enum':
 			return sanitizeEnum( value, entry.values );
+		case 'image':
+			return sanitizeCssImage( value );
 		default:
 			return null;
 	}

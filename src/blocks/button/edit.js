@@ -18,10 +18,11 @@ import DynamicControl from '../../dynamic/dynamic-control';
 import { blockClassName, useUniqueId } from '../../extensions/unique-id';
 import { sanitizeUrl } from '../../security/sanitize';
 import useBlockCss from '../../styles/use-block-css';
+import { withPanels } from '../../extensions/panels/definitions';
 import metadata from './block.json';
 import { LINK_CLASS } from './save';
 
-const STYLE_MAP = metadata.supports.cf65.styles;
+const STYLE_MAP = withPanels( metadata ).supports.cf65.styles;
 
 export default function Edit( {
 	attributes,

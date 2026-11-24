@@ -22,8 +22,9 @@ import imageSave from './image/save';
 import textMetadata from './text/block.json';
 import textDeprecated from './text/deprecated';
 import textSave from './text/save';
+import { withPanels } from '../extensions/panels/definitions';
 
-export const BLOCK_DEFINITIONS = [
+const DEFINITIONS = [
 	{
 		metadata: headingMetadata,
 		save: headingSave,
@@ -47,6 +48,12 @@ export const BLOCK_DEFINITIONS = [
 		deprecated: columnDeprecated,
 	},
 ];
+
+/** Mit gemeinsamen Panels ergänzt (wie bei der Registrierung auf dem Server). */
+export const BLOCK_DEFINITIONS = DEFINITIONS.map( ( definition ) => ( {
+	...definition,
+	metadata: withPanels( definition.metadata ),
+} ) );
 
 /**
  * Registriert alle Blöcke mit Dummy-Edit (idempotent).

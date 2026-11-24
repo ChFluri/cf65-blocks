@@ -21,6 +21,7 @@
 		"anchor": true,
 		"className": true,
 		"cf65": {
+			"panels": [ "margin", "padding", "border", "shadow", "backgroundColor", "backgroundImage" ],
 			"styles": [
 				{
 					"attr": "gap",

@@ -1,0 +1,82 @@
+{
+	"$comment": "Gemeinsame Style-Panels (UMSETZPLAN Kap. 4.2). Blöcke wählen sie über supports.cf65.panels in block.json; PHP (Styles/Panels.php) und JS (src/extensions/panels) ergänzen daraus Attribute, supports.cf65.styles und supports.cf65.dynamic. Werte gelten für das äussere Element des Blocks.",
+	"margin": {
+		"tab": "layout",
+		"attributes": {
+			"styleMarginTop": { "type": "object" },
+			"styleMarginBottom": { "type": "object" }
+		},
+		"styles": [
+			{ "attr": "styleMarginTop", "property": "margin-top", "type": "length", "responsive": true },
+			{ "attr": "styleMarginBottom", "property": "margin-bottom", "type": "length", "responsive": true }
+		]
+	},
+	"padding": {
+		"tab": "layout",
+		"attributes": {
+			"stylePaddingBlock": { "type": "object" },
+			"stylePaddingInline": { "type": "object" }
+		},
+		"styles": [
+			{ "attr": "stylePaddingBlock", "property": "padding-block", "type": "length", "responsive": true },
+			{ "attr": "stylePaddingInline", "property": "padding-inline", "type": "length", "responsive": true }
+		]
+	},
+	"border": {
+		"tab": "style",
+		"attributes": {
+			"styleBorderWidth": { "type": "string" },
+			"styleBorderStyle": { "type": "string" },
+			"styleBorderColor": { "type": "string" },
+			"styleBorderColorHover": { "type": "string" },
+			"styleBorderRadius": { "type": "string" }
+		},
+		"styles": [
+			{ "attr": "styleBorderWidth", "property": "border-width", "type": "length" },
+			{ "attr": "styleBorderStyle", "property": "border-style", "type": "enum", "values": [ "none", "solid", "dashed", "dotted", "double" ] },
+			{ "attr": "styleBorderColor", "property": "border-color", "type": "color" },
+			{ "attr": "styleBorderColorHover", "property": "border-color", "type": "color", "state": "hover" },
+			{ "attr": "styleBorderRadius", "property": "border-radius", "type": "length" }
+		]
+	},
+	"shadow": {
+		"tab": "style",
+		"attributes": {
+			"styleShadow": { "type": "string" },
+			"styleShadowHover": { "type": "string" }
+		},
+		"styles": [
+			{ "attr": "styleShadow", "property": "box-shadow", "type": "enum", "values": [ "none", "0 1px 3px rgba(0,0,0,.12)", "0 4px 12px rgba(0,0,0,.15)", "0 12px 32px rgba(0,0,0,.18)" ] },
+			{ "attr": "styleShadowHover", "property": "box-shadow", "type": "enum", "state": "hover", "values": [ "none", "0 1px 3px rgba(0,0,0,.12)", "0 4px 12px rgba(0,0,0,.15)", "0 12px 32px rgba(0,0,0,.18)" ] }
+		]
+	},
+	"backgroundColor": {
+		"tab": "style",
+		"attributes": {
+			"styleBackgroundColor": { "type": "string" },
+			"styleBackgroundColorHover": { "type": "string" }
+		},
+		"styles": [
+			{ "attr": "styleBackgroundColor", "property": "background-color", "type": "color" },
+			{ "attr": "styleBackgroundColorHover", "property": "background-color", "type": "color", "state": "hover" }
+		]
+	},
+	"backgroundImage": {
+		"tab": "style",
+		"attributes": {
+			"styleBackgroundImage": { "type": "object" },
+			"styleBackgroundSize": { "type": "string" },
+			"styleBackgroundPosition": { "type": "string" },
+			"styleBackgroundRepeat": { "type": "string" }
+		},
+		"styles": [
+			{ "attr": "styleBackgroundImage", "property": "background-image", "type": "image" },
+			{ "attr": "styleBackgroundSize", "property": "background-size", "type": "enum", "values": [ "cover", "contain", "auto" ] },
+			{ "attr": "styleBackgroundPosition", "property": "background-position", "type": "enum", "values": [ "center center", "top center", "bottom center", "center left", "center right" ] },
+			{ "attr": "styleBackgroundRepeat", "property": "background-repeat", "type": "enum", "values": [ "no-repeat", "repeat", "repeat-x", "repeat-y" ] }
+		],
+		"dynamic": {
+			"styleBackgroundImage": { "kind": "image", "style": "background-image" }
+		}
+	}
+}

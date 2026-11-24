@@ -20,6 +20,7 @@ namespace Cf65\Blocks\Dynamic;
 
 use Cf65\Blocks\Blocks\Registry;
 use Cf65\Blocks\Debug\Profiling;
+use Cf65\Blocks\Security\Sanitizer;
 
 /**
  * `render_block`-Filter für cf65-Blöcke mit Attribut `dynamic`.
@@ -28,6 +29,8 @@ final class DynamicRenderer {
 
 	private const TAG_PATTERN   = '/^[a-z][a-z0-9]{0,15}$/D';
 	private const CLASS_PATTERN = '/^[a-z][a-z0-9_-]{0,63}$/D';
+
+	private const PROPERTY_PATTERN = '/^[a-z][a-z-]{0,39}$/D';
 
 	/**
 	 * Konstruktor.
@@ -112,7 +115,7 @@ final class DynamicRenderer {
 	 * @param string               $name       Blockname.
 	 * @param array<string, mixed> $attributes Attribute.
 	 * @param array<string, mixed> $context    Block-Kontext.
-	 * @return list<array{tag: string, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null}>
+	 * @return list<array{tag: string|null, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null, style: array<string, string>}>
 	 */
 	public function plan( string $name, array $attributes, array $context ): array {
 		$specs    = $this->specs( $name );
@@ -123,8 +126,18 @@ final class DynamicRenderer {
 			if ( ! \is_string( $attr ) || ! \is_array( $spec ) || ! \array_key_exists( $attr, $bindings ) ) {
 				continue;
 			}
-			$binding    = Binding::from_array( $bindings[ $attr ] );
-			$kind       = $spec['kind'] ?? null;
+			$binding = Binding::from_array( $bindings[ $attr ] );
+			$kind    = $spec['kind'] ?? null;
+			$style   = $spec['style'] ?? null;
+			if ( null !== $style ) {
+				$patch = null !== $binding && Formatter::KIND_IMAGE === $kind && self::valid( self::PROPERTY_PATTERN, $style )
+					? self::style_image_patch( (string) $style, $this->resolver->resolve( $binding, $context, $kind ) )
+					: null;
+				if ( null !== $patch ) {
+					$patches[] = $patch;
+				}
+				continue;
+			}
 			$tag        = $spec['tag'] ?? null;
 			$class_name = $spec['class'] ?? null;
 			if ( null === $binding || ! \is_string( $kind ) || ! self::valid( self::TAG_PATTERN, $tag ) || ( null !== $class_name && ! self::valid( self::CLASS_PATTERN, $class_name ) ) ) {
@@ -147,13 +160,37 @@ final class DynamicRenderer {
 	}
 
 	/**
+	 * Bild als CSS-Eigenschaft (z. B. Hintergrundbild) inline auf dem äusseren
+	 * Element. Ohne Wert bleibt das statische Bild aus dem CSS (Fallback).
+	 *
+	 * @param string $property CSS-Eigenschaft.
+	 * @param mixed  $value    Formatierter Wert.
+	 * @return array{tag: string|null, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null, style: array<string, string>}|null
+	 */
+	private static function style_image_patch( string $property, mixed $value ): ?array {
+		$css = \is_array( $value ) ? Sanitizer::css_image( array( 'url' => $value['url'] ?? null ) ) : null;
+		if ( null === $css ) {
+			return null;
+		}
+		return array(
+			'tag'          => null,
+			'class'        => null,
+			'set'          => array(),
+			'add_class'    => array(),
+			'remove_class' => null,
+			'drop_without' => null,
+			'style'        => array( $property => $css ),
+		);
+	}
+
+	/**
 	 * Bild: src, Masse, Alternativtext und `wp-image-<id>` (für srcset/lazy).
 	 * Ohne Wert und ohne statisches Bild wird der Block nicht ausgegeben.
 	 *
 	 * @param string      $tag   Tag.
 	 * @param string|null $class_name Klasse.
 	 * @param mixed       $value Formatierter Wert.
-	 * @return array{tag: string, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null}
+	 * @return array{tag: string|null, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null, style: array<string, string>}
 	 */
 	private static function image_patch( string $tag, ?string $class_name, mixed $value ): array {
 		$patch = array(
@@ -163,6 +200,7 @@ final class DynamicRenderer {
 			'add_class'    => array(),
 			'remove_class' => null,
 			'drop_without' => 'src',
+			'style'        => array(),
 		);
 		if ( ! \is_array( $value ) || ! \is_string( $value['url'] ?? null ) ) {
 			return $patch;
@@ -196,7 +234,7 @@ final class DynamicRenderer {
 	 * @param mixed                $value      Formatierter Wert.
 	 * @param array<mixed>         $spec       Deklaration.
 	 * @param array<string, mixed> $attributes Attribute.
-	 * @return array{tag: string, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null}|null
+	 * @return array{tag: string|null, class: string|null, set: array<string, string|null>, add_class: list<string>, remove_class: string|null, drop_without: string|null, style: array<string, string>}|null
 	 */
 	private static function link_patch( string $tag, ?string $class_name, mixed $value, array $spec, array $attributes ): ?array {
 		if ( ! \is_string( $value ) ) {
@@ -215,6 +253,7 @@ final class DynamicRenderer {
 			'add_class'    => array(),
 			'remove_class' => null,
 			'drop_without' => null,
+			'style'        => array(),
 		);
 	}
 

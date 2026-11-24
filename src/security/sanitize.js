@@ -119,3 +119,34 @@ export function sanitizeUrl( value, schemes = LINK_SCHEMES ) {
 	const head = value.split( /[/?#]/, 1 )[ 0 ];
 	return head.includes( ':' ) ? null : value;
 }
+
+/**
+ * Bild-Objekt `{ url, id? }` (Spiegel von Sanitizer::image()).
+ *
+ * @param {unknown} value Rohwert.
+ * @return {{url: string, id?: number}|null} Normalisiertes Bild oder null.
+ */
+export function sanitizeImage( value ) {
+	if ( ! value || typeof value !== 'object' || Array.isArray( value ) ) {
+		return null;
+	}
+	const url = sanitizeUrl( value.url, IMAGE_SCHEMES );
+	if ( ! url ) {
+		return null;
+	}
+	return Number.isInteger( value.id ) && value.id > 0
+		? { url, id: value.id }
+		: { url };
+}
+
+/**
+ * CSS-Wert `url(…)` ohne Anführungszeichen (Spiegel von
+ * Sanitizer::css_image()); URLs mit runden Klammern werden abgelehnt.
+ *
+ * @param {unknown} value Rohwert.
+ * @return {string|null} CSS-Wert oder null.
+ */
+export function sanitizeCssImage( value ) {
+	const image = sanitizeImage( value );
+	return image && ! /[()]/.test( image.url ) ? `url(${ image.url })` : null;
+}

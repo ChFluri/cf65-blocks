@@ -9,6 +9,8 @@ declare( strict_types = 1 );
 
 namespace Cf65\Blocks\Tests\Unit\Security;
 
+use Cf65\Blocks\Styles\Panels;
+
 /**
  * Lädt alle block.json einmal.
  */
@@ -32,7 +34,8 @@ final class BlockTypes {
 			foreach ( (array) \glob( \dirname( __DIR__, 4 ) . '/src/blocks/*/block.json' ) as $file ) {
 				$json = \json_decode( (string) \file_get_contents( (string) $file ), true, 512, JSON_THROW_ON_ERROR );
 				if ( \is_array( $json ) && \is_string( $json['name'] ?? null ) ) {
-					self::$types[ $json['name'] ] = $json;
+					// Wie bei der Registrierung: gemeinsame Panels ergänzen.
+					self::$types[ $json['name'] ] = Panels::apply( $json );
 				}
 			}
 			\ksort( self::$types );

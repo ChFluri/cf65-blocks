@@ -30,6 +30,7 @@
 		"anchor": true,
 		"className": true,
 		"cf65": {
+			"panels": [ "margin" ],
 			"urls": { "url": "image" },
 			"dynamic": { "url": { "kind": "image", "tag": "img" } },
 			"styles": [

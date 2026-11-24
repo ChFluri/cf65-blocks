@@ -85,6 +85,46 @@ final class Sanitizer {
 	}
 
 	/**
+	 * Bild-Objekt `{ url, id? }` (z. B. Hintergrundbild): URL mit Bild-Schema
+	 * oder relativ, ID positive Ganzzahl. Normalisiert, sonst null.
+	 *
+	 * @param mixed $value Rohwert.
+	 * @return array{url: string, id?: int}|null
+	 */
+	public static function image( mixed $value ): ?array {
+		if ( ! \is_array( $value ) || \array_is_list( $value ) ) {
+			return null;
+		}
+		$url = self::url( $value['url'] ?? null, self::IMAGE_SCHEMES );
+		if ( null === $url ) {
+			return null;
+		}
+		$image = array( 'url' => $url );
+		$id    = $value['id'] ?? null;
+		if ( \is_int( $id ) && $id > 0 ) {
+			$image['id'] = $id;
+		}
+		return $image;
+	}
+
+	/**
+	 * CSS-Wert `url(…)` (ohne Anführungszeichen) für ein Bild-Objekt.
+	 * Die URL-Prüfung schliesst Anführungszeichen, Backslash, Leerzeichen,
+	 * Steuerzeichen und spitze Klammern aus; zusätzlich runde Klammern. Damit
+	 * ist die unquotierte Form gültiges, ausbruchsicheres CSS – auch im
+	 * `style`-Attribut.
+	 *
+	 * @param mixed $value Rohwert.
+	 */
+	public static function css_image( mixed $value ): ?string {
+		$image = self::image( $value );
+		if ( null === $image || \str_contains( $image['url'], '(' ) || \str_contains( $image['url'], ')' ) ) {
+			return null;
+		}
+		return 'url(' . $image['url'] . ')';
+	}
+
+	/**
 	 * Block-ID für die Klasse `cf65-<id>`.
 	 *
 	 * @param mixed $value Rohwert.
