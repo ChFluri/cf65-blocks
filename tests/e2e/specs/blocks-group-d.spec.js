@@ -105,8 +105,8 @@ test.describe( 'Blöcke Gruppe D', () => {
 		await expect( iconBox ).toHaveClass( /is-layout-side/ );
 		await expect( iconBox.locator( '.cf65-icon svg' ) ).toHaveCount( 1 );
 		const [ iconRect, headingRect ] = await Promise.all( [
-			iconBox.locator( '.cf65-icon' ).boundingBox(),
-			iconBox.locator( '.cf65-heading' ).boundingBox(),
+			iconBox.locator( ':scope > .cf65-icon' ).boundingBox(),
+			iconBox.locator( ':scope > .cf65-heading' ).boundingBox(),
 		] );
 		expect( headingRect.x ).toBeGreaterThanOrEqual(
 			iconRect.x + iconRect.width
