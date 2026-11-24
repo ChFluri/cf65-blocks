@@ -78,10 +78,7 @@ test.describe( 'Dynamic Content', () => {
 
 		await page.goto( `/?p=${ post.id }` );
 		const link = page.locator( '.cf65-button__link' );
-		await expect( link ).toHaveAttribute(
-			'href',
-			new RegExp( `\\?p=${ post.id }$` )
-		);
+		await expect( link ).toHaveAttribute( 'href', post.link );
 		await expect( link ).toHaveAttribute( 'target', '_blank' );
 		await expect( link ).toHaveAttribute( 'rel', 'noopener' );
 	} );
@@ -141,11 +138,10 @@ ${ buttonMarkup( 'l0o0p0b1' ) }
 			.evaluateAll( ( links ) =>
 				links.map( ( link ) => link.getAttribute( 'href' ) )
 			);
-		for ( const post of [ first, second ] ) {
-			expect( hrefs ).toContainEqual(
-				expect.stringMatching( new RegExp( `\\?p=${ post.id }$` ) )
-			);
-		}
+		expect( hrefs ).toEqual(
+			expect.arrayContaining( [ first.link, second.link ] )
+		);
+		expect( new Set( hrefs ).size ).toBe( hrefs.length );
 	} );
 
 	test( 'Editor-Vorschau zeigt das Beitragsbild', async ( {
@@ -232,9 +228,7 @@ ${ buttonMarkup( 'l0o0p0b1' ) }
 				},
 			},
 		} );
-		expect( preview.values.value ).toMatch(
-			new RegExp( `\\?p=${ post.id }$` )
-		);
+		expect( preview.values.value ).toBe( post.link );
 		expect( preview.values.kaputt ).toBeNull();
 	} );
 

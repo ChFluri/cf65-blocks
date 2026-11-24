@@ -61,7 +61,7 @@ final class RestController {
 					'kind'     => $kind,
 					'postType' => array(
 						'type'    => 'string',
-						'pattern' => '^[a-z0-9_-]{1,20}$',
+						'pattern' => '^[a-z0-9_-]{0,20}$',
 						'default' => '',
 					),
 				),
@@ -84,7 +84,7 @@ final class RestController {
 					),
 					'postType' => array(
 						'type'    => 'string',
-						'pattern' => '^[a-z0-9_-]{1,20}$',
+						'pattern' => '^[a-z0-9_-]{0,20}$',
 						'default' => '',
 					),
 					'bindings' => array(
