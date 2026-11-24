@@ -1,0 +1,16 @@
+// Gemeinsame Basis für Icon-Platzhalter (in den style.scss der Icon-Blöcke
+// eingebunden). Grösse über die CSS-Variable --cf65-icon-size.
+:where(.cf65-icon-slot) {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	line-height: 0;
+	vertical-align: middle;
+}
+
+:where(.cf65-icon-slot) .cf65-icon {
+	display: block;
+	width: var(--cf65-icon-size, 1.5em);
+	height: var(--cf65-icon-size, 1.5em);
+}

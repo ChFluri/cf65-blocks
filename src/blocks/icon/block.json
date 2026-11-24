@@ -1,0 +1,75 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/icon",
+	"version": "0.1.0",
+	"title": "Icon (cf65)",
+	"category": "cf65-blocks",
+	"icon": "star-filled",
+	"description": "Einzelnes Icon mit Grösse, Farbe inkl. Hover und optionaler Hintergrundform.",
+	"keywords": [ "icon", "symbol", "piktogramm" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"icon": { "type": "string", "default": "star" },
+		"label": { "type": "string", "default": "" },
+		"textAlign": { "type": "object" },
+		"size": { "type": "object" },
+		"color": { "type": "string" },
+		"colorHover": { "type": "string" },
+		"shapeColor": { "type": "string" },
+		"shapePadding": { "type": "string" },
+		"shapeRadius": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin" ],
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "size",
+					"property": "--cf65-icon-size",
+					"type": "length",
+					"responsive": true
+				},
+				{ "attr": "color", "property": "color", "type": "color" },
+				{
+					"attr": "colorHover",
+					"property": "color",
+					"type": "color",
+					"state": "hover"
+				},
+				{
+					"attr": "shapeColor",
+					"property": "background-color",
+					"type": "color",
+					"selector": " .cf65-icon-slot"
+				},
+				{
+					"attr": "shapePadding",
+					"property": "padding",
+					"type": "length",
+					"selector": " .cf65-icon-slot"
+				},
+				{
+					"attr": "shapeRadius",
+					"property": "border-radius",
+					"type": "length",
+					"selector": " .cf65-icon-slot"
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

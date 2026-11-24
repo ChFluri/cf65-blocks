@@ -1,0 +1,22 @@
+@use "../../styles/icon-slot";
+
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-icon-list) {
+	display: flex;
+	flex-direction: column;
+	row-gap: 0.5em;
+	margin-inline: 0;
+	padding-inline-start: 0;
+	list-style: none;
+}
+
+:where(.cf65-icon-list-item) {
+	display: flex;
+	gap: var(--cf65-icon-gap, 0.5em);
+	align-items: flex-start;
+}
+
+// Icon auf Höhe der ersten Textzeile.
+:where(.cf65-icon-list-item) .cf65-icon-slot {
+	min-height: 1lh;
+}

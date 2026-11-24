@@ -1,0 +1,8 @@
+@use "../../styles/icon-slot";
+
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-icon-label) {
+	display: flex;
+	gap: 0.5em;
+	align-items: center;
+}

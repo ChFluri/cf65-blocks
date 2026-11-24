@@ -52,6 +52,8 @@
 		"@wordpress/rich-text": "^8.2.0",
 		"@wordpress/scripts": "^37.2.0",
 		"jsdom": "^31.0.1",
+		"lucide-static": "^1.79.0",
+		"simple-icons": "^16.38.1",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.1"
 	},
@@ -59,6 +61,7 @@
 		"build": "npm run build:editor && npm run build:blocks",
 		"build:editor": "wp-scripts build index=./index.js --webpack-src-dir=src/editor --output-path=build/editor",
 		"build:blocks": "node bin/blocks.mjs build",
+		"icons": "node bin/icons.mjs",
 		"start:editor": "wp-scripts start index=./index.js --webpack-src-dir=src/editor --output-path=build/editor",
 		"start:blocks": "node bin/blocks.mjs start",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:pkg",

@@ -1,0 +1,45 @@
+@use "../../styles/icon-slot";
+@use "brands";
+
+// Basis mit Spezifität 0 (:where), Instanz-Stile gewinnen immer.
+:where(.cf65-social-buttons) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	margin-inline: 0;
+	padding-inline-start: 0;
+	list-style: none;
+}
+
+:where(.cf65-social-buttons) .cf65-social-buttons__link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.6em;
+	border-radius: 50%;
+	background-color: #1e1e1e;
+	color: #fff;
+	text-decoration: none;
+	transition: color 0.15s, background-color 0.15s, opacity 0.15s;
+}
+
+:where(.cf65-social-buttons--brand) .cf65-social-buttons__link {
+	background-color: var(--cf65-brand, #1e1e1e);
+	color: #fff;
+}
+
+:where(.cf65-social-buttons--brand) .cf65-social-buttons__link:hover {
+	opacity: 0.85;
+}
+
+:where(.cf65-social-buttons) .cf65-social-buttons__link:focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	:where(.cf65-social-buttons) .cf65-social-buttons__link {
+		transition: none;
+	}
+}

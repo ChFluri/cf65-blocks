@@ -1,0 +1,68 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/icon-label",
+	"version": "0.1.0",
+	"title": "Icon mit Text (cf65)",
+	"category": "cf65-blocks",
+	"icon": "id",
+	"description": "Icon und kurzer Text nebeneinander, z. B. für Kontaktangaben oder Merkmale.",
+	"keywords": [ "icon", "label", "text", "merkmal" ],
+	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"icon": { "type": "string", "default": "circle-check" },
+		"content": { "type": "string", "default": "" },
+		"justify": { "type": "object" },
+		"gap": { "type": "string" },
+		"iconSize": { "type": "object" },
+		"iconColor": { "type": "string" },
+		"fontSize": { "type": "object" },
+		"textColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin", "padding", "border", "backgroundColor" ],
+			"inlineDynamic": true,
+			"styles": [
+				{
+					"attr": "justify",
+					"property": "justify-content",
+					"type": "enum",
+					"values": [ "flex-start", "center", "flex-end" ],
+					"responsive": true
+				},
+				{ "attr": "gap", "property": "gap", "type": "length" },
+				{
+					"attr": "iconSize",
+					"property": "--cf65-icon-size",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "iconColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-icon-slot"
+				},
+				{
+					"attr": "fontSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" }
+			]
+		}
+	},
+	"example": {
+		"attributes": { "content": "Kostenloser Versand" }
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

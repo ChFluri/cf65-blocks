@@ -37,6 +37,24 @@ import subtitleSave from './subtitle/save';
 import blockquoteMetadata from './blockquote/block.json';
 import blockquoteDeprecated from './blockquote/deprecated';
 import blockquoteSave from './blockquote/save';
+import iconMetadata from './icon/block.json';
+import iconDeprecated from './icon/deprecated';
+import iconSave from './icon/save';
+import iconLabelMetadata from './icon-label/block.json';
+import iconLabelDeprecated from './icon-label/deprecated';
+import iconLabelSave from './icon-label/save';
+import iconListMetadata from './icon-list/block.json';
+import iconListDeprecated from './icon-list/deprecated';
+import iconListSave from './icon-list/save';
+import iconListItemMetadata from './icon-list-item/block.json';
+import iconListItemDeprecated from './icon-list-item/deprecated';
+import iconListItemSave from './icon-list-item/save';
+import iconButtonMetadata from './icon-button/block.json';
+import iconButtonDeprecated from './icon-button/deprecated';
+import iconButtonSave from './icon-button/save';
+import socialButtonsMetadata from './social-buttons/block.json';
+import socialButtonsDeprecated from './social-buttons/deprecated';
+import socialButtonsSave from './social-buttons/save';
 import { withPanels } from '../extensions/panels/definitions';
 
 const DEFINITIONS = [
@@ -86,6 +104,36 @@ const DEFINITIONS = [
 		metadata: blockquoteMetadata,
 		save: blockquoteSave,
 		deprecated: blockquoteDeprecated,
+	},
+	{
+		metadata: iconMetadata,
+		save: iconSave,
+		deprecated: iconDeprecated,
+	},
+	{
+		metadata: iconLabelMetadata,
+		save: iconLabelSave,
+		deprecated: iconLabelDeprecated,
+	},
+	{
+		metadata: iconListMetadata,
+		save: iconListSave,
+		deprecated: iconListDeprecated,
+	},
+	{
+		metadata: iconListItemMetadata,
+		save: iconListItemSave,
+		deprecated: iconListItemDeprecated,
+	},
+	{
+		metadata: iconButtonMetadata,
+		save: iconButtonSave,
+		deprecated: iconButtonDeprecated,
+	},
+	{
+		metadata: socialButtonsMetadata,
+		save: socialButtonsSave,
+		deprecated: socialButtonsDeprecated,
 	},
 ];
 

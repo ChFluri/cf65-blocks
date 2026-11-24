@@ -14,6 +14,7 @@ use Cf65\Blocks\Blocks\SeparatorRenderer;
 use Cf65\Blocks\Cli\BenchCommand;
 use Cf65\Blocks\Debug\DebugMode;
 use Cf65\Blocks\Dynamic\DynamicRenderer;
+use Cf65\Blocks\Icons\IconRenderer;
 use Cf65\Blocks\Dynamic\Resolver;
 use Cf65\Blocks\Dynamic\RestController;
 use Cf65\Blocks\Security\AttributeGuard;
@@ -49,6 +50,7 @@ final class Plugin {
 		( new Panels() )->register_hooks();
 		( new Registry( PLUGIN_DIR ) )->register_hooks();
 		( new SeparatorRenderer() )->register_hooks();
+		( new IconRenderer() )->register_hooks();
 		( new StyleRenderer( new CssGenerator(), null, new CssCache() ) )->register_hooks();
 		( new DynamicRenderer( $resolver ) )->register_hooks();
 		( new RestController( $resolver ) )->register_hooks();

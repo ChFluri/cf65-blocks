@@ -91,6 +91,9 @@ final class PayloadTest extends TestCase {
 
 	public function test_every_block_has_styles_covered(): void {
 		$covered = \array_unique( \array_map( static fn ( array $case ): string => $case[0], \iterator_to_array( self::cases() ) ) );
-		self::assertSame( \array_keys( BlockTypes::all() ), \array_values( $covered ) );
+		// Blöcke ohne eigene Stile (z. B. Listeneinträge) haben nichts zu prüfen.
+		$styled = \array_keys( \array_filter( BlockTypes::all(), static fn ( array $type ): bool => array() !== ( $type['supports']['cf65']['styles'] ?? array() ) ) );
+		self::assertSame( $styled, \array_values( $covered ) );
+		self::assertGreaterThan( 15, \count( $styled ) );
 	}
 }

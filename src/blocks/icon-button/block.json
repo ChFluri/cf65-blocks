@@ -1,0 +1,104 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/icon-button",
+	"version": "0.1.0",
+	"title": "Icon-Button (cf65)",
+	"category": "cf65-blocks",
+	"icon": "marker",
+	"description": "Runder oder eckiger Link-Button nur mit Icon; Beschriftung für Screenreader.",
+	"keywords": [ "button", "icon", "link" ],
+	"textdomain": "cf65-blocks",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"icon": { "type": "string", "default": "arrow-right" },
+		"label": { "type": "string", "default": "" },
+		"url": { "type": "string" },
+		"opensInNewTab": { "type": "boolean", "default": false },
+		"textAlign": { "type": "object" },
+		"size": { "type": "object" },
+		"padding": { "type": "string" },
+		"borderRadius": { "type": "string" },
+		"color": { "type": "string" },
+		"colorHover": { "type": "string" },
+		"backgroundColor": { "type": "string" },
+		"backgroundColorHover": { "type": "string" },
+		"dynamic": { "type": "object" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin" ],
+			"urls": { "url": "link" },
+			"dynamic": {
+				"url": {
+					"kind": "link",
+					"tag": "a",
+					"class": "cf65-icon-button__link",
+					"newTab": "opensInNewTab"
+				}
+			},
+			"styles": [
+				{
+					"attr": "textAlign",
+					"property": "text-align",
+					"type": "enum",
+					"values": [ "left", "center", "right" ],
+					"responsive": true
+				},
+				{
+					"attr": "size",
+					"property": "--cf65-icon-size",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "padding",
+					"property": "padding",
+					"type": "length",
+					"selector": " .cf65-icon-button__link"
+				},
+				{
+					"attr": "borderRadius",
+					"property": "border-radius",
+					"type": "length",
+					"selector": " .cf65-icon-button__link"
+				},
+				{
+					"attr": "color",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-icon-button__link"
+				},
+				{
+					"attr": "backgroundColor",
+					"property": "background-color",
+					"type": "color",
+					"selector": " .cf65-icon-button__link"
+				},
+				{
+					"attr": "colorHover",
+					"property": "color",
+					"type": "color",
+					"state": "hover",
+					"selector": " .cf65-icon-button__link",
+					"hoverScope": "selector"
+				},
+				{
+					"attr": "backgroundColorHover",
+					"property": "background-color",
+					"type": "color",
+					"state": "hover",
+					"selector": " .cf65-icon-button__link",
+					"hoverScope": "selector"
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

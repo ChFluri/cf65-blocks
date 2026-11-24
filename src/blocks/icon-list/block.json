@@ -1,0 +1,68 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/icon-list",
+	"version": "0.1.0",
+	"title": "Icon-Liste (cf65)",
+	"category": "cf65-blocks",
+	"icon": "editor-ul",
+	"description": "Liste mit Icon statt Aufzählungszeichen; ein Icon für alle oder pro Eintrag.",
+	"keywords": [ "liste", "icon", "aufzählung", "checkliste" ],
+	"textdomain": "cf65-blocks",
+	"allowedBlocks": [ "cf65/icon-list-item" ],
+	"providesContext": { "cf65/iconListIcon": "icon" },
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"icon": { "type": "string", "default": "check" },
+		"iconSize": { "type": "object" },
+		"iconColor": { "type": "string" },
+		"gap": { "type": "object" },
+		"iconGap": { "type": "string" },
+		"fontSize": { "type": "object" },
+		"textColor": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin", "padding", "border", "backgroundColor" ],
+			"iconFallback": "icon",
+			"styles": [
+				{
+					"attr": "iconSize",
+					"property": "--cf65-icon-size",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "iconColor",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-icon-slot"
+				},
+				{
+					"attr": "gap",
+					"property": "row-gap",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "iconGap",
+					"property": "--cf65-icon-gap",
+					"type": "length"
+				},
+				{
+					"attr": "fontSize",
+					"property": "font-size",
+					"type": "length",
+					"responsive": true
+				},
+				{ "attr": "textColor", "property": "color", "type": "color" }
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

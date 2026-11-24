@@ -1,0 +1,100 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "cf65/social-buttons",
+	"version": "0.1.0",
+	"title": "Social Buttons (cf65)",
+	"category": "cf65-blocks",
+	"icon": "share",
+	"description": "Links zu Social-Media-Profilen mit Marken-Icons, optional in Markenfarben.",
+	"keywords": [ "social", "facebook", "instagram", "teilen", "profile" ],
+	"textdomain": "cf65-blocks",
+	"attributes": {
+		"uniqueId": { "type": "string" },
+		"markupVersion": { "type": "number", "default": 1 },
+		"links": {
+			"type": "array",
+			"default": [
+				{ "network": "facebook", "url": "" },
+				{ "network": "instagram", "url": "" }
+			]
+		},
+		"opensInNewTab": { "type": "boolean", "default": true },
+		"brandColors": { "type": "boolean", "default": false },
+		"justify": { "type": "object" },
+		"gap": { "type": "string" },
+		"size": { "type": "object" },
+		"padding": { "type": "string" },
+		"borderRadius": { "type": "string" },
+		"color": { "type": "string" },
+		"colorHover": { "type": "string" },
+		"backgroundColor": { "type": "string" },
+		"backgroundColorHover": { "type": "string" }
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"cf65": {
+			"panels": [ "margin" ],
+			"styles": [
+				{
+					"attr": "justify",
+					"property": "justify-content",
+					"type": "enum",
+					"values": [ "flex-start", "center", "flex-end" ],
+					"responsive": true
+				},
+				{ "attr": "gap", "property": "gap", "type": "length" },
+				{
+					"attr": "size",
+					"property": "--cf65-icon-size",
+					"type": "length",
+					"responsive": true
+				},
+				{
+					"attr": "padding",
+					"property": "padding",
+					"type": "length",
+					"selector": " .cf65-social-buttons__link"
+				},
+				{
+					"attr": "borderRadius",
+					"property": "border-radius",
+					"type": "length",
+					"selector": " .cf65-social-buttons__link"
+				},
+				{
+					"attr": "color",
+					"property": "color",
+					"type": "color",
+					"selector": " .cf65-social-buttons__link"
+				},
+				{
+					"attr": "backgroundColor",
+					"property": "background-color",
+					"type": "color",
+					"selector": " .cf65-social-buttons__link"
+				},
+				{
+					"attr": "colorHover",
+					"property": "color",
+					"type": "color",
+					"state": "hover",
+					"selector": " .cf65-social-buttons__link",
+					"hoverScope": "selector"
+				},
+				{
+					"attr": "backgroundColorHover",
+					"property": "background-color",
+					"type": "color",
+					"state": "hover",
+					"selector": " .cf65-social-buttons__link",
+					"hoverScope": "selector"
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

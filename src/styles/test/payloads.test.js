@@ -54,7 +54,12 @@ describe( 'Payloads erzeugen kein CSS', () => {
 			cases.map( ( [ label ] ) => label.split( ' ' )[ 0 ] )
 		);
 		expect( [ ...names ].sort() ).toEqual(
-			BLOCK_DEFINITIONS.map( ( { metadata } ) => metadata.name ).sort()
+			// Blöcke ohne eigene Stile (z. B. Listeneinträge) haben nichts zu prüfen.
+			BLOCK_DEFINITIONS.filter(
+				( { metadata } ) => metadata.supports?.cf65?.styles?.length
+			)
+				.map( ( { metadata } ) => metadata.name )
+				.sort()
 		);
 	} );
 
